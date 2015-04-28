@@ -17,17 +17,9 @@ import java.util.regex.Pattern;
  */
 public class KinosNotificationHandler implements Runnable {
     private final TelnetClient telnetClient;
-    private TextView volumeView;
-    private TextView operationStateView;
-    private TextView sourceView;
-    private TextView traceDataView;
 
-    public KinosNotificationHandler(TelnetClient telnetClient, TextView volumeView, TextView operationStateView, TextView sourceView, TextView traceDataView) {
+    public KinosNotificationHandler(TelnetClient telnetClient) {
         this.telnetClient = telnetClient;
-        this.volumeView = volumeView;
-        this.operationStateView = operationStateView;
-        this.sourceView = sourceView;
-        this.traceDataView = traceDataView;
     }
 
     @Override
@@ -47,17 +39,13 @@ public class KinosNotificationHandler implements Runnable {
             }
             while (ret_read >= 0);
         } catch (IOException e) {
-            String msg = "Error in KinosNotificationHandler Thread, Exception while reading socket:";
-            Log.e("FATAL", msg, e);
-            appendTextViewText(traceDataView, msg + ": " + e.getMessage());
+            KinosKontroller.trace("FATAL", "Error in KinosNotificationHandler Thread, Exception while reading socket:", e);
         }
 
         try {
             telnetClient.disconnect();
         } catch (IOException e) {
-            String msg = "Error in KinosNotificationHandler Thread, Exception while closing telnet:";
-            Log.e("FATAL", msg, e);
-            appendTextViewText(traceDataView, msg + ": " + e.getMessage());
+            KinosKontroller.trace("FATAL", "Error in KinosNotificationHandler Thread, Exception while closing telnet:", e);
         }
     }
 
@@ -74,7 +62,7 @@ public class KinosNotificationHandler implements Runnable {
         Matcher matcher = VOLUME_STATUS_PATTERN.matcher(deviceData);
         if (matcher.matches()) {
             String volume = matcher.group(2);
-            setTextViewText(volumeView, volume);
+            KinosKontroller.updateVolumeView(volume);
             return true;
         }
         return false;
@@ -86,7 +74,7 @@ public class KinosNotificationHandler implements Runnable {
         Matcher matcher = INPUT_PROFILE_STATUS_PATTERN.matcher(deviceData);
         if (matcher.matches()) {
             String inputProfileName = matcher.group(3);
-            setTextViewText(sourceView, inputProfileName);
+            KinosKontroller.updateSourceView(inputProfileName);
             return true;
         }
         return false;
@@ -103,28 +91,11 @@ public class KinosNotificationHandler implements Runnable {
         if (matcher.matches()) {
             String standbyStatus = matcher.group(2);
             String operationStatus = STANDBY_TO_OPERATION_STATUS.get(standbyStatus);
-            setTextViewText(operationStateView, operationStatus != null ? operationStatus : "Unknown");
+            KinosKontroller.updateOperationStateView(operationStatus != null ? operationStatus : "Unknown");
             return true;
         }
         return false;
     }
 
-    static void setTextViewText(final TextView textView, final String displayText) {
-        textView.post(new Runnable() {
-            @Override
-            public void run() {
-                textView.setText(displayText);
-            }
-        });
-    }
-
-    static void appendTextViewText(final TextView textView, final String displayText) {
-        textView.post(new Runnable() {
-            @Override
-            public void run() {
-                textView.append(displayText + "\n");
-            }
-        });
-    }
 
 }

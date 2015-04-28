@@ -21,7 +21,7 @@ public class DeviceControlActivity extends ActionBarActivity {
         TextView deviceNameView = getTextView(R.id.device_name);
         deviceNameView.setText(deviceName);
         String ipAddress = intent.getStringExtra(DeviceChooserActivity.EXTRA_IP_ADDRESS);
-        KinosKontrollerManager.startKontroller(ipAddress, getTextView(R.id.volume), getTextView(R.id.operation_state), getTextView(R.id.current_source), getTextView(R.id.traceData));
+        KinosKontroller.getKontroller().start(ipAddress, getTextView(R.id.volume), getTextView(R.id.operation_state), getTextView(R.id.current_source), getTextView(R.id.traceData));
     }
 
     @Override
@@ -47,27 +47,27 @@ public class DeviceControlActivity extends ActionBarActivity {
     }
 
     public void decreaseVolume(View view) {
-        KinosKontrollerManager.getKontroller().decreaseVolume();
+        KinosKontroller.getKontroller().decreaseVolume();
     }
 
     public void increaseVolume(View view) {
-        KinosKontrollerManager.getKontroller().increaseVolume();
+        KinosKontroller.getKontroller().increaseVolume();
     }
 
     public void switchOn(View view) {
-        KinosKontrollerManager.getKontroller().switchOn();
+        KinosKontroller.getKontroller().switchOn();
     }
 
     public void switchOff(View view) {
-        KinosKontrollerManager.getKontroller().switchOff();
+        KinosKontroller.getKontroller().switchOff();
     }
 
     public void previousSource(View view) {
-        KinosKontrollerManager.getKontroller().previousInputProfile();
+        KinosKontroller.getKontroller().previousInputProfile();
     }
 
     public void nextSource(View view) {
-        KinosKontrollerManager.getKontroller().nextInputProfile();
+        KinosKontroller.getKontroller().nextInputProfile();
     }
 
     private TextView getTextView(int textViewId) {
