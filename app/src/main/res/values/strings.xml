@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Kintrol</string>
+
+    <string name="device_1">Kinos Heimkino</string>
+    <string name="device_2">Kinos Andy</string>
+    <string name="device_choser_title">Chose Device</string>
+    <string name="action_settings">Bla</string>
+    <string name="title_activity_device_control">Kintrol</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="volume_header">Volume</string>
+    <string name="volume_down">-</string>
+    <string name="volume_up">+</string>
+    <string name="volume">---</string>
+    <string name="device_name">Device</string>
+    <string name="switch_on">On</string>
+    <string name="switch_off">Off</string>
+    <string name="operation_state">Not Connected</string>
+    <string name="source_title">Source</string>
+    <string name="source_down">Src-</string>
+    <string name="current_source">---</string>
+    <string name="source_up">Src+</string>
+
+</resources>
