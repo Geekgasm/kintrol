@@ -20,7 +20,6 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
     private TextView volumeView;
     private TextView operationStateView;
     private TextView sourceView;
-    private TextView traceDataView;
     private KinosKontrollerThread kontrollerThread;
 
     @Override
@@ -43,7 +42,6 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         volumeView = (TextView) findViewById(R.id.volume);
         operationStateView = (TextView) findViewById(R.id.operation_state);
         sourceView = (TextView) findViewById(R.id.current_source);
-        traceDataView = (TextView) findViewById(R.id.traceData);
     }
 
     @Override
@@ -99,6 +97,10 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
 
     public void nextSource(View view) {
         kontrollerThread.nextInputProfile();
+    }
+
+    public void muteToggle(View view) {
+        kontrollerThread.toggleMute();
     }
 
     @Override

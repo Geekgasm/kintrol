@@ -20,5 +20,6 @@
     <string name="source_down">Src-</string>
     <string name="current_source">---</string>
     <string name="source_up">Src+</string>
+    <string name="mute">Mute</string>
 
 </resources>

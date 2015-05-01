@@ -130,13 +130,18 @@ public class KinosKontrollerThread extends Thread implements KinosStatusChecker 
     }
 
     @Override
-    public void checkDeviceStatus() {
-        handler.post(new Runnable() {
+    public void checkDeviceStatus(long delayMillis) {
+        handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 kontroller.checkDeviceStatus();
             }
-        });
+        }, delayMillis);
+    }
+
+    @Override
+    public void checkDeviceStatus() {
+        checkDeviceStatus(0);
     }
 
     @Override
@@ -165,6 +170,15 @@ public class KinosKontrollerThread extends Thread implements KinosStatusChecker 
             @Override
             public void run() {
                 kontroller.checkInputProfile();
+            }
+        });
+    }
+
+    public void toggleMute() {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                kontroller.toggleMute();
             }
         });
     }

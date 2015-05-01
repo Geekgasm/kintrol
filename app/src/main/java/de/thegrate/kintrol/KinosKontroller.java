@@ -82,6 +82,7 @@ public class KinosKontroller {
     public void checkDeviceStatus() {
         checkForOperationStatus();
         checkVolume();
+        checkMuteStatus();
         checkInputProfile();
     }
 
@@ -91,6 +92,10 @@ public class KinosKontroller {
 
     public void checkVolume() {
         sendCommand("$VOLUME ?$");
+    }
+
+    private void checkMuteStatus() {
+        sendCommand("$MUTE ?$");
     }
 
     public void checkInputProfile() {
@@ -121,6 +126,10 @@ public class KinosKontroller {
         sendCommand("$INPUT PROFILE +$");
     }
 
+    public void toggleMute() {
+        sendCommand("$MUTE TOGGLE$");
+    }
+
     private void sendCommand(String commandString) {
         try {
             establishConnection();
@@ -142,4 +151,5 @@ public class KinosKontroller {
         disconnectTelnetClient();
         telnetClient = null;
     }
+
 }

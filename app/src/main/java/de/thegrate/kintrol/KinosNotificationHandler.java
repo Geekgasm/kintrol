@@ -27,6 +27,8 @@ public class KinosNotificationHandler implements Runnable {
     private TelnetClient telnetClient;
     private KinosNotificationListener notificationListener;
     private KinosStatusChecker statusChecker;
+    private String currentVolume = NOT_AVAILABLE;
+    private boolean isMuted = false;
 
     public KinosNotificationHandler(TelnetClient telnetClient, KinosNotificationListener notificationListener, KinosStatusChecker statusChecker) {
         this.telnetClient = telnetClient;
@@ -39,7 +41,7 @@ public class KinosNotificationHandler implements Runnable {
         InputStream instr = telnetClient.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(instr));
         String deviceData = "";
-        statusChecker.checkDeviceStatus();
+        statusChecker.checkDeviceStatus(200);
         try {
             while ((deviceData = reader.readLine()) != null) {
                 updateDeviceState(deviceData);
@@ -76,16 +78,32 @@ public class KinosNotificationHandler implements Runnable {
     }
 
     static final Pattern VOLUME_STATUS_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$VOLUME ([^\\$]+)\\$.*", Pattern.DOTALL);
+    static final Pattern MUTE_STATUS_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$MUTE ([^\\$]+)\\$.*", Pattern.DOTALL);
 
     private boolean updateVolumeStatus(String deviceData) {
-        Matcher matcher = VOLUME_STATUS_PATTERN.matcher(deviceData);
-        if (matcher.matches()) {
-            String currentVolume = matcher.group(2);
-            notificationListener.handleVolumeUpdate(currentVolume);
-            notificationListener.handleOperationStatusUpdate(OPERATIONAL_STATUS_TEXT);
-            return true;
+        boolean updateStatus = false;
+        String volume = currentVolume;
+
+        Matcher volumeMatcher = VOLUME_STATUS_PATTERN.matcher(deviceData);
+        if (volumeMatcher.matches()) {
+            currentVolume = volumeMatcher.group(2);
+            updateStatus = true;
         }
-        return false;
+        Matcher muteMatcher = MUTE_STATUS_PATTERN.matcher(deviceData);
+        if (muteMatcher.matches()) {
+            String muted = muteMatcher.group(2);
+            if ("ON".equals(muted)) {
+                volume = "MUTED";
+            } else {
+                volume = currentVolume;
+            }
+            updateStatus = true;
+        }
+        if (updateStatus) {
+            notificationListener.handleVolumeUpdate(volume);
+            notificationListener.handleOperationStatusUpdate(OPERATIONAL_STATUS_TEXT);
+        }
+        return updateStatus;
     }
 
     static final Pattern INPUT_PROFILE_STATUS_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$INPUT PROFILE (\\d+) \\(([^\\$]+)\\)\\$.*", Pattern.DOTALL);

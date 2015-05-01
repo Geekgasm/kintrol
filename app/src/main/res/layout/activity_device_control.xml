@@ -6,10 +6,10 @@
     android:layout_alignEnd="@+id/textView"
     android:layout_alignRight="@+id/textView"
     android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="de.thegrate.kintrol.DeviceControlActivity">
 
     <LinearLayout
@@ -18,11 +18,11 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/device_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/device_name"
-            android:id="@+id/device_name"
             android:gravity="center"
+            android:text="@string/device_name"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <LinearLayout
@@ -32,23 +32,23 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/switch_on"
-                android:onClick="switchOn" />
+                android:onClick="switchOn"
+                android:text="@string/switch_on" />
 
             <TextView
-                android:layout_weight="1"
+                android:id="@+id/operation_state"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/operation_state"
-                android:id="@+id/operation_state"
+                android:layout_weight="1"
                 android:gravity="center"
+                android:text="@string/operation_state"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/switch_off"
-                android:onClick="switchOff" />
+                android:onClick="switchOff"
+                android:text="@string/switch_off" />
         </LinearLayout>
     </LinearLayout>
 
@@ -57,11 +57,33 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/volume_header"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/volume_header"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <Button
+                android:id="@+id/mute_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="muteToggle"
+                android:text="@string/mute" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="              "
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        </TableRow>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -70,23 +92,23 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/volume_down"
-                android:onClick="decreaseVolume" />
+                android:onClick="decreaseVolume"
+                android:text="@string/volume_down" />
 
             <TextView
-                android:layout_weight="1"
+                android:id="@+id/volume"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/volume"
-                android:id="@+id/volume"
+                android:layout_weight="1"
                 android:gravity="center"
+                android:text="@string/volume"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/volume_up"
-                android:onClick="increaseVolume" />
+                android:onClick="increaseVolume"
+                android:text="@string/volume_up" />
         </LinearLayout>
     </LinearLayout>
 
@@ -108,32 +130,25 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/source_down"
-                android:onClick="previousSource" />
+                android:onClick="previousSource"
+                android:text="@string/source_down" />
 
             <TextView
-                android:layout_weight="1"
+                android:id="@+id/current_source"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/current_source"
-                android:id="@+id/current_source"
+                android:layout_weight="1"
                 android:gravity="center"
+                android:text="@string/current_source"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/source_up"
-                android:onClick="nextSource" />
+                android:onClick="nextSource"
+                android:text="@string/source_up" />
         </LinearLayout>
     </LinearLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Trace Data"
-        android:id="@+id/traceData"
-        android:layout_gravity="center_horizontal" />
 
 </LinearLayout>
 
