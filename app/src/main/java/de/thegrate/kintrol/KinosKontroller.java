@@ -12,45 +12,33 @@ import org.apache.commons.net.telnet.TerminalTypeOptionHandler;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by d037698 on 4/26/15.
  */
 public class KinosKontroller {
+    private static final String TAG = KinosKontroller.class.getSimpleName();
     private static final int PORT = 9004;
+
     private static String deviceIp;
-    private static KinosNotificationHandler notificationHandler;
-    private static TelnetClient telnetClient;
-    private static TextView volumeView;
-    private static TextView operationStateView;
-    private static TextView sourceView;
-    private static TextView traceDataView;
+    private KinosNotificationListener notificationListener;
+    private KinosStatusChecker statusChecker;
+    private TelnetClient telnetClient;
+    private KinosNotificationHandler notificationHandler;
 
-    private static final KinosKontroller theKontroller = new KinosKontroller();
-
-    public static KinosKontroller getKontroller() {
-        return theKontroller;
-    }
-
-    private KinosKontroller() {
-    }
-
-    public void start(String deviceIp, TextView volumeView, TextView operationStateView, TextView sourceView, TextView traceDataView) {
-        this.volumeView = volumeView;
-        this.operationStateView = operationStateView;
-        this.sourceView = sourceView;
-        this.traceDataView = traceDataView;
+    public KinosKontroller(String deviceIp, KinosNotificationListener notificationListener, KinosStatusChecker statusChecker) {
         this.deviceIp = deviceIp;
+        this.notificationListener = notificationListener;
+        this.statusChecker = statusChecker;
+    }
+
+    public void start() {
         disconnectTelnetClient();
         try {
-            createTelnetClient();
             establishConnection();
         } catch (Exception e) {
-            trace("FATAL", "Error starting KinosKontroller", e);
+            Log.e(TAG, "Error starting KinosKontroller", e);
         }
-
     }
 
     private void disconnectTelnetClient() {
@@ -58,88 +46,23 @@ public class KinosKontroller {
             try {
                 telnetClient.disconnect();
             } catch (IOException e) {
-                trace("WARNING", "Error disconnecting Telnet client: ", e);
+                Log.w(TAG, "Error disconnecting Telnet client: ", e);
             }
         }
     }
 
-    private void establishConnection() throws IOException {
-        if (!telnetClient.isConnected()) {
-            new AsyncTask<String, Integer, Boolean>() {
-                @Override
-                protected Boolean doInBackground(String... params) {
-                    try {
-                        telnetClient.connect(deviceIp, PORT);
-                        Thread notificationHandler = new Thread(new KinosNotificationHandler(telnetClient));
-                        notificationHandler.start();
-                        checkDeviceStatus();
-                    } catch (IOException e) {
-                        trace("ERROR", "Unable to open telnet connection to " + deviceIp + ":" + PORT, e);
-                    }
-                    return null;
-                }
-            }.execute();
+    private void establishConnection() throws IOException, InvalidTelnetOptionException {
+        if (telnetClient == null) {
+            createTelnetClient();
         }
-    }
-
-    public void checkDeviceStatus() {
-        checkForOperationStatus();
-        checkVolume();
-        checkInputProfile();
-    }
-
-    public void checkForOperationStatus() {
-        queueCommand("$STANDBY ?$");
-    }
-
-    public void checkVolume() {
-        queueCommand("$VOLUME ?$");
-    }
-
-    public void checkInputProfile() {
-        queueCommand("$INPUT PROFILE ?$");
-    }
-
-    public void switchOn() {
-        queueCommand("STANDBY OFF$");
-    }
-
-    public void switchOff() {
-        queueCommand("STANDBY ON$");
-    }
-
-    public void decreaseVolume() {
-        queueCommand("$VOLUME -$");
-    }
-
-    public void increaseVolume() {
-        queueCommand("$VOLUME +$");
-    }
-
-    public void previousInputProfile() {
-        queueCommand("$INPUT PROFILE -$");
-    }
-
-    public void nextInputProfile() {
-        queueCommand("$INPUT PROFILE +$");
-    }
-
-    private void queueCommand(String... commands) {
-        new SendCommandTask().execute(commands);
-    }
-
-    private synchronized void sendCommand(String commandString) {
-        try {
-            establishConnection();
-            OutputStream outputStream = telnetClient.getOutputStream();
-            outputStream.write((commandString + "\n").getBytes("UTF-8"));
-            outputStream.flush();
-        } catch (IOException ex) {
-            trace("FATAL", "Error sending command '" + commandString + "'", ex);
+        if (!telnetClient.isConnected()) {
             try {
-                telnetClient.disconnect();
-            } catch (IOException ex2) {
-                trace("WARNING", "Error closing connection", ex2);
+                telnetClient.connect(deviceIp, PORT);
+                notificationHandler = new KinosNotificationHandler(telnetClient, notificationListener, statusChecker);
+                Thread notificationHandlerThread = new Thread(notificationHandler);
+                notificationHandlerThread.start();
+            } catch (IOException e) {
+                Log.e(TAG, "Unable to open telnet connection to " + deviceIp + ":" + PORT, e);
             }
         }
     }
@@ -156,54 +79,67 @@ public class KinosKontroller {
         telnetClient.addOptionHandler(gaopt);
     }
 
-    public String getIpAddress() {
-        return deviceIp;
+    public void checkDeviceStatus() {
+        checkForOperationStatus();
+        checkVolume();
+        checkInputProfile();
     }
 
+    public void checkForOperationStatus() {
+        sendCommand("$STANDBY ?$");
+    }
 
-    class SendCommandTask extends AsyncTask<String, Integer, Boolean> {
+    public void checkVolume() {
+        sendCommand("$VOLUME ?$");
+    }
 
-        @Override
-        protected Boolean doInBackground(String... commands) {
-            for (String command : commands) {
-                sendCommand(command);
+    public void checkInputProfile() {
+        sendCommand("$INPUT PROFILE ?$");
+    }
+
+    public void switchOn() {
+        sendCommand("$STANDBY OFF$");
+    }
+
+    public void switchOff() {
+        sendCommand("$STANDBY ON$");
+    }
+
+    public void decreaseVolume() {
+        sendCommand("$VOLUME -$");
+    }
+
+    public void increaseVolume() {
+        sendCommand("$VOLUME +$");
+    }
+
+    public void previousInputProfile() {
+        sendCommand("$INPUT PROFILE -$");
+    }
+
+    public void nextInputProfile() {
+        sendCommand("$INPUT PROFILE +$");
+    }
+
+    private void sendCommand(String commandString) {
+        try {
+            establishConnection();
+            OutputStream outputStream = telnetClient.getOutputStream();
+            outputStream.write((commandString + "\n").getBytes("UTF-8"));
+            outputStream.flush();
+        } catch (IOException | InvalidTelnetOptionException ex) {
+            Log.e(TAG, "Error sending command '" + commandString + "'", ex);
+            try {
+                telnetClient.disconnect();
+            } catch (IOException ex2) {
+                Log.w(TAG, "Error closing connection", ex2);
             }
-            return true;
         }
     }
 
-    static void updateVolumeView(String volume) {
-        setTextViewText(volumeView, volume);
-    }
-
-    static void updateOperationStateView(String operationState) {
-        setTextViewText(operationStateView, operationState);
-    }
-
-    static void updateSourceView(String source) {
-        setTextViewText(sourceView, source);
-    }
-
-    static void trace(String tag, String message, Throwable throwable) {
-        Log.w(tag, message, throwable);
-        appendTextViewText(traceDataView, tag + ": " + message + (throwable != null ? ": " + throwable.getMessage() : ""));
-    }
-
-    static void setTextViewText(final TextView textView, final String displayText) {
-        textView.post(new Runnable() {
-            @Override
-            public void run() {
-                textView.setText(displayText);
-            }
-        });
-    }
-
-    static void appendTextViewText(final TextView textView, final String displayText) {
-        textView.post(new Runnable() {
-            @Override
-            public void run() {
-                textView.append(displayText + "\n");
-            }
-        });
+    public void stop() {
+        notificationHandler.shutdown();
+        disconnectTelnetClient();
+        telnetClient = null;
     }
 }

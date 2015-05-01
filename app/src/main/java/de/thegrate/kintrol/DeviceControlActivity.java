@@ -2,27 +2,58 @@ package de.thegrate.kintrol;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.Random;
 
-public class DeviceControlActivity extends ActionBarActivity {
+
+public class DeviceControlActivity extends ActionBarActivity implements KinosNotificationListener {
 
     private static final String KONTROLLER = "KINOS_KONTROLLER";
+
+    private Handler handler;
+    private TextView volumeView;
+    private TextView operationStateView;
+    private TextView sourceView;
+    private TextView traceDataView;
+    private KinosKontrollerThread kontrollerThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_device_control);
+
         Intent intent = getIntent();
         String deviceName = intent.getStringExtra(DeviceChooserActivity.EXTRA_DEVICE_NAME);
-        TextView deviceNameView = getTextView(R.id.device_name);
-        deviceNameView.setText(deviceName);
         String ipAddress = intent.getStringExtra(DeviceChooserActivity.EXTRA_IP_ADDRESS);
-        KinosKontroller.getKontroller().start(ipAddress, getTextView(R.id.volume), getTextView(R.id.operation_state), getTextView(R.id.current_source), getTextView(R.id.traceData));
+
+        kontrollerThread = new KinosKontrollerThread(ipAddress, this);
+        kontrollerThread.start();
+
+        handler = new Handler();
+
+        TextView deviceNameView = (TextView) findViewById(R.id.device_name);
+        deviceNameView.setText(deviceName);
+
+        volumeView = (TextView) findViewById(R.id.volume);
+        operationStateView = (TextView) findViewById(R.id.operation_state);
+        sourceView = (TextView) findViewById(R.id.current_source);
+        traceDataView = (TextView) findViewById(R.id.traceData);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        // request the thread to stop
+        kontrollerThread.requestStop();
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -47,31 +78,56 @@ public class DeviceControlActivity extends ActionBarActivity {
     }
 
     public void decreaseVolume(View view) {
-        KinosKontroller.getKontroller().decreaseVolume();
+        kontrollerThread.decreaseVolume();
     }
 
     public void increaseVolume(View view) {
-        KinosKontroller.getKontroller().increaseVolume();
+        kontrollerThread.increaseVolume();
     }
 
     public void switchOn(View view) {
-        KinosKontroller.getKontroller().switchOn();
+        kontrollerThread.switchOn();
     }
 
     public void switchOff(View view) {
-        KinosKontroller.getKontroller().switchOff();
+        kontrollerThread.switchOff();
     }
 
     public void previousSource(View view) {
-        KinosKontroller.getKontroller().previousInputProfile();
+        kontrollerThread.previousInputProfile();
     }
 
     public void nextSource(View view) {
-        KinosKontroller.getKontroller().nextInputProfile();
+        kontrollerThread.nextInputProfile();
     }
 
-    private TextView getTextView(int textViewId) {
-        setContentView(R.layout.activity_device_control);
-        return (TextView) findViewById(textViewId);
+    @Override
+    public void handleOperationStatusUpdate(final String operationState) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                operationStateView.setText(operationState);
+            }
+        });
+    }
+
+    @Override
+    public void handleVolumeUpdate(final String volumeValue) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                volumeView.setText(volumeValue);
+            }
+        });
+    }
+
+    @Override
+    public void handleSourceUpdate(final String sourceName) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                sourceView.setText(sourceName);
+            }
+        });
     }
 }

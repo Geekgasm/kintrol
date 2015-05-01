@@ -5,8 +5,10 @@ import android.widget.TextView;
 
 import org.apache.commons.net.telnet.TelnetClient;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -16,17 +18,33 @@ import java.util.regex.Pattern;
  * Created by d037698 on 4/26/15.
  */
 public class KinosNotificationHandler implements Runnable {
-    private final TelnetClient telnetClient;
 
-    public KinosNotificationHandler(TelnetClient telnetClient) {
+    private static final String TAG = KinosNotificationHandler.class.getSimpleName();
+
+    private static final String NOT_AVAILABLE = "---";
+    public static final String OPERATIONAL_STATUS_TEXT = "Operational";
+    public static final String STANDBY_STATUS_TEXT = "Standby";
+    private TelnetClient telnetClient;
+    private KinosNotificationListener notificationListener;
+    private KinosStatusChecker statusChecker;
+
+    public KinosNotificationHandler(TelnetClient telnetClient, KinosNotificationListener notificationListener, KinosStatusChecker statusChecker) {
         this.telnetClient = telnetClient;
+        this.notificationListener = notificationListener;
+        this.statusChecker = statusChecker;
     }
 
     @Override
     public void run() {
         InputStream instr = telnetClient.getInputStream();
-
+        BufferedReader reader = new BufferedReader(new InputStreamReader(instr));
+        String deviceData = "";
+        statusChecker.checkDeviceStatus();
         try {
+            while ((deviceData = reader.readLine()) != null) {
+                updateDeviceState(deviceData);
+            }
+/*
             byte[] buff = new byte[1024];
             int ret_read = 0;
 
@@ -38,14 +56,15 @@ public class KinosNotificationHandler implements Runnable {
                 }
             }
             while (ret_read >= 0);
+            */
         } catch (IOException e) {
-            KinosKontroller.trace("FATAL", "Error in KinosNotificationHandler Thread, Exception while reading socket:", e);
+            Log.e(TAG, "Error in KinosNotificationHandler Thread, Exception while reading socket:", e);
         }
 
         try {
             telnetClient.disconnect();
         } catch (IOException e) {
-            KinosKontroller.trace("FATAL", "Error in KinosNotificationHandler Thread, Exception while closing telnet:", e);
+            Log.e(TAG, "Error in KinosNotificationHandler Thread, Exception while closing telnet:", e);
         }
     }
 
@@ -61,8 +80,9 @@ public class KinosNotificationHandler implements Runnable {
     private boolean updateVolumeStatus(String deviceData) {
         Matcher matcher = VOLUME_STATUS_PATTERN.matcher(deviceData);
         if (matcher.matches()) {
-            String volume = matcher.group(2);
-            KinosKontroller.updateVolumeView(volume);
+            String currentVolume = matcher.group(2);
+            notificationListener.handleVolumeUpdate(currentVolume);
+            notificationListener.handleOperationStatusUpdate(OPERATIONAL_STATUS_TEXT);
             return true;
         }
         return false;
@@ -73,29 +93,41 @@ public class KinosNotificationHandler implements Runnable {
     private boolean updateInputProfileStatus(String deviceData) {
         Matcher matcher = INPUT_PROFILE_STATUS_PATTERN.matcher(deviceData);
         if (matcher.matches()) {
-            String inputProfileName = matcher.group(3);
-            KinosKontroller.updateSourceView(inputProfileName);
+            String currentInputProfile = matcher.group(3);
+            notificationListener.handleSourceUpdate(currentInputProfile);
+            notificationListener.handleOperationStatusUpdate(OPERATIONAL_STATUS_TEXT);
             return true;
         }
         return false;
     }
 
     private static final Pattern STANDBY_STATUS_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$STANDBY ([^\\$]+)\\$.*", Pattern.DOTALL);
-    private static final Map<String, String> STANDBY_TO_OPERATION_STATUS = new HashMap<String, String>() {{
-        put("OFF", "Operational");
-        put("ON", "Standby");
-    }};
 
     private boolean updateStandbyStatus(String deviceData) {
         Matcher matcher = STANDBY_STATUS_PATTERN.matcher(deviceData);
         if (matcher.matches()) {
             String standbyStatus = matcher.group(2);
-            String operationStatus = STANDBY_TO_OPERATION_STATUS.get(standbyStatus);
-            KinosKontroller.updateOperationStateView(operationStatus != null ? operationStatus : "Unknown");
+            String operationStatus = "<unknown>";
+            if ("OFF".equals(standbyStatus)) {
+                operationStatus = OPERATIONAL_STATUS_TEXT;
+                statusChecker.checkVolume();
+                statusChecker.checkInputProfile();
+            } else if ("ON".equals(standbyStatus)) {
+                operationStatus = STANDBY_STATUS_TEXT;
+                notificationListener.handleVolumeUpdate(NOT_AVAILABLE);
+                notificationListener.handleSourceUpdate(NOT_AVAILABLE);
+            } else {
+                operationStatus = standbyStatus;
+            }
+            notificationListener.handleOperationStatusUpdate(operationStatus);
             return true;
         }
         return false;
     }
 
 
+    public void shutdown() {
+        telnetClient = null;
+        notificationListener = null;
+    }
 }
