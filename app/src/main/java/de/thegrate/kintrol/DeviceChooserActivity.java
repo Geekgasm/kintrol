@@ -1,22 +1,85 @@
 package de.thegrate.kintrol;
 
+import android.app.ListActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.nfc.Tag;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 
 public class DeviceChooserActivity extends ActionBarActivity {
 
+    private static final String TAG = DeviceChooserActivity.class.getSimpleName();
+
     public static final String EXTRA_IP_ADDRESS = "de.thegrate.kintrol.IP_ADDRESS";
     public static final String EXTRA_DEVICE_NAME = "de.thegrate.kintrol.DEVICE_NAME";
+    public static final String DEVICES_PREF_KEY = "Devices";
+
+    private List<DeviceInfo> deviceList;
+    private ListView deviceListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device_choser);
+        deviceListView = (ListView) findViewById(R.id.deviceListView);
+        loadDeviceList();
+        DeviceInfo[] deviceInfoArray = new DeviceInfo[deviceList.size()];
+        deviceList.toArray(deviceInfoArray);
+        ListAdapter deviceInfoAdapter = new ArrayAdapter<DeviceInfo>(this, R.layout.devicerow, deviceInfoArray);
+        deviceListView.setAdapter(deviceInfoAdapter);
+        deviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                DeviceInfo deviceInfo = (DeviceInfo) parent.getItemAtPosition(position);
+                startControlActivity(deviceInfo);
+            }
+        });
+    }
+
+    private void loadDeviceList() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String deviceJson = preferences.getString(DEVICES_PREF_KEY, null);
+        if (deviceJson == null) {
+            deviceJson = initializeDeviceList();
+        }
+        deviceList = new ArrayList<DeviceInfo>();
+        try {
+            JSONArray devices = new JSONArray(deviceJson);
+            for (int i = 0; i < devices.length(); i++) {
+                JSONObject device = devices.getJSONObject(i);
+                DeviceInfo deviceInfo = new DeviceInfo(device.getString("ipAddress"), device.getString("deviceName"));
+                deviceList.add(deviceInfo);
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "Error parsing device info json: '" + deviceJson + "'", e);
+        }
+    }
+
+    private String initializeDeviceList() {
+        String initialDeviceList = "[{'deviceName':'Kinos Heimkino','ipAddress':'192.168.178.77'}," +
+                "{'deviceName':'Kinos Andy','ipAddress':'192.168.178.81'}]".replaceAll("'", "\"");
+        //TODO Store in prefs
+        return initialDeviceList;
     }
 
     @Override
@@ -39,14 +102,6 @@ public class DeviceChooserActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void choseDevice1(View view) {
-        startControlActivity(new DeviceInfo("192.168.178.77", "Kinos Heimkino"));
-    }
-
-    public void choseDevice2(View view) {
-        startControlActivity(new DeviceInfo("192.168.178.81", "Kinos Andy"));
     }
 
     private void startControlActivity(DeviceInfo deviceInfo) {

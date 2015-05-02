@@ -4,8 +4,11 @@ package de.thegrate.kintrol;
  * Created by d037698 on 4/26/15.
  */
 public class DeviceInfo {
-    private final String ipAddress;
-    private final String deviceName;
+    public String deviceName;
+    public String ipAddress;
+
+    public DeviceInfo() {
+    }
 
     public DeviceInfo(String ipAddress, String deviceName) {
         this.ipAddress = ipAddress;
@@ -18,5 +21,15 @@ public class DeviceInfo {
 
     public String getDeviceName() {
         return deviceName;
+    }
+
+    @Override
+    public String toString() {
+        return deviceName.toUpperCase();
+/*        return "DeviceInfo{" +
+                "deviceName='" + deviceName + '\'' +
+                ", ipAddress='" + ipAddress + '\'' +
+                '}';
+                */
     }
 }

@@ -15,16 +15,8 @@
         android:text="@string/device_choser_title"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <Button
+    <ListView
+        android:id="@+id/deviceListView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/device_1"
-        android:onClick="choseDevice1" />
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/device_2"
-        android:onClick="choseDevice2" />
-
+        android:layout_height="match_parent"></ListView>
 </LinearLayout>
