@@ -42,23 +42,11 @@ public class KinosNotificationHandler implements Runnable {
         BufferedReader reader = new BufferedReader(new InputStreamReader(instr));
         String deviceData = "";
         statusChecker.checkDeviceStatus(200);
+        statusChecker.checkDeviceStatus(600);
         try {
             while ((deviceData = reader.readLine()) != null) {
                 updateDeviceState(deviceData);
             }
-/*
-            byte[] buff = new byte[1024];
-            int ret_read = 0;
-
-            do {
-                ret_read = instr.read(buff);
-                if (ret_read > 0) {
-                    String deviceData = new String(buff, 0, ret_read);
-                    updateDeviceState(deviceData);
-                }
-            }
-            while (ret_read >= 0);
-            */
         } catch (IOException e) {
             Log.e(TAG, "Error in KinosNotificationHandler Thread, Exception while reading socket:", e);
         }
