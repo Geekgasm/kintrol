@@ -16,6 +16,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.google.gson.Gson;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,7 +36,7 @@ public class DeviceChooserActivity extends ActionBarActivity {
     public static final String EXTRA_DEVICE_NAME = "de.thegrate.kintrol.DEVICE_NAME";
     public static final String DEVICES_PREF_KEY = "Devices";
 
-    private List<DeviceInfo> deviceList;
+    private DeviceInfo[] deviceList;
     private ListView deviceListView;
 
     @Override
@@ -43,9 +45,7 @@ public class DeviceChooserActivity extends ActionBarActivity {
         setContentView(R.layout.activity_device_choser);
         deviceListView = (ListView) findViewById(R.id.deviceListView);
         loadDeviceList();
-        DeviceInfo[] deviceInfoArray = new DeviceInfo[deviceList.size()];
-        deviceList.toArray(deviceInfoArray);
-        ListAdapter deviceInfoAdapter = new ArrayAdapter<DeviceInfo>(this, R.layout.devicerow, deviceInfoArray);
+        ListAdapter deviceInfoAdapter = new ArrayAdapter<DeviceInfo>(this, R.layout.devicerow, deviceList);
         deviceListView.setAdapter(deviceInfoAdapter);
         deviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -62,23 +62,17 @@ public class DeviceChooserActivity extends ActionBarActivity {
         if (deviceJson == null) {
             deviceJson = initializeDeviceList();
         }
-        deviceList = new ArrayList<DeviceInfo>();
-        try {
-            JSONArray devices = new JSONArray(deviceJson);
-            for (int i = 0; i < devices.length(); i++) {
-                JSONObject device = devices.getJSONObject(i);
-                DeviceInfo deviceInfo = new DeviceInfo(device.getString("ipAddress"), device.getString("deviceName"));
-                deviceList.add(deviceInfo);
-            }
-        } catch (JSONException e) {
-            Log.e(TAG, "Error parsing device info json: '" + deviceJson + "'", e);
-        }
+        Gson gson = new Gson();
+        deviceList = gson.fromJson(deviceJson, DeviceInfo[].class);
     }
 
     private String initializeDeviceList() {
         String initialDeviceList = "[{'deviceName':'Kinos Heimkino','ipAddress':'192.168.178.77'}," +
                 "{'deviceName':'Kinos Andy','ipAddress':'192.168.178.81'}]".replaceAll("'", "\"");
-        //TODO Store in prefs
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(DEVICES_PREF_KEY, initialDeviceList);
+        editor.commit();
         return initialDeviceList;
     }
 

@@ -26,10 +26,9 @@ public class DeviceInfo {
     @Override
     public String toString() {
         return deviceName.toUpperCase();
-/*        return "DeviceInfo{" +
-                "deviceName='" + deviceName + '\'' +
-                ", ipAddress='" + ipAddress + '\'' +
-                '}';
-                */
+//        return "DeviceInfo{" +
+//                "deviceName='" + deviceName + '\'' +
+//                ", ipAddress='" + ipAddress + '\'' +
+//                '}';
     }
 }
