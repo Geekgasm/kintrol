@@ -1,13 +1,10 @@
 package de.thegrate.kintrol;
 
-import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,15 +14,6 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 
 public class DeviceChooserActivity extends ActionBarActivity {

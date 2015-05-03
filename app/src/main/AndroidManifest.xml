@@ -11,8 +11,9 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".DeviceChooserActivity"
-            android:label="@string/app_name">
-            <intent-filter>
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
+        <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -21,8 +22,9 @@
         <activity
             android:name=".DeviceControlActivity"
             android:label="@string/title_activity_device_control"
-            android:parentActivityName=".DeviceChooserActivity">
-            <meta-data
+            android:parentActivityName=".DeviceChooserActivity"
+            android:screenOrientation="portrait">
+        <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.thegrate.kintrol.DeviceChooserActivity" />
         </activity>
