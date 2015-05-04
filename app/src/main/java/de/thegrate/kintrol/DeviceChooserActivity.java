@@ -1,19 +1,21 @@
 package de.thegrate.kintrol;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 
-import com.google.gson.Gson;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class DeviceChooserActivity extends ActionBarActivity {
@@ -24,16 +26,18 @@ public class DeviceChooserActivity extends ActionBarActivity {
     public static final String EXTRA_DEVICE_NAME = "de.thegrate.kintrol.DEVICE_NAME";
     public static final String DEVICES_PREF_KEY = "Devices";
 
-    private DeviceInfo[] deviceList;
+    private final List<DeviceInfo> deviceList = new ArrayList<>();
+    private final DeviceInfoPersistenceHandler deviceListPersistor = new DeviceInfoPersistenceHandler(this);
     private ListView deviceListView;
+    private ArrayAdapter<DeviceInfo> deviceInfoAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device_choser);
         deviceListView = (ListView) findViewById(R.id.deviceListView);
-        loadDeviceList();
-        ListAdapter deviceInfoAdapter = new ArrayAdapter<DeviceInfo>(this, R.layout.devicerow, deviceList);
+        new DeviceInfoPersistenceHandler(this).loadDeviceList(deviceList);
+        deviceInfoAdapter = new ArrayAdapter<DeviceInfo>(this, R.layout.devicerow, deviceList);
         deviceListView.setAdapter(deviceInfoAdapter);
         deviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -42,26 +46,6 @@ public class DeviceChooserActivity extends ActionBarActivity {
                 startControlActivity(deviceInfo);
             }
         });
-    }
-
-    private void loadDeviceList() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String deviceJson = preferences.getString(DEVICES_PREF_KEY, null);
-        if (deviceJson == null) {
-            deviceJson = initializeDeviceList();
-        }
-        Gson gson = new Gson();
-        deviceList = gson.fromJson(deviceJson, DeviceInfo[].class);
-    }
-
-    private String initializeDeviceList() {
-        String initialDeviceList = "[{'deviceName':'Kinos Heimkino','ipAddress':'192.168.178.77'}," +
-                "{'deviceName':'Kinos Andy','ipAddress':'192.168.178.81'}]".replaceAll("'", "\"");
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(DEVICES_PREF_KEY, initialDeviceList);
-        editor.commit();
-        return initialDeviceList;
     }
 
     @Override
@@ -79,7 +63,7 @@ public class DeviceChooserActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_add_device) {
             return true;
         }
 
@@ -93,4 +77,32 @@ public class DeviceChooserActivity extends ActionBarActivity {
         startActivity(intent);
     }
 
+    public void openAddDeviceDialog(MenuItem item) {
+        final DeviceInfo newDevice = new DeviceInfo();
+        LayoutInflater li = LayoutInflater.from(this);
+        View promptsView = li.inflate(R.layout.fragment_dialog_edit_device, null);
+        final EditText deviceNameText = (EditText) promptsView.findViewById(R.id.edit_device_name);
+        final EditText ipAddressText = (EditText) promptsView.findViewById(R.id.edit_ip_address);
+        final ArrayAdapter<DeviceInfo> adapter = deviceInfoAdapter;
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setView(promptsView)
+                .setTitle("New Device")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        DeviceInfo newDevice = new DeviceInfo(ipAddressText.getText().toString(), deviceNameText.getText().toString());
+                        deviceList.add(newDevice);
+                        deviceListPersistor.saveDeviceList(deviceList);
+                        adapter.notifyDataSetChanged();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                }).create();
+        alertDialog.show();
+    }
 }

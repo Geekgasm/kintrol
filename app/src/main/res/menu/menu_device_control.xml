@@ -3,8 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="de.thegrate.kintrol.DeviceControlActivity">
     <item
-        android:id="@+id/action_settings"
-        android:title="@string/action_settings"
+        android:id="@+id/action_edit_device"
+        android:title="@string/action_edit_device"
         android:orderInCategory="100"
+        android:onClick="openEditDeviceDialog"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_delete_device"
+        android:title="@string/action_delete_device"
+        android:orderInCategory="100"
+        android:onClick="openDeleteDeviceDialog"
         app:showAsAction="never" />
 </menu>

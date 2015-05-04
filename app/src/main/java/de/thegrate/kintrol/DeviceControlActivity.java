@@ -1,12 +1,17 @@
 package de.thegrate.kintrol;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.Random;
@@ -21,6 +26,8 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
     private TextView operationStateView;
     private TextView sourceView;
     private KinosKontrollerThread kontrollerThread;
+    private final DeviceInfoPersistenceHandler deviceListPersistor = new DeviceInfoPersistenceHandler(this);
+    private DeviceInfo deviceInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,20 +35,25 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         setContentView(R.layout.activity_device_control);
 
         Intent intent = getIntent();
-        String deviceName = intent.getStringExtra(DeviceChooserActivity.EXTRA_DEVICE_NAME);
-        String ipAddress = intent.getStringExtra(DeviceChooserActivity.EXTRA_IP_ADDRESS);
+        deviceInfo = new DeviceInfo(intent.getStringExtra(DeviceChooserActivity.EXTRA_IP_ADDRESS), intent.getStringExtra(DeviceChooserActivity.EXTRA_DEVICE_NAME));
 
-        kontrollerThread = new KinosKontrollerThread(ipAddress, this);
-        kontrollerThread.start();
+        startKontrollerThread(deviceInfo);
 
         handler = new Handler();
 
         TextView deviceNameView = (TextView) findViewById(R.id.device_name);
-        deviceNameView.setText(deviceName);
+        deviceNameView.setText(deviceInfo.deviceName);
 
         volumeView = (TextView) findViewById(R.id.volume);
         operationStateView = (TextView) findViewById(R.id.operation_state);
         sourceView = (TextView) findViewById(R.id.current_source);
+    }
+
+    private void startKontrollerThread(DeviceInfo deviceInfo) {
+        if (kontrollerThread != null)
+            kontrollerThread.requestStop();
+        kontrollerThread = new KinosKontrollerThread(deviceInfo.ipAddress, this);
+        kontrollerThread.start();
     }
 
     @Override
@@ -68,7 +80,7 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_delete_device) {
             return true;
         }
 
@@ -131,5 +143,38 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
                 sourceView.setText(sourceName);
             }
         });
+    }
+
+    public void openEditDeviceDialog(MenuItem item) {
+        final DeviceInfo newDevice = new DeviceInfo();
+        LayoutInflater li = LayoutInflater.from(this);
+        View promptsView = li.inflate(R.layout.fragment_dialog_edit_device, null);
+        final EditText deviceNameText = (EditText) promptsView.findViewById(R.id.edit_device_name);
+        deviceNameText.setText(deviceInfo.deviceName);
+        final EditText ipAddressText = (EditText) promptsView.findViewById(R.id.edit_ip_address);
+        ipAddressText.setText(deviceInfo.ipAddress);
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setView(promptsView)
+                .setTitle("Edit Device")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        DeviceInfo newDevice = new DeviceInfo(ipAddressText.getText().toString(), deviceNameText.getText().toString());
+                        deviceListPersistor.updateDevice(deviceInfo, newDevice);
+                        deviceInfo = newDevice;
+                        startKontrollerThread(deviceInfo);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                }).create();
+        alertDialog.show();
+    }
+
+    public void openDeleteDeviceDialog(MenuItem item) {
     }
 }
