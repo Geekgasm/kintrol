@@ -22,10 +22,6 @@ public class DeviceChooserActivity extends ActionBarActivity {
 
     private static final String TAG = DeviceChooserActivity.class.getSimpleName();
 
-    public static final String EXTRA_IP_ADDRESS = "de.thegrate.kintrol.IP_ADDRESS";
-    public static final String EXTRA_DEVICE_NAME = "de.thegrate.kintrol.DEVICE_NAME";
-    public static final String DEVICES_PREF_KEY = "Devices";
-
     private final List<DeviceInfo> deviceList = new ArrayList<>();
     private final DeviceInfoPersistenceHandler deviceListPersistor = new DeviceInfoPersistenceHandler(this);
     private ListView deviceListView;
@@ -72,13 +68,12 @@ public class DeviceChooserActivity extends ActionBarActivity {
 
     private void startControlActivity(DeviceInfo deviceInfo) {
         Intent intent = new Intent(this, DeviceControlActivity.class);
-        intent.putExtra(EXTRA_IP_ADDRESS, deviceInfo.getIpAddress());
-        intent.putExtra(EXTRA_DEVICE_NAME, deviceInfo.getDeviceName());
+        intent.putExtra(DeviceControlActivity.EXTRA_IP_ADDRESS, deviceInfo.getIpAddress());
+        intent.putExtra(DeviceControlActivity.EXTRA_DEVICE_NAME, deviceInfo.getDeviceName());
         startActivity(intent);
     }
 
     public void openAddDeviceDialog(MenuItem item) {
-        final DeviceInfo newDevice = new DeviceInfo();
         LayoutInflater li = LayoutInflater.from(this);
         View promptsView = li.inflate(R.layout.fragment_dialog_edit_device, null);
         final EditText deviceNameText = (EditText) promptsView.findViewById(R.id.edit_device_name);

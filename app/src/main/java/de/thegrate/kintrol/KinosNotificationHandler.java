@@ -16,15 +16,15 @@ import java.util.regex.Pattern;
  */
 public class KinosNotificationHandler implements Runnable {
 
+    static final Pattern VOLUME_STATUS_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$VOLUME ([^\\$]+)\\$.*", Pattern.DOTALL);
+    static final Pattern MUTE_STATUS_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$MUTE ([^\\$]+)\\$.*", Pattern.DOTALL);
+    static final Pattern INPUT_PROFILE_STATUS_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$INPUT PROFILE (\\d+) \\(([^\\$]+)\\)\\$.*", Pattern.DOTALL);
     private static final String TAG = KinosNotificationHandler.class.getSimpleName();
-
-    private static final String NOT_AVAILABLE = "---";
-    public static final String OPERATIONAL_STATUS_TEXT = "Operational";
-    public static final String STANDBY_STATUS_TEXT = "Standby";
+    private static final Pattern STANDBY_STATUS_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$STANDBY ([^\\$]+)\\$.*", Pattern.DOTALL);
     private TelnetClient telnetClient;
     private KinosNotificationListener notificationListener;
     private KinosStatusChecker statusChecker;
-    private String currentVolume = NOT_AVAILABLE;
+    private String currentVolume = KinosNotificationListener.NOT_AVAILABLE;
     private boolean isMuted = false;
 
     public KinosNotificationHandler(TelnetClient telnetClient, KinosNotificationListener notificationListener, KinosStatusChecker statusChecker) {
@@ -45,19 +45,15 @@ public class KinosNotificationHandler implements Runnable {
                 updateDeviceState(deviceData);
             }
         } catch (IOException e) {
-            Log.e(TAG, "Error in KinosNotificationHandler Thread, Exception while reading socket:", e);
+            Log.w(TAG, "Error in KinosNotificationHandler Thread, Exception while reading socket:", e);
         }
     }
-
 
     private void updateDeviceState(String deviceData) {
         updateVolumeStatus(deviceData);
         updateInputProfileStatus(deviceData);
         updateStandbyStatus(deviceData);
     }
-
-    static final Pattern VOLUME_STATUS_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$VOLUME ([^\\$]+)\\$.*", Pattern.DOTALL);
-    static final Pattern MUTE_STATUS_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$MUTE ([^\\$]+)\\$.*", Pattern.DOTALL);
 
     private boolean updateVolumeStatus(String deviceData) {
         boolean updateStatus = false;
@@ -80,25 +76,21 @@ public class KinosNotificationHandler implements Runnable {
         }
         if (updateStatus) {
             notificationListener.handleVolumeUpdate(volume);
-            notificationListener.handleOperationStatusUpdate(OPERATIONAL_STATUS_TEXT);
+            notificationListener.handleOperationStatusUpdate(KinosNotificationListener.OPERATIONAL_STATUS_TEXT);
         }
         return updateStatus;
     }
-
-    static final Pattern INPUT_PROFILE_STATUS_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$INPUT PROFILE (\\d+) \\(([^\\$]+)\\)\\$.*", Pattern.DOTALL);
 
     private boolean updateInputProfileStatus(String deviceData) {
         Matcher matcher = INPUT_PROFILE_STATUS_PATTERN.matcher(deviceData);
         if (matcher.matches()) {
             String currentInputProfile = matcher.group(3);
             notificationListener.handleSourceUpdate(currentInputProfile);
-            notificationListener.handleOperationStatusUpdate(OPERATIONAL_STATUS_TEXT);
+            notificationListener.handleOperationStatusUpdate(KinosNotificationListener.OPERATIONAL_STATUS_TEXT);
             return true;
         }
         return false;
     }
-
-    private static final Pattern STANDBY_STATUS_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$STANDBY ([^\\$]+)\\$.*", Pattern.DOTALL);
 
     private boolean updateStandbyStatus(String deviceData) {
         Matcher matcher = STANDBY_STATUS_PATTERN.matcher(deviceData);
@@ -106,13 +98,13 @@ public class KinosNotificationHandler implements Runnable {
             String standbyStatus = matcher.group(2);
             String operationStatus = "<unknown>";
             if ("OFF".equals(standbyStatus)) {
-                operationStatus = OPERATIONAL_STATUS_TEXT;
+                operationStatus = KinosNotificationListener.OPERATIONAL_STATUS_TEXT;
                 statusChecker.checkVolume();
                 statusChecker.checkInputProfile();
             } else if ("ON".equals(standbyStatus)) {
-                operationStatus = STANDBY_STATUS_TEXT;
-                notificationListener.handleVolumeUpdate(NOT_AVAILABLE);
-                notificationListener.handleSourceUpdate(NOT_AVAILABLE);
+                operationStatus = KinosNotificationListener.STANDBY_STATUS_TEXT;
+                notificationListener.handleVolumeUpdate(KinosNotificationListener.NOT_AVAILABLE);
+                notificationListener.handleSourceUpdate(KinosNotificationListener.NOT_AVAILABLE);
             } else {
                 operationStatus = standbyStatus;
             }
