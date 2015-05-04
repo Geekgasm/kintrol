@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -38,6 +39,8 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         deviceInfo = new DeviceInfo(intent.getStringExtra(DeviceChooserActivity.EXTRA_IP_ADDRESS), intent.getStringExtra(DeviceChooserActivity.EXTRA_DEVICE_NAME));
 
         startKontrollerThread(deviceInfo);
+//        kontrollerThread = new KinosKontrollerThread(deviceInfo.ipAddress, this);
+//        kontrollerThread.start();
 
         handler = new Handler();
 
@@ -176,5 +179,23 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
     }
 
     public void openDeleteDeviceDialog(MenuItem item) {
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setTitle("Delete Device " + deviceInfo.getDeviceName() + "?")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deviceListPersistor.deleteDevice(deviceInfo);
+                        Intent upIntent = new Intent(DeviceControlActivity.this, DeviceChooserActivity.class);
+                        NavUtils.navigateUpTo(DeviceControlActivity.this, upIntent);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                }).create();
+        alertDialog.show();
     }
 }

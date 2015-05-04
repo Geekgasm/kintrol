@@ -64,4 +64,11 @@ public class DeviceInfoPersistenceHandler {
         }
         saveDeviceList(deviceInfos);
     }
+
+    public void deleteDevice(DeviceInfo deviceInfo) {
+        List<DeviceInfo> deviceInfos = new ArrayList<>();
+        loadDeviceList(deviceInfos);
+        deviceInfos.remove(deviceInfo);
+        saveDeviceList(deviceInfos);
+    }
 }
