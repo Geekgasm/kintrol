@@ -133,14 +133,16 @@ public class KinosKontroller {
         try {
             establishConnection();
             OutputStream outputStream = telnetClient.getOutputStream();
+            if (outputStream == null)
+                throw new IOException("Could not get output stream from telnet client");
             outputStream.write((commandString + "\n").getBytes("UTF-8"));
             outputStream.flush();
         } catch (IOException | InvalidTelnetOptionException ex) {
             Log.e(TAG, "Error sending command '" + commandString + "'", ex);
             try {
                 telnetClient.disconnect();
-            } catch (IOException ex2) {
-                Log.w(TAG, "Error closing connection", ex2);
+            } catch (IOException ioex) {
+                Log.w(TAG, "Error closing connection", ioex);
             }
         }
     }

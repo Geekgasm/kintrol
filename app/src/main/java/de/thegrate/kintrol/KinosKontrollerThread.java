@@ -35,7 +35,7 @@ public class KinosKontrollerThread extends HandlerThread implements KinosStatusC
     // This method is allowed to be called from any thread
     public synchronized void requestStop() {
         Log.i(TAG, "KinosKontrollerThread loop quitting by request");
-        quitSafely();
+        quit();
         Log.i(TAG, "Shutting down KinosKontroller");
         if (kontroller != null) {
             kontroller.stop();

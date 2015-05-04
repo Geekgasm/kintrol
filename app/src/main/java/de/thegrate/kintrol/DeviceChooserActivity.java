@@ -42,6 +42,9 @@ public class DeviceChooserActivity extends ActionBarActivity {
                 startControlActivity(deviceInfo);
             }
         });
+        if (deviceList.isEmpty()) {
+            openAddDeviceDialog(null);
+        }
     }
 
     @Override
