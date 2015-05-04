@@ -8,7 +8,6 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
@@ -35,8 +34,9 @@ public class DeviceInfoPersistenceHandler {
     }
 
     private String initializeDeviceList(Context context) {
-        String initialDeviceList = "[{'deviceName':'Kinos Heimkino','ipAddress':'192.168.178.77'}," +
-                "{'deviceName':'Kinos Andy','ipAddress':'192.168.178.81'}]".replaceAll("'", "\"");
+//        String initialDeviceList = "[{'deviceName':'Kinos Heimkino','ipAddress':'192.168.178.77'}," +
+//                "{'deviceName':'Kinos Andy','ipAddress':'192.168.178.81'}]".replaceAll("'", "\"");
+        String initialDeviceList = "[]";
         save(context, initialDeviceList);
         return initialDeviceList;
     }

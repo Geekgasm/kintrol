@@ -1,82 +1,50 @@
 package de.thegrate.kintrol;
 
 import android.os.Handler;
-import android.os.Looper;
+import android.os.HandlerThread;
 import android.util.Log;
 
 /**
  * Created by d037698 on 5/1/15.
  */
-public class KinosKontrollerThread extends Thread implements KinosStatusChecker {
+public class KinosKontrollerThread extends HandlerThread implements KinosStatusChecker {
 
     private static final String TAG = KinosKontrollerThread.class.getSimpleName();
 
     private static final int PORT = 9004;
     private final String ipAddress;
     private final KinosNotificationListener notificationListener;
+    private KinosKontroller kontroller;
     private Handler handler;
-    private KinosKontroller
-            kontroller;
 
     public KinosKontrollerThread(String ipAddress, KinosNotificationListener notificationListener) {
+        super("Kinos Kontroller Thread");
         this.ipAddress = ipAddress;
         this.notificationListener = notificationListener;
     }
 
     @Override
-    public void run() {
-        try {
-            // preparing a looper on current thread
-            // the current thread is being detected implicitly
-            Looper.prepare();
-
-            Log.i(TAG, "KinosKontrollerThread starts KinosKontroller");
-            kontroller = new KinosKontroller(ipAddress, notificationListener, this);
-            kontroller.start();
-
-            Log.i(TAG, "KinosKontrollerThread entering the loop");
-
-            // now, the handler will automatically bind to the
-            // Looper that is attached to the current thread
-            // You don't need to specify the Looper explicitly
-            handler = new Handler();
-
-            // After the following line the thread will start
-            // running the message loop and will not normally
-            // exit the loop unless a problem happens or you
-            // quit() the looper (see below)
-            Looper.loop();
-
-            Log.i(TAG, "KinosKontrollerThread exiting gracefully");
-        } catch (Throwable t) {
-            Log.e(TAG, "KinosKontrollerThread halted due to an error", t);
-        }
+    protected void onLooperPrepared() {
+        Log.i(TAG, "KinosKontrollerThread starts KinosKontroller");
+        kontroller = new KinosKontroller(ipAddress, notificationListener, this);
+        kontroller.start();
+        Log.i(TAG, "KinosKontrollerThread entering the loop");
     }
+
 
     // This method is allowed to be called from any thread
     public synchronized void requestStop() {
-        // using the handler, post a Runnable that will quit()
-        // the Looper attached to our KinosKontrollerThread
-        // obviously, all previously queued tasks will be executed
-        // before the loop gets the quit Runnable
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                // This is guaranteed to run on the DownloadThread
-                // so we can use myLooper() to get its looper
-                Log.i(TAG, "KinosKontrollerThread loop quitting by request");
-
-                Looper.myLooper().quitSafely();
-
-                Log.i(TAG, "Shutting down KinosKontroller");
-//                kontroller.stop();
-//                kontroller = null;
-            }
-        });
+        Log.i(TAG, "KinosKontrollerThread loop quitting by request");
+        quitSafely();
+        Log.i(TAG, "Shutting down KinosKontroller");
+        if (kontroller != null) {
+            kontroller.stop();
+            kontroller = null;
+        }
     }
 
     public synchronized void decreaseVolume() {
-        handler.post(new Runnable() {
+        post(new Runnable() {
             @Override
             public void run() {
                 kontroller.decreaseVolume();
@@ -85,7 +53,7 @@ public class KinosKontrollerThread extends Thread implements KinosStatusChecker 
     }
 
     public synchronized void increaseVolume() {
-        handler.post(new Runnable() {
+        post(new Runnable() {
             @Override
             public void run() {
                 kontroller.increaseVolume();
@@ -94,7 +62,7 @@ public class KinosKontrollerThread extends Thread implements KinosStatusChecker 
     }
 
     public synchronized void switchOn() {
-        handler.post(new Runnable() {
+        post(new Runnable() {
             @Override
             public void run() {
                 kontroller.switchOn();
@@ -103,7 +71,7 @@ public class KinosKontrollerThread extends Thread implements KinosStatusChecker 
     }
 
     public synchronized void switchOff() {
-        handler.post(new Runnable() {
+        post(new Runnable() {
             @Override
             public void run() {
                 kontroller.switchOff();
@@ -112,7 +80,7 @@ public class KinosKontrollerThread extends Thread implements KinosStatusChecker 
     }
 
     public synchronized void previousInputProfile() {
-        handler.post(new Runnable() {
+        post(new Runnable() {
             @Override
             public void run() {
                 kontroller.previousInputProfile();
@@ -121,7 +89,7 @@ public class KinosKontrollerThread extends Thread implements KinosStatusChecker 
     }
 
     public synchronized void nextInputProfile() {
-        handler.post(new Runnable() {
+        post(new Runnable() {
             @Override
             public void run() {
                 kontroller.nextInputProfile();
@@ -131,7 +99,7 @@ public class KinosKontrollerThread extends Thread implements KinosStatusChecker 
 
     @Override
     public void checkDeviceStatus(long delayMillis) {
-        handler.postDelayed(new Runnable() {
+        postDelayed(new Runnable() {
             @Override
             public void run() {
                 kontroller.checkDeviceStatus();
@@ -146,7 +114,7 @@ public class KinosKontrollerThread extends Thread implements KinosStatusChecker 
 
     @Override
     public void checkForOperationStatus() {
-        handler.post(new Runnable() {
+        post(new Runnable() {
             @Override
             public void run() {
                 kontroller.checkForOperationStatus();
@@ -156,7 +124,7 @@ public class KinosKontrollerThread extends Thread implements KinosStatusChecker 
 
     @Override
     public void checkVolume() {
-        handler.post(new Runnable() {
+        post(new Runnable() {
             @Override
             public void run() {
                 kontroller.checkVolume();
@@ -166,7 +134,7 @@ public class KinosKontrollerThread extends Thread implements KinosStatusChecker 
 
     @Override
     public void checkInputProfile() {
-        handler.post(new Runnable() {
+        post(new Runnable() {
             @Override
             public void run() {
                 kontroller.checkInputProfile();
@@ -175,11 +143,31 @@ public class KinosKontrollerThread extends Thread implements KinosStatusChecker 
     }
 
     public void toggleMute() {
-        handler.post(new Runnable() {
+        post(new Runnable() {
             @Override
             public void run() {
                 kontroller.toggleMute();
             }
         });
+    }
+
+    private void post(Runnable runnable) {
+        postDelayed(runnable, 0);
+    }
+
+    private void postDelayed(Runnable runnable, long delayMillis) {
+        Handler handler = getHandler();
+        if (handler != null) {
+            handler.postDelayed(runnable, delayMillis);
+        } else {
+            Log.w(TAG, "Kontroller thread not active, command ignored");
+        }
+    }
+
+    private Handler getHandler() {
+        if (handler == null) {
+            handler = new Handler(getLooper());
+        }
+        return handler;
     }
 }

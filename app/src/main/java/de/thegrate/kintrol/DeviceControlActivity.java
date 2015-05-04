@@ -11,11 +11,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import java.util.Random;
 
 
 public class DeviceControlActivity extends ActionBarActivity implements KinosNotificationListener {
@@ -23,6 +20,7 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
     private static final String KONTROLLER = "KINOS_KONTROLLER";
 
     private Handler handler;
+    private TextView deviceNameView;
     private TextView volumeView;
     private TextView operationStateView;
     private TextView sourceView;
@@ -39,17 +37,15 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         deviceInfo = new DeviceInfo(intent.getStringExtra(DeviceChooserActivity.EXTRA_IP_ADDRESS), intent.getStringExtra(DeviceChooserActivity.EXTRA_DEVICE_NAME));
 
         startKontrollerThread(deviceInfo);
-//        kontrollerThread = new KinosKontrollerThread(deviceInfo.ipAddress, this);
-//        kontrollerThread.start();
 
         handler = new Handler();
 
-        TextView deviceNameView = (TextView) findViewById(R.id.device_name);
-        deviceNameView.setText(deviceInfo.deviceName);
-
+        deviceNameView = (TextView) findViewById(R.id.device_name);
         volumeView = (TextView) findViewById(R.id.volume);
         operationStateView = (TextView) findViewById(R.id.operation_state);
         sourceView = (TextView) findViewById(R.id.current_source);
+
+        deviceNameView.setText(deviceInfo.deviceName);
     }
 
     private void startKontrollerThread(DeviceInfo deviceInfo) {
@@ -148,6 +144,15 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         });
     }
 
+    public void handleDeviceNameUpdate(final String deviceName) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                deviceNameView.setText(deviceName);
+            }
+        });
+    }
+
     public void openEditDeviceDialog(MenuItem item) {
         final DeviceInfo newDevice = new DeviceInfo();
         LayoutInflater li = LayoutInflater.from(this);
@@ -163,10 +168,11 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        DeviceInfo newDevice = new DeviceInfo(ipAddressText.getText().toString(), deviceNameText.getText().toString());
+                        final DeviceInfo newDevice = new DeviceInfo(ipAddressText.getText().toString(), deviceNameText.getText().toString());
                         deviceListPersistor.updateDevice(deviceInfo, newDevice);
                         deviceInfo = newDevice;
                         startKontrollerThread(deviceInfo);
+                        handleDeviceNameUpdate(deviceInfo.deviceName);
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

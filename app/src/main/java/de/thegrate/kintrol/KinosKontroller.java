@@ -1,8 +1,6 @@
 package de.thegrate.kintrol;
 
-import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.TextView;
 
 import org.apache.commons.net.telnet.EchoOptionHandler;
 import org.apache.commons.net.telnet.InvalidTelnetOptionException;
@@ -57,9 +55,10 @@ public class KinosKontroller {
         }
         if (!telnetClient.isConnected()) {
             try {
+                Log.d(TAG, "Opening telnet connection to " + deviceIp + ":" + PORT);
                 telnetClient.connect(deviceIp, PORT);
                 notificationHandler = new KinosNotificationHandler(telnetClient, notificationListener, statusChecker);
-                Thread notificationHandlerThread = new Thread(notificationHandler);
+                Thread notificationHandlerThread = new Thread(notificationHandler, "Kinos response handler thread");
                 notificationHandlerThread.start();
             } catch (IOException e) {
                 Log.e(TAG, "Unable to open telnet connection to " + deviceIp + ":" + PORT, e);
@@ -147,7 +146,8 @@ public class KinosKontroller {
     }
 
     public void stop() {
-        notificationHandler.shutdown();
+        if (notificationHandler != null)
+            notificationHandler.shutdown();
         disconnectTelnetClient();
         telnetClient = null;
     }

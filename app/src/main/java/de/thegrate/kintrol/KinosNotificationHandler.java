@@ -1,7 +1,6 @@
 package de.thegrate.kintrol;
 
 import android.util.Log;
-import android.widget.TextView;
 
 import org.apache.commons.net.telnet.TelnetClient;
 
@@ -9,8 +8,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,12 +46,6 @@ public class KinosNotificationHandler implements Runnable {
             }
         } catch (IOException e) {
             Log.e(TAG, "Error in KinosNotificationHandler Thread, Exception while reading socket:", e);
-        }
-
-        try {
-            telnetClient.disconnect();
-        } catch (IOException e) {
-            Log.e(TAG, "Error in KinosNotificationHandler Thread, Exception while closing telnet:", e);
         }
     }
 
