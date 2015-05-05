@@ -1,4 +1,4 @@
-package de.thegrate.kintrol;
+package eu.geekgasm.kintrol;
 
 import android.os.Handler;
 import android.os.HandlerThread;

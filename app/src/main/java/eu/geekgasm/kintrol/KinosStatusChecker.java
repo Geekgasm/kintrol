@@ -1,4 +1,4 @@
-package de.thegrate.kintrol;
+package eu.geekgasm.kintrol;
 
 /**
  * Created by d037698 on 5/1/15.

@@ -1,4 +1,4 @@
-package de.thegrate.kintrol;
+package eu.geekgasm.kintrol;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -25,8 +25,8 @@ import java.util.Map;
 
 public class DeviceControlActivity extends ActionBarActivity implements KinosNotificationListener {
 
-    public static final String EXTRA_IP_ADDRESS = "de.thegrate.kintrol.IP_ADDRESS";
-    public static final String EXTRA_DEVICE_NAME = "de.thegrate.kintrol.DEVICE_NAME";
+    public static final String EXTRA_IP_ADDRESS = "eu.geekgasm.kintrol.IP_ADDRESS";
+    public static final String EXTRA_DEVICE_NAME = "eu.geekgasm.kintrol.DEVICE_NAME";
 
     private Handler handler;
     private TextView deviceNameView;
@@ -255,7 +255,7 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
             return "unknwown";
         String[] segments = powerCounterValue.split(":");
         if (segments.length == 4) {
-            return String.format("%s days %s hours %s minutes %s seconds", segments);
+            return String.format("%s days %s hours %s minutes %s seconds", (Object[])segments);
         }
         return powerCounterValue;
     }

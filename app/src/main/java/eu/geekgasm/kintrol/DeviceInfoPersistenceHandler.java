@@ -1,4 +1,4 @@
-package de.thegrate.kintrol;
+package eu.geekgasm.kintrol;
 
 import android.content.Context;
 import android.content.SharedPreferences;
