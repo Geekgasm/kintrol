@@ -3,9 +3,9 @@
 
     <string name="device_choser_title">Chose device</string>
     <string name="title_activity_device_control">Kintrol</string>
-    <string name="action_add_device">Add device...</string>
+    <string name="action_add_device">Add device</string>
     <string name="action_delete_device">Delete device</string>
-    <string name="action_edit_device">Edit device...</string>
+    <string name="action_edit_device">Edit device</string>
     <string name="action_show_device_info">Show device info</string>
 
     <string name="volume_header">Volume</string>
@@ -24,5 +24,14 @@
 
     <string name="edit_device_name">Device name</string>
     <string name="edit_ip_address">IP address</string>
+    <string name="app_descrip">
+        <![CDATA[
+        Remote control app for LINN&reg; KINOS&trade; and KISTO&trade; system controllers.
+        ]]></string>
+    <string name="app_credits">
+    <![CDATA[
+    &copy; 2015 Oliver Götz, published as open source under Apache license. Look for the sources on <a href="https://github.com/">GitHub</a>
+    ]]></string>
+    <string name="action_about_kintrol">About Kintrol</string>
 
 </resources>

@@ -8,4 +8,10 @@
         android:title="@string/action_add_device"
         android:onClick="openAddDeviceDialog"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_about_kintrol"
+        android:orderInCategory="100"
+        android:title="@string/action_about_kintrol"
+        android:onClick="showAbout"
+        app:showAsAction="never" />
 </menu>

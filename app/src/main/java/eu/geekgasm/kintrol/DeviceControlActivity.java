@@ -284,4 +284,7 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         return map;
     }
 
+    public void showAbout(MenuItem item) {
+        DeviceChooserActivity.showAbout(this);
+    }
 }
