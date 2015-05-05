@@ -1,14 +1,13 @@
 <resources>
     <string name="app_name">Kintrol</string>
 
-    <string name="device_1">Kinos Heimkino</string>
-    <string name="device_2">Kinos Andy</string>
-    <string name="device_choser_title">Chose Device</string>
-    <string name="action_add_device">Add Device...</string>
-    <string name="action_delete_device">Delete Device</string>
+    <string name="device_choser_title">Chose device</string>
     <string name="title_activity_device_control">Kintrol</string>
+    <string name="action_add_device">Add device...</string>
+    <string name="action_delete_device">Delete device</string>
+    <string name="action_edit_device">Edit device...</string>
+    <string name="action_show_device_info">Show device info</string>
 
-    <string name="hello_world">Hello world!</string>
     <string name="volume_header">Volume</string>
     <string name="volume_down">-</string>
     <string name="volume_up">+</string>
@@ -23,10 +22,7 @@
     <string name="source_up">Src+</string>
     <string name="mute">Mute</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="edit_device_name">Device name</string>
     <string name="edit_ip_address">IP address</string>
-    <string name="action_edit_device">Edit device...</string>
 
 </resources>

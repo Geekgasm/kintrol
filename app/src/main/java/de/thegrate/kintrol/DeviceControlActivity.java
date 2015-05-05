@@ -12,7 +12,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class DeviceControlActivity extends ActionBarActivity implements KinosNotificationListener {
@@ -28,6 +36,8 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
     private KinosKontrollerThread kontrollerThread;
     private final DeviceInfoPersistenceHandler deviceListPersistor = new DeviceInfoPersistenceHandler(this);
     private DeviceInfo deviceInfo;
+    private String powerCounterValue;
+    private String deviceId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,6 +155,16 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         });
     }
 
+    @Override
+    public void handlePowerCounterUpdate(String powerCounterValue) {
+        this.powerCounterValue = powerCounterValue;
+    }
+
+    @Override
+    public void handleDeviceIdUpdate(String deviceId) {
+        this.deviceId = deviceId;
+    }
+
     public void openEditDeviceDialog(MenuItem item) {
         final DeviceInfo newDevice = new DeviceInfo();
         LayoutInflater li = LayoutInflater.from(this);
@@ -202,4 +222,49 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
                 }).create();
         alertDialog.show();
     }
+
+    public void openShowDeviceInfoDialog(MenuItem item) {
+        ListView deviceInfoListView = new ListView(this);
+        deviceInfoListView.setAdapter(createDeviceInfoListAdapter());
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setTitle("Device Info")
+                .setCancelable(false)
+                .setView(deviceInfoListView)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).create();
+        alertDialog.show();
+    }
+
+    ListAdapter createDeviceInfoListAdapter() {
+        final String[] fromMapKey = new String[]{"key", "value"};
+        final int[] toLayoutId = new int[]{android.R.id.text1, android.R.id.text2};
+        final List<Map<String, String>> list = new ArrayList<>();
+        list.add(createListEntry("Device Name", deviceInfo.deviceName));
+        list.add(createListEntry("IP Address", deviceInfo.ipAddress));
+        list.add(createListEntry("Device ID", deviceId != null ? deviceId : "unknown"));
+        list.add(createListEntry("Total Operation Time", renderOperationTime(powerCounterValue)));
+
+        return new SimpleAdapter(this, list, android.R.layout.simple_list_item_2, fromMapKey, toLayoutId);
+    }
+
+    private String renderOperationTime(String powerCounterValue) {
+        if (powerCounterValue == null)
+            return "unknwown";
+        String[] segments = powerCounterValue.split(":");
+        if (segments.length == 4) {
+            return String.format("%s days %s hours %s minutes %s seconds", segments);
+        }
+        return powerCounterValue;
+    }
+
+    private HashMap<String, String> createListEntry(String key, String value) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("key", key);
+        map.put("value", value);
+        return map;
+    }
+
 }

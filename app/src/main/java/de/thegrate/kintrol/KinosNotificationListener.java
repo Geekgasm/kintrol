@@ -14,4 +14,8 @@ public interface KinosNotificationListener {
     void handleVolumeUpdate(String volumeValue);
 
     void handleSourceUpdate(String sourceName);
+
+    void handlePowerCounterUpdate(String powerCounterValue);
+
+    void handleDeviceIdUpdate(String deviceId);
 }

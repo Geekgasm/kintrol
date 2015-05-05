@@ -16,10 +16,13 @@ import java.util.regex.Pattern;
  */
 public class KinosNotificationHandler implements Runnable {
 
+    private static final String TAG = KinosNotificationHandler.class.getSimpleName();
+
     static final Pattern VOLUME_STATUS_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$VOLUME ([^\\$]+)\\$.*", Pattern.DOTALL);
     static final Pattern MUTE_STATUS_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$MUTE ([^\\$]+)\\$.*", Pattern.DOTALL);
     static final Pattern INPUT_PROFILE_STATUS_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$INPUT PROFILE (\\d+) \\(([^\\$]+)\\)\\$.*", Pattern.DOTALL);
-    private static final String TAG = KinosNotificationHandler.class.getSimpleName();
+    static final Pattern DEVICE_ID_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$ID ([^\\$]+)\\$.*", Pattern.DOTALL);
+    static final Pattern POWER_COUNTER_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$COUNTER POWER ([^\\$]+)\\$.*", Pattern.DOTALL);
     private static final Pattern STANDBY_STATUS_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$STANDBY ([^\\$]+)\\$.*", Pattern.DOTALL);
     private TelnetClient telnetClient;
     private KinosNotificationListener notificationListener;
@@ -53,6 +56,8 @@ public class KinosNotificationHandler implements Runnable {
         updateVolumeStatus(deviceData);
         updateInputProfileStatus(deviceData);
         updateStandbyStatus(deviceData);
+        updateDeviceId(deviceData);
+        updatePowerCounter(deviceData);
     }
 
     private boolean updateVolumeStatus(String deviceData) {
@@ -112,6 +117,28 @@ public class KinosNotificationHandler implements Runnable {
             return true;
         }
         return false;
+    }
+
+    private boolean updatePowerCounter(String deviceData) {
+        Matcher matcher = POWER_COUNTER_PATTERN.matcher(deviceData);
+        if (matcher.matches()) {
+            String powerCounterValue = matcher.group(2);
+            notificationListener.handlePowerCounterUpdate(powerCounterValue);
+            return true;
+        }
+        return false;
+
+    }
+
+    private boolean updateDeviceId(String deviceData) {
+        Matcher matcher = DEVICE_ID_PATTERN.matcher(deviceData);
+        if (matcher.matches()) {
+            String deviceId = matcher.group(2);
+            notificationListener.handleDeviceIdUpdate(deviceId);
+            return true;
+        }
+        return false;
+
     }
 
 

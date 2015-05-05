@@ -14,4 +14,10 @@
         android:orderInCategory="100"
         android:onClick="openDeleteDeviceDialog"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_show_device_info"
+        android:title="@string/action_show_device_info"
+        android:orderInCategory="100"
+        android:onClick="openShowDeviceInfoDialog"
+        app:showAsAction="never" />
 </menu>

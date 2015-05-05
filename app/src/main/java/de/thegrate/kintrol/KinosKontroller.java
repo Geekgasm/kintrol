@@ -83,6 +83,8 @@ public class KinosKontroller {
         checkVolume();
         checkMuteStatus();
         checkInputProfile();
+        checkDeviceId();
+        checkPowerCounter();
     }
 
     public void checkForOperationStatus() {
@@ -99,6 +101,14 @@ public class KinosKontroller {
 
     public void checkInputProfile() {
         sendCommand("$INPUT PROFILE ?$");
+    }
+
+    public void checkDeviceId() {
+        sendCommand("$ID ?$");
+    }
+
+    public void checkPowerCounter() {
+        sendCommand("$COUNTER POWER ?$");
     }
 
     public void switchOn() {
