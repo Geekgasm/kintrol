@@ -142,11 +142,39 @@ public class KinosKontrollerThread extends HandlerThread implements KinosStatusC
         });
     }
 
+    @Override
+    public void checkSurroundMode() {
+        post(new Runnable() {
+            @Override
+            public void run() {
+                kontroller.checkSurroundMode();
+            }
+        });
+    }
+
     public void toggleMute() {
         post(new Runnable() {
             @Override
             public void run() {
                 kontroller.toggleMute();
+            }
+        });
+    }
+
+    public void previousSurroundMode() {
+        post(new Runnable() {
+            @Override
+            public void run() {
+                kontroller.previousSurroundMode();
+            }
+        });
+    }
+
+    public void nextSurroundMode() {
+        post(new Runnable() {
+            @Override
+            public void run() {
+                kontroller.nextSurroundMode();
             }
         });
     }

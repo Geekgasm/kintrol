@@ -83,6 +83,7 @@ public class KinosKontroller {
         checkVolume();
         checkMuteStatus();
         checkInputProfile();
+        checkSurroundMode();
         checkDeviceId();
         checkPowerCounter();
         checkSoftwareVersion();
@@ -102,6 +103,10 @@ public class KinosKontroller {
 
     public void checkInputProfile() {
         sendCommand("$INPUT PROFILE ?$");
+    }
+
+    public void checkSurroundMode() {
+        sendCommand("$SURROUND ?$");
     }
 
     public void checkDeviceId() {
@@ -142,6 +147,14 @@ public class KinosKontroller {
 
     public void toggleMute() {
         sendCommand("$MUTE TOGGLE$");
+    }
+
+    public void previousSurroundMode() {
+        sendCommand("$SURROUND -$");
+    }
+
+    public void nextSurroundMode() {
+        sendCommand("$SURROUND +$");
     }
 
     private void sendCommand(String commandString) {

@@ -20,4 +20,6 @@ public interface KinosNotificationListener {
     void handleDeviceIdUpdate(String deviceId);
 
     void handleSoftwareVersionUpdate(String softwareVersion);
+
+    void handleSurroundModeUpdate(String currentSurroundMode);
 }

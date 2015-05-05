@@ -38,6 +38,7 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
     private String powerCounterValue;
     private String deviceId;
     private String softwareVersion;
+    private TextView surroundModeView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +56,7 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         volumeView = (TextView) findViewById(R.id.volume);
         operationStateView = (TextView) findViewById(R.id.operation_state);
         sourceView = (TextView) findViewById(R.id.current_source);
+        surroundModeView = (TextView) findViewById(R.id.current_surround_mode);
 
         deviceNameView.setText(deviceInfo.deviceName);
     }
@@ -125,6 +127,14 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         kontrollerThread.toggleMute();
     }
 
+    public void previousSurroundMode(View view) {
+        kontrollerThread.previousSurroundMode();
+    }
+
+    public void nextSurroundMode(View view) {
+        kontrollerThread.nextSurroundMode();
+    }
+
     @Override
     public void handleOperationStatusUpdate(final String operationState) {
         handler.post(new Runnable() {
@@ -151,6 +161,17 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
             @Override
             public void run() {
                 sourceView.setText(sourceName);
+            }
+        });
+    }
+
+    @Override
+    public void handleSurroundModeUpdate(final String currentSurroundMode) {
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                surroundModeView.setText(SurroundModes.renderSurroundModeString(currentSurroundMode));
             }
         });
     }

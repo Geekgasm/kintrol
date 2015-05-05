@@ -21,6 +21,7 @@ public class KinosNotificationHandler implements Runnable {
     private static final Pattern VOLUME_STATUS_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$VOLUME ([^\\$]+)\\$.*", Pattern.DOTALL);
     private static final Pattern MUTE_STATUS_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$MUTE ([^\\$]+)\\$.*", Pattern.DOTALL);
     private static final Pattern INPUT_PROFILE_STATUS_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$INPUT PROFILE (\\d+) \\(([^\\$]+)\\)\\$.*", Pattern.DOTALL);
+    private static final Pattern SURROUND_MODE_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$SURROUND (\\d+)[\\d\\s]*\\$.*", Pattern.DOTALL);
     private static final Pattern DEVICE_ID_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$ID ([^\\$]+)\\$.*", Pattern.DOTALL);
     private static final Pattern POWER_COUNTER_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$COUNTER POWER ([^\\$]+)\\$.*", Pattern.DOTALL);
     private static final Pattern SOFTWARE_VERSION_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$VERSION (SOFTWARE [^\\$]+)\\$.*", Pattern.DOTALL);
@@ -56,6 +57,7 @@ public class KinosNotificationHandler implements Runnable {
     private void updateDeviceState(String deviceData) {
         updateVolumeStatus(deviceData);
         updateInputProfileStatus(deviceData);
+        updateSurroundModeStatus(deviceData);
         updateStandbyStatus(deviceData);
         updateDeviceId(deviceData);
         updatePowerCounter(deviceData);
@@ -99,6 +101,17 @@ public class KinosNotificationHandler implements Runnable {
         return false;
     }
 
+    private boolean updateSurroundModeStatus(String deviceData) {
+        Matcher matcher = SURROUND_MODE_PATTERN.matcher(deviceData);
+        if (matcher.matches()) {
+            String currentSurroundMode = matcher.group(2);
+            notificationListener.handleSurroundModeUpdate(currentSurroundMode);
+            notificationListener.handleOperationStatusUpdate(KinosNotificationListener.OPERATIONAL_STATUS_TEXT);
+            return true;
+        }
+        return false;
+    }
+
     private boolean updateStandbyStatus(String deviceData) {
         Matcher matcher = STANDBY_STATUS_PATTERN.matcher(deviceData);
         if (matcher.matches()) {
@@ -108,10 +121,12 @@ public class KinosNotificationHandler implements Runnable {
                 operationStatus = KinosNotificationListener.OPERATIONAL_STATUS_TEXT;
                 statusChecker.checkVolume();
                 statusChecker.checkInputProfile();
+                statusChecker.checkSurroundMode();
             } else if ("ON".equals(standbyStatus)) {
                 operationStatus = KinosNotificationListener.STANDBY_STATUS_TEXT;
                 notificationListener.handleVolumeUpdate(KinosNotificationListener.NOT_AVAILABLE);
                 notificationListener.handleSourceUpdate(KinosNotificationListener.NOT_AVAILABLE);
+                notificationListener.handleSurroundModeUpdate(KinosNotificationListener.NOT_AVAILABLE);
             } else {
                 operationStatus = standbyStatus;
             }

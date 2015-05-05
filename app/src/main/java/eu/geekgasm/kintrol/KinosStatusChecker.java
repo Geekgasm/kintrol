@@ -13,4 +13,6 @@ public interface KinosStatusChecker {
     public void checkVolume();
 
     public void checkInputProfile();
+
+    public void checkSurroundMode();
 }

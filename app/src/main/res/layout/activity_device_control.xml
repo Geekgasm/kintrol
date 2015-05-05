@@ -150,5 +150,42 @@
         </LinearLayout>
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/surround_mode_title"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="previousSurroundMode"
+                android:text="@string/surround_mode_prev" />
+
+            <TextView
+                android:id="@+id/current_surround_mode"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/current_surround_mode"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="nextSurroundMode"
+                android:text="@string/surround_mode_next" />
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>
 

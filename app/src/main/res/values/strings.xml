@@ -33,5 +33,9 @@
     &copy; 2015 Oliver Götz, published as open source under Apache license. Look for the sources on <a href="https://github.com/">GitHub</a>
     ]]></string>
     <string name="action_about_kintrol">About Kintrol</string>
+    <string name="surround_mode_title">Surround Mode</string>
+    <string name="surround_mode_prev">-</string>
+    <string name="current_surround_mode">---</string>
+    <string name="surround_mode_next">+</string>
 
 </resources>
