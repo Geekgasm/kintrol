@@ -18,4 +18,6 @@ public interface KinosNotificationListener {
     void handlePowerCounterUpdate(String powerCounterValue);
 
     void handleDeviceIdUpdate(String deviceId);
+
+    void handleSoftwareVersionUpdate(String softwareVersion);
 }

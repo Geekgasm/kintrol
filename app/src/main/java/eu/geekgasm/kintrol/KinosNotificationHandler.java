@@ -18,11 +18,12 @@ public class KinosNotificationHandler implements Runnable {
 
     private static final String TAG = KinosNotificationHandler.class.getSimpleName();
 
-    static final Pattern VOLUME_STATUS_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$VOLUME ([^\\$]+)\\$.*", Pattern.DOTALL);
-    static final Pattern MUTE_STATUS_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$MUTE ([^\\$]+)\\$.*", Pattern.DOTALL);
-    static final Pattern INPUT_PROFILE_STATUS_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$INPUT PROFILE (\\d+) \\(([^\\$]+)\\)\\$.*", Pattern.DOTALL);
-    static final Pattern DEVICE_ID_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$ID ([^\\$]+)\\$.*", Pattern.DOTALL);
-    static final Pattern POWER_COUNTER_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$COUNTER POWER ([^\\$]+)\\$.*", Pattern.DOTALL);
+    private static final Pattern VOLUME_STATUS_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$VOLUME ([^\\$]+)\\$.*", Pattern.DOTALL);
+    private static final Pattern MUTE_STATUS_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$MUTE ([^\\$]+)\\$.*", Pattern.DOTALL);
+    private static final Pattern INPUT_PROFILE_STATUS_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$INPUT PROFILE (\\d+) \\(([^\\$]+)\\)\\$.*", Pattern.DOTALL);
+    private static final Pattern DEVICE_ID_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$ID ([^\\$]+)\\$.*", Pattern.DOTALL);
+    private static final Pattern POWER_COUNTER_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$COUNTER POWER ([^\\$]+)\\$.*", Pattern.DOTALL);
+    private static final Pattern SOFTWARE_VERSION_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$VERSION (SOFTWARE [^\\$]+)\\$.*", Pattern.DOTALL);
     private static final Pattern STANDBY_STATUS_PATTERN = Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$STANDBY ([^\\$]+)\\$.*", Pattern.DOTALL);
     private TelnetClient telnetClient;
     private KinosNotificationListener notificationListener;
@@ -58,6 +59,7 @@ public class KinosNotificationHandler implements Runnable {
         updateStandbyStatus(deviceData);
         updateDeviceId(deviceData);
         updatePowerCounter(deviceData);
+        updateSoftwareVersion(deviceData);
     }
 
     private boolean updateVolumeStatus(String deviceData) {
@@ -141,6 +143,16 @@ public class KinosNotificationHandler implements Runnable {
 
     }
 
+    private boolean updateSoftwareVersion(String deviceData) {
+        Matcher matcher = SOFTWARE_VERSION_PATTERN.matcher(deviceData);
+        if (matcher.matches()) {
+            String softwareVersion = matcher.group(2);
+            notificationListener.handleSoftwareVersionUpdate(softwareVersion);
+            return true;
+        }
+        return false;
+
+    }
 
     public void shutdown() {
         telnetClient = null;

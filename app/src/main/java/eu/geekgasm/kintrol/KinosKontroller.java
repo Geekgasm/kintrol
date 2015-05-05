@@ -85,6 +85,7 @@ public class KinosKontroller {
         checkInputProfile();
         checkDeviceId();
         checkPowerCounter();
+        checkSoftwareVersion();
     }
 
     public void checkForOperationStatus() {
@@ -109,6 +110,10 @@ public class KinosKontroller {
 
     public void checkPowerCounter() {
         sendCommand("$COUNTER POWER ?$");
+    }
+
+    public void checkSoftwareVersion() {
+        sendCommand("$VERSION SOFTWARE ?$");
     }
 
     public void switchOn() {

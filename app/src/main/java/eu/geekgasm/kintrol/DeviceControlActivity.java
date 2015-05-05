@@ -27,17 +27,17 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
 
     public static final String EXTRA_IP_ADDRESS = "eu.geekgasm.kintrol.IP_ADDRESS";
     public static final String EXTRA_DEVICE_NAME = "eu.geekgasm.kintrol.DEVICE_NAME";
-
+    private final DeviceInfoPersistenceHandler deviceListPersistor = new DeviceInfoPersistenceHandler(this);
     private Handler handler;
     private TextView deviceNameView;
     private TextView volumeView;
     private TextView operationStateView;
     private TextView sourceView;
     private KinosKontrollerThread kontrollerThread;
-    private final DeviceInfoPersistenceHandler deviceListPersistor = new DeviceInfoPersistenceHandler(this);
     private DeviceInfo deviceInfo;
     private String powerCounterValue;
     private String deviceId;
+    private String softwareVersion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,6 +165,11 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         this.deviceId = deviceId;
     }
 
+    @Override
+    public void handleSoftwareVersionUpdate(String softwareVersion) {
+        this.softwareVersion = softwareVersion;
+    }
+
     public void openEditDeviceDialog(MenuItem item) {
         final DeviceInfo newDevice = new DeviceInfo();
         LayoutInflater li = LayoutInflater.from(this);
@@ -246,18 +251,30 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         list.add(createListEntry("IP Address", deviceInfo.ipAddress));
         list.add(createListEntry("Device ID", deviceId != null ? deviceId : "unknown"));
         list.add(createListEntry("Total Operation Time", renderOperationTime(powerCounterValue)));
+        addSoftwareVersions(list);
 
         return new SimpleAdapter(this, list, android.R.layout.simple_list_item_2, fromMapKey, toLayoutId);
     }
 
     private String renderOperationTime(String powerCounterValue) {
         if (powerCounterValue == null)
-            return "unknwown";
+            return "unknown";
         String[] segments = powerCounterValue.split(":");
         if (segments.length == 4) {
-            return String.format("%s days %s hours %s minutes %s seconds", (Object[])segments);
+            return String.format("%s days %s hours %s minutes %s seconds", (Object[]) segments);
         }
         return powerCounterValue;
+    }
+
+    private void addSoftwareVersions(List<Map<String, String>> list) {
+        if (softwareVersion == null) {
+            list.add(createListEntry("Software Version", "unknown"));
+        } else {
+            String[] versions = softwareVersion.split("\\s");
+            for (int i = 0; i < versions.length - 1; i += 2) {
+                list.add(createListEntry(versions[i] + " version", versions[i + 1]));
+            }
+        }
     }
 
     private HashMap<String, String> createListEntry(String key, String value) {
