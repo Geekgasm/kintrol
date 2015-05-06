@@ -17,6 +17,8 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -160,9 +162,18 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         handler.post(new Runnable() {
             @Override
             public void run() {
-                sourceView.setText(sourceName);
+                sourceView.setText(unescapeHexCharacters(sourceName));
             }
         });
+    }
+
+    private String unescapeHexCharacters(String escapedString) {
+        try {
+            return URLDecoder.decode(escapedString.replaceAll("\\\\x", "%"), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            // UTF-8 encoding must always exist
+            return escapedString;
+        }
     }
 
     @Override
