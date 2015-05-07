@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,6 +38,7 @@ public class DeviceChooserActivity extends ActionBarActivity {
         setContentView(R.layout.activity_device_choser);
         deviceListView = (ListView) findViewById(R.id.deviceListView);
         new DeviceInfoPersistenceHandler(this).loadDeviceList(deviceList);
+        Log.d(TAG, "Loaded device list: " + deviceList.toString());
         deviceInfoAdapter = new ArrayAdapter<DeviceInfo>(this, R.layout.devicerow, deviceList);
         deviceListView.setAdapter(deviceInfoAdapter);
         deviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
