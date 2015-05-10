@@ -7,15 +7,21 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
+import android.text.TextUtils;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+
+import com.lb.auto_fit_textview.AutoResizeTextView;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -33,14 +39,14 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
     private Handler handler;
     private TextView deviceNameView;
     private TextView volumeView;
-    private TextView operationStateView;
-    private TextView sourceView;
+    private ViewGroup operationStateView;
+    private ViewGroup sourceView;
     private KinosKontrollerThread kontrollerThread;
     private DeviceInfo deviceInfo;
     private String powerCounterValue;
     private String deviceId;
     private String softwareVersion;
-    private TextView surroundModeView;
+    private ViewGroup surroundModeView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,11 +62,38 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
 
         deviceNameView = (TextView) findViewById(R.id.device_name);
         volumeView = (TextView) findViewById(R.id.volume);
-        operationStateView = (TextView) findViewById(R.id.operation_state);
-        sourceView = (TextView) findViewById(R.id.current_source);
-        surroundModeView = (TextView) findViewById(R.id.current_surround_mode);
-
+        operationStateView = (ViewGroup) findViewById(R.id.operation_state);
+        setText(operationStateView, KinosNotificationListener.NOT_AVAILABLE);
+        sourceView = (ViewGroup) findViewById(R.id.current_source);
+        setText(operationStateView, KinosNotificationListener.NOT_AVAILABLE);
+        surroundModeView = (ViewGroup) findViewById(R.id.current_surround_mode);
+        setText(surroundModeView, KinosNotificationListener.NOT_AVAILABLE);
         deviceNameView.setText(deviceInfo.deviceName);
+    }
+
+    private void setText(ViewGroup viewGroup, String text) {
+        if (viewGroup.getChildCount() > 0) {
+            View firstChild = viewGroup.getChildAt(0);
+            if (firstChild instanceof TextView) {
+                String oldText = String.valueOf(((TextView) firstChild).getText());
+                if (text != null && text.equals(oldText))
+                    return;
+            }
+        }
+        viewGroup.removeAllViews();
+        final int width = viewGroup.getWidth();
+        final int height = viewGroup.getHeight() * 80 / 100;
+        final AutoResizeTextView textView = new AutoResizeTextView(DeviceControlActivity.this);
+        textView.setGravity(Gravity.CENTER);
+        final int maxLinesCount = 2;
+        textView.setMaxLines(maxLinesCount);
+        textView.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, height, getResources().getDisplayMetrics()));
+        textView.setEllipsize(TextUtils.TruncateAt.END);
+        textView.setEnableSizeCache(false);
+        textView.setEnableSizeCache(false);
+        textView.setLayoutParams(new ViewGroup.LayoutParams(width, height));
+        textView.setText(text);
+        viewGroup.addView(textView);
     }
 
     private void startKontrollerThread(DeviceInfo deviceInfo) {
@@ -142,7 +175,7 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         handler.post(new Runnable() {
             @Override
             public void run() {
-                operationStateView.setText(operationState);
+                setText(operationStateView, operationState);
             }
         });
     }
@@ -162,7 +195,7 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         handler.post(new Runnable() {
             @Override
             public void run() {
-                sourceView.setText(unescapeHexCharacters(sourceName));
+                setText(sourceView, unescapeHexCharacters(sourceName));
             }
         });
     }
@@ -182,7 +215,8 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         handler.post(new Runnable() {
             @Override
             public void run() {
-                surroundModeView.setText(SurroundModes.renderSurroundModeString(currentSurroundMode));
+//                surroundModeView.setText(SurroundModes.renderSurroundModeString(currentSurroundMode));
+                setText(surroundModeView, SurroundModes.renderSurroundModeString(currentSurroundMode));
             }
         });
     }

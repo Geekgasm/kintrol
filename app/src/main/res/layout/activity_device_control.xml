@@ -35,14 +35,13 @@
                 android:onClick="switchOn"
                 android:text="@string/switch_on" />
 
-            <TextView
+            <FrameLayout
                 android:id="@+id/operation_state"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/operation_state"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                android:layout_alignParentBottom="true"></FrameLayout>
 
             <Button
                 android:layout_width="wrap_content"
@@ -133,14 +132,13 @@
                 android:onClick="previousSource"
                 android:text="@string/source_down" />
 
-            <TextView
+            <FrameLayout
                 android:id="@+id/current_source"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/current_source"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                android:layout_alignParentBottom="true"></FrameLayout>
 
             <Button
                 android:layout_width="wrap_content"
@@ -171,12 +169,13 @@
                 android:onClick="previousSurroundMode"
                 android:text="@string/surround_mode_prev" />
 
-            <com.lb.auto_fit_textview.AutoResizeTextView
+            <FrameLayout
                 android:id="@+id/current_surround_mode"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/current_surround_mode" />
+                android:layout_alignParentBottom="true"></FrameLayout>
 
             <Button
                 android:layout_width="wrap_content"
