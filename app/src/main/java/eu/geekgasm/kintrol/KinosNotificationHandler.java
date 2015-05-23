@@ -136,7 +136,7 @@ public class KinosNotificationHandler implements Runnable {
                 statusChecker.checkSurroundMode();
             } else if ("ON".equals(standbyStatus)) {
                 operationStatus = KinosNotificationListener.STANDBY_STATUS_TEXT;
-                notificationListener.handleVolumeUpdate("Standby");
+                notificationListener.handleVolumeUpdate(KinosNotificationListener.NOT_AVAILABLE);
                 notificationListener.handleSourceUpdate(KinosNotificationListener.NOT_AVAILABLE);
                 notificationListener.handleSurroundModeUpdate(KinosNotificationListener.NOT_AVAILABLE);
             } else {
