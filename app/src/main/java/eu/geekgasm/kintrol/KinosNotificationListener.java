@@ -7,6 +7,7 @@ public interface KinosNotificationListener {
 
     public static final String NOT_AVAILABLE = "---";
     public static final String OPERATIONAL_STATUS_TEXT = "Operational";
+    public static final String NOT_CONNECTED_STATUS_TEXT = "Not Connected";
     public static final String STANDBY_STATUS_TEXT = "Standby";
 
     void handleOperationStatusUpdate(String operationState);
@@ -22,4 +23,6 @@ public interface KinosNotificationListener {
     void handleSoftwareVersionUpdate(String softwareVersion);
 
     void handleSurroundModeUpdate(String currentSurroundMode);
+
+    void handleNoConnectionStatusUpdate();
 }

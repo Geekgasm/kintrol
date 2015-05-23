@@ -47,6 +47,7 @@ public class KinosKontroller {
                 Log.w(TAG, "Error disconnecting Telnet client: ", e);
             }
         }
+        notificationListener.handleNoConnectionStatusUpdate();
     }
 
     private void establishConnection() throws IOException, InvalidTelnetOptionException {

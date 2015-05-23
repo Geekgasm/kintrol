@@ -52,7 +52,7 @@ public class SurroundModes {
     }
 
     public static String renderSurroundModeString(String surroundModeCode) {
-        if (surroundModeCode == null)
+        if (surroundModeCode == null || surroundModeCode.equals(KinosNotificationListener.NOT_AVAILABLE))
             return KinosNotificationListener.NOT_AVAILABLE;
         try {
             int code = Integer.parseInt(surroundModeCode);

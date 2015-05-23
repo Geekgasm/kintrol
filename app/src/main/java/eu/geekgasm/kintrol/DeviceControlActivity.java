@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -56,25 +57,29 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         Intent intent = getIntent();
         deviceInfo = new DeviceInfo(intent.getStringExtra(EXTRA_IP_ADDRESS), intent.getStringExtra(EXTRA_DEVICE_NAME));
 
-        startKontrollerThread(deviceInfo);
-
         handler = new Handler();
 
         deviceNameView = (TextView) findViewById(R.id.device_name);
         volumeView = (TextView) findViewById(R.id.volume);
         operationStateView = (ViewGroup) findViewById(R.id.operation_state);
-        setText(operationStateView, KinosNotificationListener.NOT_AVAILABLE);
         sourceView = (ViewGroup) findViewById(R.id.current_source);
-        setText(operationStateView, KinosNotificationListener.NOT_AVAILABLE);
         surroundModeView = (ViewGroup) findViewById(R.id.current_surround_mode);
-        setText(surroundModeView, KinosNotificationListener.NOT_AVAILABLE);
         deviceNameView.setText(deviceInfo.deviceName);
+
+        startKontrollerThread(deviceInfo);
+    }
+
+    private void setNoConnectionInfo() {
+        setText(operationStateView, KinosNotificationListener.NOT_CONNECTED_STATUS_TEXT);
+        volumeView.setText(KinosNotificationListener.NOT_AVAILABLE);
+        setText(sourceView, KinosNotificationListener.NOT_AVAILABLE);
+        setText(surroundModeView, KinosNotificationListener.NOT_AVAILABLE);
     }
 
     private void setText(ViewGroup viewGroup, String text) {
         if (viewGroup.getChildCount() > 0) {
             View firstChild = viewGroup.getChildAt(0);
-            if (firstChild instanceof TextView) {
+            if (firstChild instanceof AutoResizeTextView) {
                 String oldText = String.valueOf(((TextView) firstChild).getText());
                 if (text != null && text.equals(oldText))
                     return;
@@ -89,7 +94,6 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         textView.setMaxLines(maxLinesCount);
         textView.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, height, getResources().getDisplayMetrics()));
         textView.setEllipsize(TextUtils.TruncateAt.END);
-        textView.setEnableSizeCache(false);
         textView.setEnableSizeCache(false);
         textView.setLayoutParams(new ViewGroup.LayoutParams(width, height));
         textView.setText(text);
@@ -215,8 +219,17 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         handler.post(new Runnable() {
             @Override
             public void run() {
-//                surroundModeView.setText(SurroundModes.renderSurroundModeString(currentSurroundMode));
                 setText(surroundModeView, SurroundModes.renderSurroundModeString(currentSurroundMode));
+            }
+        });
+    }
+
+    @Override
+    public void handleNoConnectionStatusUpdate() {
+        runJustBeforeBeingDrawn(surroundModeView, new Runnable() {
+            @Override
+            public void run() {
+                setNoConnectionInfo();
             }
         });
     }
@@ -353,4 +366,17 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
     public void showAbout(MenuItem item) {
         DeviceChooserActivity.showAbout(this);
     }
+
+    private static void runJustBeforeBeingDrawn(final View view, final Runnable runnable) {
+        final ViewTreeObserver.OnPreDrawListener preDrawListener = new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                runnable.run();
+                view.getViewTreeObserver().removeOnPreDrawListener(this);
+                return true;
+            }
+        };
+        view.getViewTreeObserver().addOnPreDrawListener(preDrawListener);
+    }
+
 }
