@@ -1,3 +1,18 @@
+<!--
+ Kintrol: Remote control app for LINN(R) KINOS(TM) and KISTO(TM) system controllers.
+ Copyright (C) 2015 Oliver Götz
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License version 3.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
 <resources>
     <string name="app_name">Kintrol</string>
 
@@ -27,7 +42,13 @@
         ]]></string>
     <string name="app_credits">
     <![CDATA[
-    &copy; 2015 Oliver Götz, published as open source under Apache license. Look for the sources on <a href="https://github.com/">GitHub</a>
+    &copy; 2015 Oliver Götz<p>
+    App icon designed by Mr. Truesound<p>
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the <a href="http://www.gnu.org/licenses/gpl.html">GNU General Public
+    License version 3</a> as published by the Free Software Foundation.
+    Find the project sources at <a href="https://github.com/Geekgasm/kintrol">GitHub</a><p>
+    Please send your feedback to <a href="mailto:developer@geekgasm.eu">developer@geekgasm.eu</a>
     ]]></string>
     <string name="action_about_kintrol">About Kintrol</string>
     <string name="surround_mode_title">Surround Mode</string>
