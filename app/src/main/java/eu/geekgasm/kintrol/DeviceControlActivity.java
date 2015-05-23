@@ -379,7 +379,7 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
     }
 
     public void showAbout(MenuItem item) {
-        DeviceChooserActivity.showAbout(this);
+        AboutDialog.showAbout(this);
     }
 
     private static void runJustBeforeBeingDrawn(final View view, final Runnable runnable) {

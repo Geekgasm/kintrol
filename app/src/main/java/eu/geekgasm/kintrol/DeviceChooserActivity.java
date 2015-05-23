@@ -15,14 +15,11 @@
  */
 package eu.geekgasm.kintrol;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,7 +29,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -125,24 +121,7 @@ public class DeviceChooserActivity extends ActionBarActivity {
     }
 
     public void showAbout(MenuItem item) {
-        showAbout(this);
-    }
-
-    static void showAbout(Activity activity) {
-        View messageView = activity.getLayoutInflater().inflate(R.layout.about, null, false);
-
-        TextView descriptionView = (TextView) messageView.findViewById(R.id.app_description);
-        descriptionView.setText(Html.fromHtml(activity.getString(R.string.app_descrip)));
-        TextView creditsView = (TextView) messageView.findViewById(R.id.about_credits);
-        creditsView.setMovementMethod(LinkMovementMethod.getInstance());
-        creditsView.setText(Html.fromHtml(activity.getString(R.string.app_credits)));
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setIcon(R.mipmap.ic_launcher);
-        builder.setTitle(R.string.app_name);
-        builder.setView(messageView);
-        builder.create();
-        builder.show();
+        AboutDialog.showAbout(this);
     }
 
 }
