@@ -80,7 +80,11 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         sourceView = (ViewGroup) findViewById(R.id.current_source);
         surroundModeView = (ViewGroup) findViewById(R.id.current_surround_mode);
         deviceNameView.setText(deviceInfo.deviceName);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
         startKontrollerThread(deviceInfo);
     }
 
@@ -123,13 +127,11 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
+    protected void onPause() {
+        super.onPause();
         // request the thread to stop
         kontrollerThread.requestStop();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
