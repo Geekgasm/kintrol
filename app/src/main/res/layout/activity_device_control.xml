@@ -47,8 +47,8 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="switchOn"
-                android:text="@string/switch_on" />
+                android:onClick="switchOff"
+                android:text="@string/switch_off" />
 
             <FrameLayout
                 android:id="@+id/operation_state"
@@ -61,8 +61,8 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="switchOff"
-                android:text="@string/switch_off" />
+                android:onClick="switchOn"
+                android:text="@string/switch_on" />
         </LinearLayout>
     </LinearLayout>
 
@@ -109,13 +109,13 @@
                 android:onClick="decreaseVolume"
                 android:text="@string/volume_down" />
 
-            <TextView
+            <FrameLayout
                 android:id="@+id/volume"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                android:layout_alignParentBottom="true"></FrameLayout>
 
             <Button
                 android:layout_width="wrap_content"

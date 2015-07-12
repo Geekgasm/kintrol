@@ -54,7 +54,7 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
     private final DeviceInfoPersistenceHandler deviceListPersistor = new DeviceInfoPersistenceHandler(this);
     private Handler handler;
     private TextView deviceNameView;
-    private TextView volumeView;
+    private ViewGroup volumeView;
     private ViewGroup operationStateView;
     private ViewGroup sourceView;
     private KinosKontrollerThread kontrollerThread;
@@ -75,7 +75,7 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         handler = new Handler();
 
         deviceNameView = (TextView) findViewById(R.id.device_name);
-        volumeView = (TextView) findViewById(R.id.volume);
+        volumeView = (ViewGroup) findViewById(R.id.volume);
         operationStateView = (ViewGroup) findViewById(R.id.operation_state);
         sourceView = (ViewGroup) findViewById(R.id.current_source);
         surroundModeView = (ViewGroup) findViewById(R.id.current_surround_mode);
@@ -90,7 +90,7 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
 
     private void setNoConnectionInfo() {
         setText(operationStateView, KinosNotificationListener.NOT_CONNECTED_STATUS_TEXT);
-        volumeView.setText(KinosNotificationListener.NOT_AVAILABLE);
+        setText(volumeView, KinosNotificationListener.NOT_AVAILABLE);
         setText(sourceView, KinosNotificationListener.NOT_AVAILABLE);
         setText(surroundModeView, KinosNotificationListener.NOT_AVAILABLE);
     }
@@ -206,7 +206,7 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         handler.post(new Runnable() {
             @Override
             public void run() {
-                volumeView.setText(volumeValue);
+                setText(volumeView, unescapeHexCharacters(volumeValue));
             }
         });
     }
