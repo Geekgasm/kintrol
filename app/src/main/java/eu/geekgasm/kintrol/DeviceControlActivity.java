@@ -22,22 +22,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
-import android.text.TextUtils;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-
-import com.lb.auto_fit_textview.AutoResizeTextView;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -54,15 +48,15 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
     private final DeviceInfoPersistenceHandler deviceListPersistor = new DeviceInfoPersistenceHandler(this);
     private Handler handler;
     private TextView deviceNameView;
-    private ViewGroup volumeView;
-    private ViewGroup operationStateView;
-    private ViewGroup sourceView;
+    private AutoSizeText volumeView;
+    private AutoSizeText operationStateView;
+    private AutoSizeText sourceView;
     private KinosKontrollerThread kontrollerThread;
     private DeviceInfo deviceInfo;
     private String powerCounterValue;
     private String deviceId;
     private String softwareVersion;
-    private ViewGroup surroundModeView;
+    private AutoSizeText surroundModeView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,10 +69,10 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         handler = new Handler();
 
         deviceNameView = (TextView) findViewById(R.id.device_name);
-        volumeView = (ViewGroup) findViewById(R.id.volume);
-        operationStateView = (ViewGroup) findViewById(R.id.operation_state);
-        sourceView = (ViewGroup) findViewById(R.id.current_source);
-        surroundModeView = (ViewGroup) findViewById(R.id.current_surround_mode);
+        volumeView = new AutoSizeText(this, R.id.volume);
+        operationStateView = new AutoSizeText(this, R.id.operation_state);
+        sourceView = new AutoSizeText(this, R.id.current_source);
+        surroundModeView = new AutoSizeText(this, R.id.current_surround_mode);
         deviceNameView.setText(deviceInfo.deviceName);
     }
 
@@ -89,34 +83,10 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
     }
 
     private void setNoConnectionInfo() {
-        setText(operationStateView, KinosNotificationListener.NOT_CONNECTED_STATUS_TEXT);
-        setText(volumeView, KinosNotificationListener.NOT_AVAILABLE);
-        setText(sourceView, KinosNotificationListener.NOT_AVAILABLE);
-        setText(surroundModeView, KinosNotificationListener.NOT_AVAILABLE);
-    }
-
-    private void setText(ViewGroup viewGroup, String text) {
-        if (viewGroup.getChildCount() > 0) {
-            View firstChild = viewGroup.getChildAt(0);
-            if (firstChild instanceof AutoResizeTextView) {
-                String oldText = String.valueOf(((TextView) firstChild).getText());
-                if (text != null && text.equals(oldText))
-                    return;
-            }
-        }
-        viewGroup.removeAllViews();
-        final int width = viewGroup.getWidth();
-        final int height = viewGroup.getHeight() * 80 / 100;
-        final AutoResizeTextView textView = new AutoResizeTextView(DeviceControlActivity.this);
-        textView.setGravity(Gravity.CENTER);
-        final int maxLinesCount = 2;
-        textView.setMaxLines(maxLinesCount);
-        textView.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, height, getResources().getDisplayMetrics()));
-        textView.setEllipsize(TextUtils.TruncateAt.END);
-        textView.setEnableSizeCache(false);
-        textView.setLayoutParams(new ViewGroup.LayoutParams(width, height));
-        textView.setText(text);
-        viewGroup.addView(textView);
+        operationStateView.setText(KinosNotificationListener.NOT_CONNECTED_STATUS_TEXT);
+        volumeView.setText(KinosNotificationListener.NOT_AVAILABLE);
+        sourceView.setText(KinosNotificationListener.NOT_AVAILABLE);
+        surroundModeView.setText(KinosNotificationListener.NOT_AVAILABLE);
     }
 
     private void startKontrollerThread(DeviceInfo deviceInfo) {
@@ -196,7 +166,7 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         handler.post(new Runnable() {
             @Override
             public void run() {
-                setText(operationStateView, operationState);
+                operationStateView.setText(operationState);
             }
         });
     }
@@ -206,7 +176,7 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         handler.post(new Runnable() {
             @Override
             public void run() {
-                setText(volumeView, unescapeHexCharacters(volumeValue));
+                volumeView.setText(unescapeHexCharacters(volumeValue));
             }
         });
     }
@@ -216,7 +186,7 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         handler.post(new Runnable() {
             @Override
             public void run() {
-                setText(sourceView, unescapeHexCharacters(sourceName));
+                sourceView.setText(unescapeHexCharacters(sourceName));
             }
         });
     }
@@ -236,14 +206,14 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         handler.post(new Runnable() {
             @Override
             public void run() {
-                setText(surroundModeView, SurroundModes.renderSurroundModeString(currentSurroundMode));
+                surroundModeView.setText(SurroundModes.renderSurroundModeString(currentSurroundMode));
             }
         });
     }
 
     @Override
     public void handleNoConnectionStatusUpdate() {
-        runJustBeforeBeingDrawn(surroundModeView, new Runnable() {
+        runJustBeforeBeingDrawn(surroundModeView.getViewGroup(), new Runnable() {
             @Override
             public void run() {
                 setNoConnectionInfo();
