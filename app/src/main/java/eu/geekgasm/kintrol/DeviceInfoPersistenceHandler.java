@@ -36,21 +36,10 @@ public class DeviceInfoPersistenceHandler {
     public synchronized void loadDeviceList(List<DeviceInfo> deviceList) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String deviceJson = preferences.getString(DEVICES_PREF_KEY, null);
-        if (deviceJson == null) {
-            deviceJson = initializeDeviceList(context);
-        }
         Gson gson = new Gson();
         DeviceInfo[] deviceArray = gson.fromJson(deviceJson, DeviceInfo[].class);
         deviceList.clear();
         deviceList.addAll(Arrays.asList(deviceArray));
-    }
-
-    private String initializeDeviceList(Context context) {
-//        String initialDeviceList = "[{'deviceName':'Kinos Heimkino','ipAddress':'192.168.178.77'}," +
-//                "{'deviceName':'Kinos Andy','ipAddress':'192.168.178.81'}]".replaceAll("'", "\"");
-        String initialDeviceList = "[]";
-        save(context, initialDeviceList);
-        return initialDeviceList;
     }
 
     private void save(Context context, String deviceListString) {

@@ -27,6 +27,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -45,6 +46,7 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
 
     public static final String EXTRA_IP_ADDRESS = "eu.geekgasm.kintrol.IP_ADDRESS";
     public static final String EXTRA_DEVICE_NAME = "eu.geekgasm.kintrol.DEVICE_NAME";
+    public static final String EXTRA_DEVICE_VOLUMES = "eu.geekgasm.kintrol.DEVICE_VOLUMES";
     private final DeviceInfoPersistenceHandler deviceListPersistor = new DeviceInfoPersistenceHandler(this);
     private Handler handler;
     private TextView deviceNameView;
@@ -57,6 +59,7 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
     private String deviceId;
     private String softwareVersion;
     private AutoSizeText surroundModeView;
+    private int discreteVolumeValue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +67,7 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         setContentView(R.layout.activity_device_control);
 
         Intent intent = getIntent();
-        deviceInfo = new DeviceInfo(intent.getStringExtra(EXTRA_IP_ADDRESS), intent.getStringExtra(EXTRA_DEVICE_NAME));
+        deviceInfo = new DeviceInfo(intent.getStringExtra(EXTRA_IP_ADDRESS), intent.getStringExtra(EXTRA_DEVICE_NAME), intent.getStringArrayExtra(EXTRA_DEVICE_VOLUMES));
 
         handler = new Handler();
 
@@ -74,11 +77,19 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         sourceView = new AutoSizeText(this, R.id.current_source);
         surroundModeView = new AutoSizeText(this, R.id.current_surround_mode);
         deviceNameView.setText(deviceInfo.deviceName);
+        discreteVolumeValue = deviceInfo.getFirstDiscreteVolumeValue();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        Button discreteVolumeButton = (Button) findViewById(R.id.discrete_volume_button);
+        if (discreteVolumeValue >= 0) {
+            discreteVolumeButton.setText(String.valueOf(discreteVolumeValue));
+            discreteVolumeButton.setVisibility(View.VISIBLE);
+        } else {
+            discreteVolumeButton.setVisibility(View.INVISIBLE);
+        }
         startKontrollerThread(deviceInfo);
     }
 
@@ -151,6 +162,10 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
 
     public void muteToggle(View view) {
         kontrollerThread.toggleMute();
+    }
+
+    public void setDiscreteVolume(View view) {
+        kontrollerThread.setVolume(discreteVolumeValue);
     }
 
     public void previousSurroundMode(View view) {
@@ -244,6 +259,9 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         deviceNameText.setText(deviceInfo.deviceName);
         final EditText ipAddressText = (EditText) promptsView.findViewById(R.id.edit_ip_address);
         ipAddressText.setText(deviceInfo.ipAddress);
+        final EditText discreteVolumeText = (EditText) promptsView.findViewById(R.id.edit_discrete_volume);
+        if (deviceInfo.discreteVolumeValues != null && deviceInfo.discreteVolumeValues.length > 0)
+            discreteVolumeText.setText(deviceInfo.discreteVolumeValues[0]);
         AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .setView(promptsView)
                 .setTitle("Edit Device")
@@ -251,7 +269,7 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        final DeviceInfo newDevice = new DeviceInfo(ipAddressText.getText().toString(), deviceNameText.getText().toString());
+                        final DeviceInfo newDevice = new DeviceInfo(ipAddressText.getText().toString(), deviceNameText.getText().toString(), DeviceChooserActivity.getDiscreteVolumes(discreteVolumeText));
                         deviceListPersistor.updateDevice(deviceInfo, newDevice);
                         startControlActivity(newDevice);
                         finish();
@@ -270,6 +288,7 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         Intent intent = new Intent(this, DeviceControlActivity.class);
         intent.putExtra(EXTRA_IP_ADDRESS, deviceInfo.getIpAddress());
         intent.putExtra(EXTRA_DEVICE_NAME, deviceInfo.getDeviceName());
+        intent.putExtra(EXTRA_DEVICE_VOLUMES, deviceInfo.getDiscreteVolumeValues());
         startActivity(intent);
     }
 

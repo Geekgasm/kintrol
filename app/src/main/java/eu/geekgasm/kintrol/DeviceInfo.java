@@ -15,16 +15,20 @@
  */
 package eu.geekgasm.kintrol;
 
+import java.util.Arrays;
+
 public class DeviceInfo {
     public String deviceName;
     public String ipAddress;
+    public String[] discreteVolumeValues;
 
     public DeviceInfo() {
     }
 
-    public DeviceInfo(String ipAddress, String deviceName) {
+    public DeviceInfo(String ipAddress, String deviceName, String... discreteVolumeValues) {
         this.ipAddress = ipAddress;
         this.deviceName = deviceName;
+        this.discreteVolumeValues = discreteVolumeValues;
     }
 
     public String getIpAddress() {
@@ -33,6 +37,25 @@ public class DeviceInfo {
 
     public String getDeviceName() {
         return deviceName;
+    }
+
+    public String[] getDiscreteVolumeValues() {
+        return discreteVolumeValues;
+    }
+
+    public int getFirstDiscreteVolumeValue() {
+        int volume = -1;
+        if (discreteVolumeValues != null && discreteVolumeValues.length > 0) {
+            String volumeString = discreteVolumeValues[0];
+            if (volumeString != null) {
+                try {
+                    volume = Integer.parseInt(volumeString);
+                } catch (NumberFormatException e) {
+                    volume = -1;
+                }
+            }
+        }
+        return volume;
     }
 
     @Override
@@ -53,14 +76,16 @@ public class DeviceInfo {
 
         if (deviceName != null ? !deviceName.equals(that.deviceName) : that.deviceName != null)
             return false;
-        return !(ipAddress != null ? !ipAddress.equals(that.ipAddress) : that.ipAddress != null);
-
+        if (ipAddress != null ? !ipAddress.equals(that.ipAddress) : that.ipAddress != null)
+            return false;
+        return Arrays.equals(discreteVolumeValues, that.discreteVolumeValues);
     }
 
     @Override
     public int hashCode() {
         int result = deviceName != null ? deviceName.hashCode() : 0;
         result = 31 * result + (ipAddress != null ? ipAddress.hashCode() : 0);
+        result = 31 * result + (discreteVolumeValues != null ? Arrays.hashCode(discreteVolumeValues) : 0);
         return result;
     }
 }

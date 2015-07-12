@@ -39,5 +39,14 @@
             android:inputType="number"
             android:digits="0123456789."
             android:hint="@string/edit_ip_address" />
+
+        <EditText
+            android:id="@+id/edit_discrete_volume"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:digits="0123456789"
+            android:hint="@string/edit_discrete_volume" />
     </LinearLayout>
 </FrameLayout>

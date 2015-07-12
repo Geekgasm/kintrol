@@ -89,6 +89,7 @@ public class DeviceChooserActivity extends ActionBarActivity {
         Intent intent = new Intent(this, DeviceControlActivity.class);
         intent.putExtra(DeviceControlActivity.EXTRA_IP_ADDRESS, deviceInfo.getIpAddress());
         intent.putExtra(DeviceControlActivity.EXTRA_DEVICE_NAME, deviceInfo.getDeviceName());
+        intent.putExtra(DeviceControlActivity.EXTRA_DEVICE_VOLUMES, deviceInfo.getDiscreteVolumeValues());
         startActivity(intent);
     }
 
@@ -97,6 +98,7 @@ public class DeviceChooserActivity extends ActionBarActivity {
         View promptsView = li.inflate(R.layout.fragment_dialog_edit_device, null);
         final EditText deviceNameText = (EditText) promptsView.findViewById(R.id.edit_device_name);
         final EditText ipAddressText = (EditText) promptsView.findViewById(R.id.edit_ip_address);
+        final EditText discreteVolumeText = (EditText) promptsView.findViewById(R.id.edit_discrete_volume);
         final ArrayAdapter<DeviceInfo> adapter = deviceInfoAdapter;
         AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .setView(promptsView)
@@ -105,7 +107,7 @@ public class DeviceChooserActivity extends ActionBarActivity {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        DeviceInfo newDevice = new DeviceInfo(ipAddressText.getText().toString(), deviceNameText.getText().toString());
+                        DeviceInfo newDevice = new DeviceInfo(ipAddressText.getText().toString(), deviceNameText.getText().toString(), getDiscreteVolumes(discreteVolumeText));
                         deviceList.add(newDevice);
                         deviceListPersistor.saveDeviceList(deviceList);
                         adapter.notifyDataSetChanged();
@@ -118,6 +120,17 @@ public class DeviceChooserActivity extends ActionBarActivity {
                     }
                 }).create();
         alertDialog.show();
+    }
+
+    static String[] getDiscreteVolumes(EditText discreteVolumeText) {
+        String discreteVolume = discreteVolumeText.getText().toString();
+        if (discreteVolume == null) return null;
+        try {
+            int volumeValue = Integer.parseInt(discreteVolume);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+        return new String[]{discreteVolume};
     }
 
     public void showAbout(MenuItem item) {

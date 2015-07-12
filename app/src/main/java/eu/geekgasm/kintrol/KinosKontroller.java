@@ -162,6 +162,10 @@ public class KinosKontroller {
         sendCommand("$MUTE TOGGLE$");
     }
 
+    public void setVolume(int volume) {
+        sendCommand("$VOLUME = " + volume + "$");
+    }
+
     public void previousSurroundMode() {
         sendCommand("$SURROUND -$");
     }

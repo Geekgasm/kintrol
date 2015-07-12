@@ -173,6 +173,15 @@ public class KinosKontrollerThread extends HandlerThread implements KinosStatusC
         });
     }
 
+    public void setVolume(final int volume) {
+        post(new Runnable() {
+            @Override
+            public void run() {
+                kontroller.setVolume(volume);
+            }
+        });
+    }
+
     public void previousSurroundMode() {
         post(new Runnable() {
             @Override
@@ -210,4 +219,5 @@ public class KinosKontrollerThread extends HandlerThread implements KinosStatusC
         }
         return handler;
     }
+
 }

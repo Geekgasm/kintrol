@@ -72,7 +72,7 @@
         android:orientation="vertical">
 
         <TableRow
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <TextView
@@ -90,12 +90,13 @@
                 android:onClick="muteToggle"
                 android:text="@string/mute" />
 
-            <TextView
+            <Button
+                android:id="@+id/discrete_volume_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="              "
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                android:onClick="setDiscreteVolume"
+                android:visibility="invisible" />
 
         </TableRow>
 

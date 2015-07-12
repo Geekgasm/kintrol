@@ -36,6 +36,7 @@
 
     <string name="edit_device_name">Device name</string>
     <string name="edit_ip_address">IP address</string>
+    <string name="edit_discrete_volume">Discrete Volume Value</string>
     <string name="app_descrip">
         <![CDATA[
         Remote control app for LINN&reg; KINOS&trade; and KISTO&trade; system controllers.<br>
