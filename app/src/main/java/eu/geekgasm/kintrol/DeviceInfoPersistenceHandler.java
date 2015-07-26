@@ -34,12 +34,13 @@ public class DeviceInfoPersistenceHandler {
     }
 
     public synchronized void loadDeviceList(List<DeviceInfo> deviceList) {
+        deviceList.clear();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String deviceJson = preferences.getString(DEVICES_PREF_KEY, null);
         Gson gson = new Gson();
         DeviceInfo[] deviceArray = gson.fromJson(deviceJson, DeviceInfo[].class);
-        deviceList.clear();
-        deviceList.addAll(Arrays.asList(deviceArray));
+        if (deviceArray != null)
+            deviceList.addAll(Arrays.asList(deviceArray));
     }
 
     private void save(Context context, String deviceListString) {
