@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generated with http://android-holo-colors.com -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="RemoteTheme" parent="@style/_RemoteTheme" />
+
+    <style name="_RemoteTheme" parent="Theme.AppCompat">
+
+        <item name="android:editTextStyle">@style/EditTextRemoteTheme</item>
+
+        <item name="android:textColorHighlight">#9933b5e5</item>
+
+        <item name="android:checkboxStyle">@style/CheckBoxRemoteTheme</item>
+
+        <item name="android:buttonStyle">@style/ButtonRemoteTheme</item>
+
+        <item name="android:imageButtonStyle">@style/ImageButtonRemoteTheme</item>
+
+        <item name="android:listViewStyle">@style/ListViewRemoteTheme</item>
+
+        <item name="android:listViewWhiteStyle">@style/ListViewRemoteTheme.White</item>
+
+        <item name="android:spinnerItemStyle">@style/SpinnerItemRemoteTheme</item>
+
+    </style>
+
+</resources>

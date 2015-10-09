@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generated with http://android-holo-colors.com -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="RemoteTheme" parent="@style/_RemoteTheme">
+
+        <item name="android:textSelectHandleLeft">@drawable/remotetheme_text_select_handle_left
+        </item>
+        <item name="android:textSelectHandleRight">@drawable/remotetheme_text_select_handle_right
+        </item>
+        <item name="android:textSelectHandle">@drawable/remotetheme_text_select_handle_middle</item>
+
+    </style>
+
+</resources>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generated with http://android-holo-colors.com -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="RemoteTheme" parent="@style/_RemoteTheme" />
+
+    <style name="_RemoteTheme" parent="Theme.AppCompat">
+
+        <item name="android:editTextBackground">@drawable/remotetheme_edit_text_holo_dark</item>
+
+        <item name="android:textColorHighlight">#9933b5e5</item>
+        <item name="android:textSelectHandleLeft">@drawable/remotetheme_text_select_handle_left
+        </item>
+        <item name="android:textSelectHandleRight">@drawable/remotetheme_text_select_handle_right
+        </item>
+        <item name="android:textSelectHandle">@drawable/remotetheme_text_select_handle_middle</item>
+
+        <item name="android:listChoiceIndicatorMultiple">@drawable/remotetheme_btn_check_holo_dark
+        </item>
+
+        <item name="android:buttonStyle">@style/ButtonRemoteTheme</item>
+
+        <item name="android:imageButtonStyle">@style/ImageButtonRemoteTheme</item>
+
+        <item name="android:listChoiceBackgroundIndicator">
+            @drawable/remotetheme_list_selector_holo_dark
+        </item>
+
+        <item name="android:activatedBackgroundIndicator">
+            @drawable/remotetheme_activated_background_holo_dark
+        </item>
+
+    </style>
+
+</resources>
