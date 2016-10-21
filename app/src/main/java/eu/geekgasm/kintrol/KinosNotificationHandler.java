@@ -78,8 +78,6 @@ public class KinosNotificationHandler implements Runnable {
 
     private boolean updateVolumeStatus(String deviceData) {
         boolean updateStatus = false;
-        String volume = currentVolume;
-
         Matcher volumeMatcher = VOLUME_STATUS_PATTERN.matcher(deviceData);
         if (volumeMatcher.matches()) {
             currentVolume = volumeMatcher.group(2);
@@ -88,15 +86,11 @@ public class KinosNotificationHandler implements Runnable {
         Matcher muteMatcher = MUTE_STATUS_PATTERN.matcher(deviceData);
         if (muteMatcher.matches()) {
             String muted = muteMatcher.group(2);
-            if ("ON".equals(muted)) {
-                volume = "MUTED";
-            } else {
-                volume = currentVolume;
-            }
+            isMuted = "ON".equals(muted);
             updateStatus = true;
         }
         if (updateStatus) {
-            notificationListener.handleVolumeUpdate(volume);
+            notificationListener.handleVolumeUpdate(isMuted ? "MUTED" : currentVolume);
             notificationListener.handleOperationStatusUpdate(KinosNotificationListener.OPERATIONAL_STATUS_TEXT);
         }
         return updateStatus;
