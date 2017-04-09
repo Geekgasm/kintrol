@@ -29,6 +29,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +47,11 @@ public class DeviceChooserActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        /**
+         * catch unexpected error
+         */
+        Thread.setDefaultUncaughtExceptionHandler(new FatalityHander());
+
         setContentView(R.layout.activity_device_choser);
         deviceListView = (ListView) findViewById(R.id.deviceListView);
         new DeviceInfoPersistenceHandler(this).loadDeviceList(deviceList);
@@ -88,6 +95,8 @@ public class DeviceChooserActivity extends ActionBarActivity {
     private void startControlActivity(DeviceInfo deviceInfo) {
         Intent intent = new Intent(this, DeviceControlActivity.class);
         intent.putExtra(DeviceControlActivity.EXTRA_IP_ADDRESS, deviceInfo.getIpAddress());
+        intent.putExtra(DeviceControlActivity.EXTRA_PORT, deviceInfo.getPort());
+        intent.putExtra(DeviceControlActivity.EXTRA_DEVICE_TYPE, deviceInfo.getDeviceType());
         intent.putExtra(DeviceControlActivity.EXTRA_DEVICE_NAME, deviceInfo.getDeviceName());
         intent.putExtra(DeviceControlActivity.EXTRA_DEVICE_VOLUMES, deviceInfo.getDiscreteVolumeValues());
         startActivity(intent);
@@ -96,8 +105,10 @@ public class DeviceChooserActivity extends ActionBarActivity {
     public void openAddDeviceDialog(MenuItem item) {
         LayoutInflater li = LayoutInflater.from(this);
         View promptsView = li.inflate(R.layout.fragment_dialog_edit_device, null);
+        final RadioGroup deviceTypeGroup = (RadioGroup) promptsView.findViewById(R.id.device_type_group);
         final EditText deviceNameText = (EditText) promptsView.findViewById(R.id.edit_device_name);
         final EditText ipAddressText = (EditText) promptsView.findViewById(R.id.edit_ip_address);
+        final EditText portText = (EditText) promptsView.findViewById(R.id.edit_port);
         final EditText discreteVolumeText = (EditText) promptsView.findViewById(R.id.edit_discrete_volume);
         final ArrayAdapter<DeviceInfo> adapter = deviceInfoAdapter;
         AlertDialog alertDialog = new AlertDialog.Builder(this)
@@ -107,7 +118,12 @@ public class DeviceChooserActivity extends ActionBarActivity {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        DeviceInfo newDevice = new DeviceInfo(ipAddressText.getText().toString(), deviceNameText.getText().toString(), getDiscreteVolumes(discreteVolumeText));
+                        DeviceInfo newDevice = new DeviceInfo(
+                                ipAddressText.getText().toString(),
+                                portText.getText().toString(),
+                                DeviceInfo.getDeviceTypeById(getDeviceTypeId(deviceTypeGroup)),
+                                deviceNameText.getText().toString(),
+                                getDiscreteVolumes(discreteVolumeText));
                         deviceList.add(newDevice);
                         deviceListPersistor.saveDeviceList(deviceList);
                         adapter.notifyDataSetChanged();
@@ -131,6 +147,12 @@ public class DeviceChooserActivity extends ActionBarActivity {
             return null;
         }
         return new String[]{discreteVolume};
+    }
+
+    static int getDeviceTypeId(RadioGroup deviceTypeGroup) {
+        RadioButton deviceType = (RadioButton) deviceTypeGroup.findViewById(deviceTypeGroup.getCheckedRadioButtonId());
+        int deviceTypeId = deviceTypeGroup.getCheckedRadioButtonId();
+        return  deviceTypeId;
     }
 
     public void showAbout(MenuItem item) {

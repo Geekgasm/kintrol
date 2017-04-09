@@ -19,36 +19,36 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
 
-public class KinosKontrollerThread extends HandlerThread implements KinosStatusChecker {
+public class KontrollerThread extends HandlerThread implements StatusChecker {
 
-    private static final String TAG = KinosKontrollerThread.class.getSimpleName();
+    private static final String TAG = KontrollerThread.class.getSimpleName();
 
-    private static final int PORT = 9004;
-    private final String ipAddress;
-    private final KinosNotificationListener notificationListener;
-    private KinosKontroller kontroller;
+    private DeviceInfo deviceInfo;
+    private final NotificationListener notificationListener;
+    private Kontroller kontroller;
     private Handler handler;
 
-    public KinosKontrollerThread(String ipAddress, KinosNotificationListener notificationListener) {
-        super("Kinos Kontroller Thread");
-        this.ipAddress = ipAddress;
+    public KontrollerThread(DeviceInfo deviceInfo, NotificationListener notificationListener) {
+        super("Kontroller Thread");
+        this.deviceInfo = deviceInfo;
         this.notificationListener = notificationListener;
     }
 
     @Override
     protected void onLooperPrepared() {
-        Log.i(TAG, "KinosKontrollerThread starts KinosKontroller");
-        kontroller = new KinosKontroller(ipAddress, notificationListener, this);
+        Log.i(TAG, "KontrollerThread starts Kontroller");
+        Device device = new DeviceDirectory().getDevice(deviceInfo.deviceType);
+        kontroller = new Kontroller(deviceInfo.ipAddress, deviceInfo.getPort(), notificationListener, this, device);
         kontroller.start();
-        Log.i(TAG, "KinosKontrollerThread entering the loop");
+        Log.i(TAG, "KontrollerThread entering the loop");
     }
 
 
     // This method is allowed to be called from any thread
     public synchronized void requestStop() {
-        Log.i(TAG, "KinosKontrollerThread loop quitting by request");
+        Log.i(TAG, "KontrollerThread loop quitting by request");
         quit();
-        Log.i(TAG, "Shutting down KinosKontroller");
+        Log.i(TAG, "Shutting down Kontroller");
         if (kontroller != null) {
             kontroller.stop();
             kontroller = null;
@@ -150,6 +150,16 @@ public class KinosKontrollerThread extends HandlerThread implements KinosStatusC
             @Override
             public void run() {
                 kontroller.checkInputProfile();
+            }
+        });
+    }
+
+    @Override
+    public void checkInputName(final String currentInputProfileId) {
+        post(new Runnable() {
+            @Override
+            public void run() {
+                kontroller.checkInputName(currentInputProfileId);
             }
         });
     }

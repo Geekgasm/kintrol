@@ -15,7 +15,7 @@
  */
 package eu.geekgasm.kintrol;
 
-public interface KinosNotificationListener {
+public interface NotificationListener {
 
     public static final String NOT_AVAILABLE = "---";
     public static final String OPERATIONAL_STATUS_TEXT = "Operational";

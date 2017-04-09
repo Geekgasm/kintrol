@@ -34,16 +34,21 @@
     <string name="source_up">Src+</string>
     <string name="mute">Mute</string>
 
+    <string name="edit_device_type">Device type</string>
+    <string name="kinos">Kinos</string>
+    <string name="kisto">Kisto</string>
+    <string name="klimax_kontrol">Klimax Kontrol</string>
     <string name="edit_device_name">Device name</string>
     <string name="edit_ip_address">IP address</string>
+    <string name="edit_port">Port</string>
     <string name="edit_discrete_volume">Discrete Volume Value</string>
     <string name="app_descrip">
         <![CDATA[
-        Remote control app for LINN&reg; KINOS&trade; and KISTO&trade; system controllers.<br>
+        Remote control app for LINN&reg; KINOS&trade;, KISTO&trade; and Klimax Kontrol&trade; system controllers.<br>
         ]]></string>
     <string name="app_credits">
     <![CDATA[
-    &copy; 2015 Oliver Götz<br>
+    &copy; 2015-2017 Oliver Götz<br>
     App icon designed by Mr. Truesound<p>
     This program is free software: you can redistribute it and/or modify
     it under the terms of the <a href="http://www.gnu.org/licenses/gpl.html">GNU General Public

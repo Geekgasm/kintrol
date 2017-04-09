@@ -15,16 +15,26 @@
  */
 package eu.geekgasm.kintrol;
 
-public interface KinosStatusChecker {
-    public void checkDeviceStatus(long delayMillis);
-
-    public void checkDeviceStatus();
-
-    public void checkForOperationStatus();
-
-    public void checkVolume();
-
-    public void checkInputProfile();
-
-    public void checkSurroundMode();
+public enum KommandKey {
+    checkVolume,
+    checkMuteStatus,
+    checkInputProfile,
+    checkInputName,
+    checkSurroundMode,
+    checkDeviceId,
+    checkPowerCounter,
+    checkSoftwareVersion,
+    checkOperationStatus,
+    switchOn,
+    switchOff,
+    decreaseVolume,
+    increaseVolume,
+    previousInputProfile,
+    nextInputProfile,
+    toggleMute,
+    muteOn,
+    muteOff,
+    setVolume,
+    previousSurroundMode,
+    nextSurroundMode
 }

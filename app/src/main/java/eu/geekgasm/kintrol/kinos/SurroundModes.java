@@ -13,9 +13,11 @@
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.geekgasm.kintrol;
+package eu.geekgasm.kintrol.kinos;
 
 import android.util.SparseArray;
+
+import eu.geekgasm.kintrol.NotificationListener;
 
 public class SurroundModes {
     private static final SparseArray<String> SURROUND_MODES = new SparseArray<>(43);
@@ -67,8 +69,8 @@ public class SurroundModes {
     }
 
     public static String renderSurroundModeString(String surroundModeCode) {
-        if (surroundModeCode == null || surroundModeCode.equals(KinosNotificationListener.NOT_AVAILABLE))
-            return KinosNotificationListener.NOT_AVAILABLE;
+        if (surroundModeCode == null || surroundModeCode.equals(NotificationListener.NOT_AVAILABLE))
+            return NotificationListener.NOT_AVAILABLE;
         try {
             int code = Integer.parseInt(surroundModeCode);
             String surroundMode = SURROUND_MODES.get(code);

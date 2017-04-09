@@ -17,12 +17,37 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="eu.geekgasm.DeviceChooserActivity">
+    tools:context="eu.geekgasm.kintrol.DeviceChooserActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
+        <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/device_type_group"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/device_type_caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/edit_device_type"
+                />
+            <RadioButton android:id="@+id/radio_kinos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/kinos"/>
+            <RadioButton android:id="@+id/radio_kisto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/kisto"/>
+            <RadioButton android:id="@+id/radio_klimax_kontrol"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/klimax_kontrol"/>
+        </RadioGroup>
 
         <EditText
             android:id="@+id/edit_device_name"
@@ -38,6 +63,14 @@
             android:layout_height="wrap_content"
             android:digits="0123456789."
             android:hint="@string/edit_ip_address" />
+
+        <EditText
+            android:id="@+id/edit_port"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:digits="0123456789."
+            android:hint="@string/edit_port" />
 
         <EditText
             android:id="@+id/edit_discrete_volume"
