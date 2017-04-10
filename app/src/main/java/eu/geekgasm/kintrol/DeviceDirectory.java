@@ -21,8 +21,12 @@ import eu.geekgasm.kintrol.klimaxKontrol.KlimaxKontrolDevice;
 
 public class DeviceDirectory {
 
-    public Device getDevice(String deviceType) {
-        switch (deviceType) {
+    public static String denullify(String inputString) {
+        return inputString == null ? "" : inputString;
+    }
+
+    public static Device getDevice(String deviceType) {
+        switch (denullify(deviceType)) {
             case "kisto":
                 return new KistoDevice();
             case "klimax kontrol":
@@ -31,6 +35,18 @@ public class DeviceDirectory {
             default:
                 return new KinosDevice();
         }
-
     }
+
+    public static Device getDeviceById(int id) {
+        switch (id) {
+            case R.id.radio_kisto:
+                return new KistoDevice();
+            case R.id.radio_klimax_kontrol:
+                return new KlimaxKontrolDevice();
+            case R.id.radio_kinos:
+            default:
+                return new KinosDevice();
+        }
+    }
+
 }

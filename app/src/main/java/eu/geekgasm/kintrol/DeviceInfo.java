@@ -48,30 +48,7 @@ public class DeviceInfo {
     }
 
     public int getDeviceTypeId() {
-        if (deviceType==null) {
-            return R.id.radio_kinos;
-        }
-        switch (deviceType) {
-            case "kisto":
-                return R.id.radio_kisto;
-            case "klimax kontrol":
-                return R.id.radio_klimax_kontrol;
-            case "kinos":
-            default:
-                return R.id.radio_kinos;
-        }
-    }
-
-    static public String getDeviceTypeById(int id) {
-        switch (id) {
-            case R.id.radio_kisto:
-                return "kisto";
-            case R.id.radio_klimax_kontrol:
-                return "klimax kontrol";
-            case R.id.radio_kinos:
-            default:
-                return "kinos";
-        }
+        return DeviceDirectory.getDevice(deviceType).getDeviveTypeRadioButtonId();
     }
 
     public String getDeviceName() {

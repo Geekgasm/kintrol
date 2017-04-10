@@ -44,6 +44,23 @@ public class DeviceChooserActivity extends ActionBarActivity {
     private ListView deviceListView;
     private ArrayAdapter<DeviceInfo> deviceInfoAdapter;
 
+    static String[] getDiscreteVolumes(EditText discreteVolumeText) {
+        String discreteVolume = discreteVolumeText.getText().toString();
+        if (discreteVolume == null) return null;
+        try {
+            int volumeValue = Integer.parseInt(discreteVolume);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+        return new String[]{discreteVolume};
+    }
+
+    static int getDeviceTypeId(RadioGroup deviceTypeGroup) {
+        RadioButton deviceType = (RadioButton) deviceTypeGroup.findViewById(deviceTypeGroup.getCheckedRadioButtonId());
+        int deviceTypeId = deviceTypeGroup.getCheckedRadioButtonId();
+        return deviceTypeId;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,7 +138,7 @@ public class DeviceChooserActivity extends ActionBarActivity {
                         DeviceInfo newDevice = new DeviceInfo(
                                 ipAddressText.getText().toString(),
                                 portText.getText().toString(),
-                                DeviceInfo.getDeviceTypeById(getDeviceTypeId(deviceTypeGroup)),
+                                DeviceDirectory.getDeviceById(getDeviceTypeId(deviceTypeGroup)).getDeviceName(),
                                 deviceNameText.getText().toString(),
                                 getDiscreteVolumes(discreteVolumeText));
                         deviceList.add(newDevice);
@@ -136,23 +153,6 @@ public class DeviceChooserActivity extends ActionBarActivity {
                     }
                 }).create();
         alertDialog.show();
-    }
-
-    static String[] getDiscreteVolumes(EditText discreteVolumeText) {
-        String discreteVolume = discreteVolumeText.getText().toString();
-        if (discreteVolume == null) return null;
-        try {
-            int volumeValue = Integer.parseInt(discreteVolume);
-        } catch (NumberFormatException e) {
-            return null;
-        }
-        return new String[]{discreteVolume};
-    }
-
-    static int getDeviceTypeId(RadioGroup deviceTypeGroup) {
-        RadioButton deviceType = (RadioButton) deviceTypeGroup.findViewById(deviceTypeGroup.getCheckedRadioButtonId());
-        int deviceTypeId = deviceTypeGroup.getCheckedRadioButtonId();
-        return  deviceTypeId;
     }
 
     public void showAbout(MenuItem item) {

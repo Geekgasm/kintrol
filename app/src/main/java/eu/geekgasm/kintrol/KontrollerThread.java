@@ -37,7 +37,7 @@ public class KontrollerThread extends HandlerThread implements StatusChecker {
     @Override
     protected void onLooperPrepared() {
         Log.i(TAG, "KontrollerThread starts Kontroller");
-        Device device = new DeviceDirectory().getDevice(deviceInfo.deviceType);
+        Device device = DeviceDirectory.getDevice(deviceInfo.deviceType);
         kontroller = new Kontroller(deviceInfo.ipAddress, deviceInfo.getPort(), notificationListener, this, device);
         kontroller.start();
         Log.i(TAG, "KontrollerThread entering the loop");

@@ -22,11 +22,14 @@ import java.util.regex.Pattern;
 
 import eu.geekgasm.kintrol.Device;
 import eu.geekgasm.kintrol.KommandKey;
+import eu.geekgasm.kintrol.R;
 import eu.geekgasm.kintrol.ResponseValueKey;
 
 public class KlimaxKontrolDevice implements Device {
 
     private static final Map<KommandKey, String> COMMANDS = new EnumMap<KommandKey, String>(KommandKey.class);
+    private static final Map<ResponseValueKey, Pattern> RESPONSE_PATTERNS = new EnumMap<ResponseValueKey, Pattern>(ResponseValueKey.class);
+
     static {
         COMMANDS.put(KommandKey.checkVolume, "VOL ?");
         COMMANDS.put(KommandKey.checkMuteStatus, "MUTE ?");
@@ -47,7 +50,6 @@ public class KlimaxKontrolDevice implements Device {
         COMMANDS.put(KommandKey.setVolume, "VOL = ");
     }
 
-    private static final Map<ResponseValueKey, Pattern> RESPONSE_PATTERNS = new EnumMap<ResponseValueKey, Pattern>(ResponseValueKey.class);
     static {
         RESPONSE_PATTERNS.put(ResponseValueKey.VOLUME_STATUS, compile("VOL ([^\\$]+)"));
         RESPONSE_PATTERNS.put(ResponseValueKey.MUTE_STATUS, compile("MUTE ([^\\$]+)"));
@@ -60,7 +62,7 @@ public class KlimaxKontrolDevice implements Device {
     }
 
     private static Pattern compile(String responsePattern) {
-        return Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$"+responsePattern+"\\$.*", Pattern.DOTALL);
+        return Pattern.compile(".*\\!?(\\#[^#]*\\#)?\\$" + responsePattern + "\\$.*", Pattern.DOTALL);
     }
 
     @Override
@@ -81,5 +83,10 @@ public class KlimaxKontrolDevice implements Device {
     @Override
     public boolean hasSurround() {
         return false;
+    }
+
+    @Override
+    public int getDeviveTypeRadioButtonId() {
+        return R.id.radio_klimax_kontrol;
     }
 }

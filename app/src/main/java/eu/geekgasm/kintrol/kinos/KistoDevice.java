@@ -15,9 +15,16 @@
  */
 package eu.geekgasm.kintrol.kinos;
 
+import eu.geekgasm.kintrol.R;
+
 public class KistoDevice extends KinosKistoDevice {
     @Override
     public String getDeviceName() {
         return "kisto";
+    }
+
+    @Override
+    public int getDeviveTypeRadioButtonId() {
+        return R.id.radio_kisto;
     }
 }

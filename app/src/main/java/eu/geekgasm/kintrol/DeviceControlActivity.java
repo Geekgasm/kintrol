@@ -118,7 +118,7 @@ public class DeviceControlActivity extends ActionBarActivity implements Notifica
             discreteVolumeButton.setVisibility(View.INVISIBLE);
         }
 
-        int surroundVisibility = new DeviceDirectory().getDevice(deviceInfo.deviceType).hasSurround()
+        int surroundVisibility = DeviceDirectory.getDevice(deviceInfo.deviceType).hasSurround()
                 ? View.VISIBLE
                 : View.INVISIBLE;
         View surroundView = findViewById(R.id.surround_group);
@@ -331,7 +331,7 @@ public class DeviceControlActivity extends ActionBarActivity implements Notifica
                         final DeviceInfo newDevice = new DeviceInfo(
                                 ipAddressText.getText().toString(),
                                 portText.getText().toString(),
-                                DeviceInfo.getDeviceTypeById(DeviceChooserActivity.getDeviceTypeId(deviceTypeGroup)),
+                                DeviceDirectory.getDeviceById(DeviceChooserActivity.getDeviceTypeId(deviceTypeGroup)).getDeviceName(),
                                 deviceNameText.getText().toString(),
                                 DeviceChooserActivity.getDiscreteVolumes(discreteVolumeText));
                         deviceListPersistor.updateDevice(deviceInfo, newDevice);
