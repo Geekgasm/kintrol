@@ -23,5 +23,5 @@ public interface Device {
     Map<KommandKey, String> getCommands();
     Map<ResponseValueKey, Pattern> getResponsePatterns();
     boolean hasSurround();
-    int getDeviveTypeRadioButtonId();
+    int getDeviceTypeRadioButtonId();
 }

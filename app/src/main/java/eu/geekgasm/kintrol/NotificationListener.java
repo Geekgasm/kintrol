@@ -34,6 +34,8 @@ public interface NotificationListener {
 
     void handleSoftwareVersionUpdate(String softwareVersion);
 
+    void handleHardwareVersionUpdate(String hardwareVersion);
+
     void handleSurroundModeUpdate(String currentSurroundMode);
 
     void handleNoConnectionStatusUpdate();

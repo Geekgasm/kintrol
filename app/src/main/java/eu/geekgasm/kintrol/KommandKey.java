@@ -24,6 +24,7 @@ public enum KommandKey {
     checkDeviceId,
     checkPowerCounter,
     checkSoftwareVersion,
+    checkHardwareVersion,
     checkOperationStatus,
     switchOn,
     switchOff,

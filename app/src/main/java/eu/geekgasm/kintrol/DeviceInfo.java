@@ -48,7 +48,7 @@ public class DeviceInfo {
     }
 
     public int getDeviceTypeId() {
-        return DeviceDirectory.getDevice(deviceType).getDeviveTypeRadioButtonId();
+        return DeviceDirectory.getDevice(deviceType).getDeviceTypeRadioButtonId();
     }
 
     public String getDeviceName() {

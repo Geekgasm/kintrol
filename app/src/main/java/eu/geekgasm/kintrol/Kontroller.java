@@ -110,7 +110,7 @@ public class Kontroller {
     }
 
     public void checkDeviceStatus() {
-        checkForOperationStatus();
+        checkOperationStatus();
         checkVolume();
         checkMuteStatus();
         checkInputProfile();
@@ -118,9 +118,10 @@ public class Kontroller {
         checkDeviceId();
         checkPowerCounter();
         checkSoftwareVersion();
+        checkHardwareVersion();
     }
 
-    public void checkForOperationStatus() {
+    public void checkOperationStatus() {
         sendCommand(device.getCommands().get(KommandKey.checkOperationStatus));
     }
 
@@ -157,6 +158,10 @@ public class Kontroller {
 
     public void checkSoftwareVersion() {
         sendCommand(device.getCommands().get(KommandKey.checkSoftwareVersion));
+    }
+
+    public void checkHardwareVersion() {
+        sendCommand(device.getCommands().get(KommandKey.checkHardwareVersion));
     }
 
     public void switchOn() {

@@ -18,10 +18,6 @@ package eu.geekgasm.kintrol;
 public interface StatusChecker {
     public void checkDeviceStatus(long delayMillis);
 
-    public void checkDeviceStatus();
-
-    public void checkForOperationStatus();
-
     public void checkVolume();
 
     public void checkInputProfile();

@@ -36,8 +36,8 @@ public class KlimaxKontrolDevice implements Device {
         COMMANDS.put(KommandKey.checkInputProfile, "LISTEN ?");
         COMMANDS.put(KommandKey.checkInputName, "INPUT %s NAME ?");
         COMMANDS.put(KommandKey.checkPowerCounter, "COUNTER POWER ?");
-        COMMANDS.put(KommandKey.checkSoftwareVersion, "VERSION SOFTWARE ?");
-        COMMANDS.put(KommandKey.checkSoftwareVersion, "VERSION HARDWARE ?");
+        COMMANDS.put(KommandKey.checkSoftwareVersion, "VERSION SOFTWARE");
+        COMMANDS.put(KommandKey.checkHardwareVersion, "VERSION HARDWARE");
         COMMANDS.put(KommandKey.checkOperationStatus, "STANDBY ?");
         COMMANDS.put(KommandKey.switchOn, "STANDBY N");
         COMMANDS.put(KommandKey.switchOff, "STANDBY Y");
@@ -57,7 +57,7 @@ public class KlimaxKontrolDevice implements Device {
         RESPONSE_PATTERNS.put(ResponseValueKey.INPUT_NAME, compile("INPUT \\d+ NAME ([^\\$]+)"));
         RESPONSE_PATTERNS.put(ResponseValueKey.POWER_COUNTER, compile("COUNTER POWER ([^\\$]+)"));
         RESPONSE_PATTERNS.put(ResponseValueKey.SOFTWARE_VERSION, compile("VERSION (SOFTWARE [^\\$]+)"));
-        RESPONSE_PATTERNS.put(ResponseValueKey.HARDWARE_VERSION, compile("VERSION (HARDWARE [^\\$]+)"));
+        RESPONSE_PATTERNS.put(ResponseValueKey.HARDWARE_VERSION, compile("VERSION HARDWARE ([^\\$]+)"));
         RESPONSE_PATTERNS.put(ResponseValueKey.STANDBY_STATUS, compile("STANDBY ([^\\$]+)"));
     }
 
@@ -86,7 +86,7 @@ public class KlimaxKontrolDevice implements Device {
     }
 
     @Override
-    public int getDeviveTypeRadioButtonId() {
+    public int getDeviceTypeRadioButtonId() {
         return R.id.radio_klimax_kontrol;
     }
 }

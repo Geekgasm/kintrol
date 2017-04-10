@@ -120,21 +120,6 @@ public class KontrollerThread extends HandlerThread implements StatusChecker {
     }
 
     @Override
-    public void checkDeviceStatus() {
-        checkDeviceStatus(0);
-    }
-
-    @Override
-    public void checkForOperationStatus() {
-        post(new Runnable() {
-            @Override
-            public void run() {
-                kontroller.checkForOperationStatus();
-            }
-        });
-    }
-
-    @Override
     public void checkVolume() {
         post(new Runnable() {
             @Override

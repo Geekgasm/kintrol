@@ -24,7 +24,7 @@ public class KistoDevice extends KinosKistoDevice {
     }
 
     @Override
-    public int getDeviveTypeRadioButtonId() {
+    public int getDeviceTypeRadioButtonId() {
         return R.id.radio_kisto;
     }
 }

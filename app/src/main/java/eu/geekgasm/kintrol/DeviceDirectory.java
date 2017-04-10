@@ -21,7 +21,7 @@ import eu.geekgasm.kintrol.klimaxKontrol.KlimaxKontrolDevice;
 
 public class DeviceDirectory {
 
-    public static String denullify(String inputString) {
+    private static String denullify(String inputString) {
         return inputString == null ? "" : inputString;
     }
 

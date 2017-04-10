@@ -36,6 +36,7 @@ public class NotificationHandler implements Runnable {
     private Device device;
     private String currentVolume = NotificationListener.NOT_AVAILABLE;
     private boolean isMuted = false;
+    private boolean isOperational = false;
 
     public NotificationHandler(TelnetClient telnetClient,
                                NotificationListener notificationListener,
@@ -92,7 +93,7 @@ public class NotificationHandler implements Runnable {
             isMuted = isOn(muted);
             updateStatus = true;
         }
-        if (updateStatus) {
+        if (isOperational && updateStatus) {
             notificationListener.handleVolumeUpdate(isMuted ? "MUTED" : currentVolume);
             notificationListener.handleOperationStatusUpdate(NotificationListener.OPERATIONAL_STATUS_TEXT);
         }
@@ -101,7 +102,7 @@ public class NotificationHandler implements Runnable {
 
     private boolean updateInputProfileStatus(String deviceData) {
         Matcher matcher = getMatcher(ResponseValueKey.INPUT_PROFILE_STATUS, deviceData);
-        if (matches(matcher)) {
+        if (isOperational && matches(matcher)) {
             String currentInputProfileId = matcher.group(2);
             if (matcher.groupCount() >= 3) {
                 String currentInputProfileName = matcher.group(3);
@@ -117,7 +118,7 @@ public class NotificationHandler implements Runnable {
 
     private boolean updateInputNameStatus(String deviceData) {
         Matcher matcher = getMatcher(ResponseValueKey.INPUT_NAME, deviceData);
-        if (matches(matcher)) {
+        if (isOperational && matches(matcher)) {
             String currentInputProfileName = matcher.group(2).trim();
             notificationListener.handleSourceUpdate(currentInputProfileName);
             notificationListener.handleOperationStatusUpdate(NotificationListener.OPERATIONAL_STATUS_TEXT);
@@ -128,7 +129,7 @@ public class NotificationHandler implements Runnable {
 
     private boolean updateSurroundModeStatus(String deviceData) {
         Matcher matcher = getMatcher(ResponseValueKey.SURROUND_MODE, deviceData);
-        if (matches(matcher)) {
+        if (isOperational && matches(matcher)) {
             String currentSurroundMode = matcher.group(2);
             notificationListener.handleSurroundModeUpdate(currentSurroundMode);
             notificationListener.handleOperationStatusUpdate(NotificationListener.OPERATIONAL_STATUS_TEXT);
@@ -147,11 +148,13 @@ public class NotificationHandler implements Runnable {
                 statusChecker.checkVolume();
                 statusChecker.checkInputProfile();
                 statusChecker.checkSurroundMode();
+                isOperational = true;
             } else if (isOn(standbyStatus)) {
                 operationStatus = NotificationListener.STANDBY_STATUS_TEXT;
                 notificationListener.handleVolumeUpdate(NotificationListener.NOT_AVAILABLE);
                 notificationListener.handleSourceUpdate(NotificationListener.NOT_AVAILABLE);
                 notificationListener.handleSurroundModeUpdate(NotificationListener.NOT_AVAILABLE);
+                isOperational = false;
             } else {
                 operationStatus = standbyStatus;
             }
@@ -196,8 +199,8 @@ public class NotificationHandler implements Runnable {
     private boolean updateHardwareVersion(String deviceData) {
         Matcher matcher = getMatcher(ResponseValueKey.HARDWARE_VERSION, deviceData);
         if (matches(matcher)) {
-            String softwareVersion = matcher.group(2);
-            notificationListener.handleSoftwareVersionUpdate(softwareVersion);
+            String hardwareVersion = matcher.group(2);
+            notificationListener.handleHardwareVersionUpdate(hardwareVersion);
             return true;
         }
         return false;

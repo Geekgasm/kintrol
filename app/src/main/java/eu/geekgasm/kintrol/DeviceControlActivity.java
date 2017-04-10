@@ -21,7 +21,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBarActivity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -46,7 +45,7 @@ import java.util.Map;
 import eu.geekgasm.kintrol.kinos.SurroundModes;
 
 
-public class DeviceControlActivity extends ActionBarActivity implements NotificationListener {
+public class DeviceControlActivity extends AbstractDeviceActivity implements NotificationListener {
 
     public static final String EXTRA_IP_ADDRESS = "eu.geekgasm.kintrol.IP_ADDRESS";
     public static final String EXTRA_PORT = "eu.geekgasm.kintrol.PORT";
@@ -64,6 +63,7 @@ public class DeviceControlActivity extends ActionBarActivity implements Notifica
     private String powerCounterValue;
     private String deviceId;
     private String softwareVersion;
+    private String hardwareVersion;
     private AutoSizeText surroundModeView;
     private int discreteVolumeValue;
 
@@ -305,9 +305,12 @@ public class DeviceControlActivity extends ActionBarActivity implements Notifica
         this.softwareVersion = softwareVersion;
     }
 
-    public void openEditDeviceDialog(MenuItem item) {
+    @Override
+    public void handleHardwareVersionUpdate(String hardwareVersion) {
+        this.hardwareVersion = hardwareVersion;
+    }
 
-        final DeviceInfo newDevice = new DeviceInfo();
+    public void openEditDeviceDialog(MenuItem item) {
         LayoutInflater li = LayoutInflater.from(this);
         View promptsView = li.inflate(R.layout.fragment_dialog_edit_device, null);
         final RadioGroup deviceTypeGroup = (RadioGroup) promptsView.findViewById(R.id.device_type_group);
@@ -331,9 +334,9 @@ public class DeviceControlActivity extends ActionBarActivity implements Notifica
                         final DeviceInfo newDevice = new DeviceInfo(
                                 ipAddressText.getText().toString(),
                                 portText.getText().toString(),
-                                DeviceDirectory.getDeviceById(DeviceChooserActivity.getDeviceTypeId(deviceTypeGroup)).getDeviceName(),
+                                DeviceDirectory.getDeviceById(deviceTypeGroup.getCheckedRadioButtonId()).getDeviceName(),
                                 deviceNameText.getText().toString(),
-                                DeviceChooserActivity.getDiscreteVolumes(discreteVolumeText));
+                                getDiscreteVolumes(discreteVolumeText));
                         deviceListPersistor.updateDevice(deviceInfo, newDevice);
                         startControlActivity(newDevice);
                         finish();
@@ -401,8 +404,9 @@ public class DeviceControlActivity extends ActionBarActivity implements Notifica
         list.add(createListEntry("Device Name", deviceInfo.deviceName));
         list.add(createListEntry("IP Address", deviceInfo.ipAddress));
         list.add(createListEntry("Device ID", deviceId != null ? deviceId : "unknown"));
-        list.add(createListEntry("Total Operation Time", renderOperationTime(powerCounterValue)));
+        list.add(createListEntry("Operation Time", renderOperationTime(powerCounterValue)));
         addSoftwareVersions(list);
+        addHardwareVersions(list);
 
         return new SimpleAdapter(this, list, android.R.layout.simple_list_item_2, fromMapKey, toLayoutId);
     }
@@ -428,15 +432,17 @@ public class DeviceControlActivity extends ActionBarActivity implements Notifica
         }
     }
 
+    private void addHardwareVersions(List<Map<String, String>> list) {
+        if (hardwareVersion == null) {
+            list.add(createListEntry("Hardware Version", hardwareVersion));
+        }
+    }
+
     private HashMap<String, String> createListEntry(String key, String value) {
         HashMap<String, String> map = new HashMap<>();
         map.put("key", key);
         map.put("value", value);
         return map;
-    }
-
-    public void showAbout(MenuItem item) {
-        AboutDialog.showAbout(this);
     }
 
 }
