@@ -41,8 +41,8 @@ public class KlimaxKontrolDevice implements Device {
         COMMANDS.put(KommandKey.checkOperationStatus, "STANDBY ?");
         COMMANDS.put(KommandKey.switchOn, "STANDBY N");
         COMMANDS.put(KommandKey.switchOff, "STANDBY Y");
-        COMMANDS.put(KommandKey.decreaseVolume, "VOL -");
-        COMMANDS.put(KommandKey.increaseVolume, "VOL +");
+        COMMANDS.put(KommandKey.decreaseVolume, "VOL -1");
+        COMMANDS.put(KommandKey.increaseVolume, "VOL +1");
         COMMANDS.put(KommandKey.previousInputProfile, "LISTEN -");
         COMMANDS.put(KommandKey.nextInputProfile, "LISTEN +");
         COMMANDS.put(KommandKey.muteOn, "MUTE Y");

@@ -433,7 +433,7 @@ public class DeviceControlActivity extends AbstractDeviceActivity implements Not
     }
 
     private void addHardwareVersions(List<Map<String, String>> list) {
-        if (hardwareVersion == null) {
+        if (hardwareVersion != null) {
             list.add(createListEntry("Hardware Version", hardwareVersion));
         }
     }
