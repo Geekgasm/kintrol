@@ -37,6 +37,7 @@ public class NotificationHandler implements Runnable {
     private String currentVolume = NotificationListener.NOT_AVAILABLE;
     private boolean isMuted = false;
     private boolean isOperational = false;
+    private boolean isUnityGainOn = false;
 
     public NotificationHandler(TelnetClient telnetClient,
                                NotificationListener notificationListener,
@@ -69,6 +70,7 @@ public class NotificationHandler implements Runnable {
     }
 
     private void updateDeviceState(String deviceData) {
+        Log.d(TAG, "Received device data: " + deviceData);
         updateVolumeStatus(deviceData);
         updateInputProfileStatus(deviceData);
         updateInputNameStatus(deviceData);
@@ -87,6 +89,11 @@ public class NotificationHandler implements Runnable {
             currentVolume = volumeMatcher.group(2);
             updateStatus = true;
         }
+        Matcher unityGainMatcher = getMatcher(ResponseValueKey.INPUT_UNITY_GAIN, deviceData);
+        if (matches(unityGainMatcher)) {
+            isUnityGainOn = isOn(unityGainMatcher.group(2));
+            updateStatus = true;
+        }
         Matcher muteMatcher = getMatcher(ResponseValueKey.MUTE_STATUS, deviceData);
         if (matches(muteMatcher)) {
             String muted = muteMatcher.group(2);
@@ -94,7 +101,16 @@ public class NotificationHandler implements Runnable {
             updateStatus = true;
         }
         if (isOperational && updateStatus) {
-            notificationListener.handleVolumeUpdate(isMuted ? "MUTED" : currentVolume);
+            String volumeText;
+            if (isUnityGainOn) {
+                volumeText = NotificationListener.UNITY_GAIN_TEXT;
+            } else if (isMuted) {
+                volumeText = NotificationListener.MUTED_TEXT;
+            } else {
+                volumeText = currentVolume;
+            }
+            boolean buttonsEnabled = !isUnityGainOn;
+            notificationListener.handleVolumeUpdate(volumeText, buttonsEnabled);
             notificationListener.handleOperationStatusUpdate(NotificationListener.OPERATIONAL_STATUS_TEXT);
         }
         return updateStatus;
@@ -111,6 +127,7 @@ public class NotificationHandler implements Runnable {
             } else {
                 statusChecker.checkInputName(currentInputProfileId);
             }
+            statusChecker.checkUnityGain(currentInputProfileId);
             return true;
         }
         return false;
@@ -142,7 +159,7 @@ public class NotificationHandler implements Runnable {
         Matcher matcher = getMatcher(ResponseValueKey.STANDBY_STATUS, deviceData);
         if (matches(matcher)) {
             String standbyStatus = matcher.group(2);
-            String operationStatus = "<unknown>";
+            String operationStatus;
             if (isOff(standbyStatus)) {
                 operationStatus = NotificationListener.OPERATIONAL_STATUS_TEXT;
                 statusChecker.checkVolume();
@@ -151,7 +168,7 @@ public class NotificationHandler implements Runnable {
                 isOperational = true;
             } else if (isOn(standbyStatus)) {
                 operationStatus = NotificationListener.STANDBY_STATUS_TEXT;
-                notificationListener.handleVolumeUpdate(NotificationListener.NOT_AVAILABLE);
+                notificationListener.handleVolumeUpdate(NotificationListener.NOT_AVAILABLE, true);
                 notificationListener.handleSourceUpdate(NotificationListener.NOT_AVAILABLE);
                 notificationListener.handleSurroundModeUpdate(NotificationListener.NOT_AVAILABLE);
                 isOperational = false;

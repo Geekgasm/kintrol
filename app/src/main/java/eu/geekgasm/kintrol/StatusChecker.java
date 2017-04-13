@@ -22,6 +22,8 @@ public interface StatusChecker {
 
     public void checkInputProfile();
 
+    public void checkUnityGain(String currentInputProfileId);
+
     public void checkInputName(String currentInputProfileId);
 
     public void checkSurroundMode();

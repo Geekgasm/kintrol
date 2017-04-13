@@ -40,8 +40,8 @@
     <string name="klimax_kontrol">Klimax Kontrol</string>
     <string name="edit_device_name">Device name</string>
     <string name="edit_ip_address">IP address</string>
-    <string name="edit_port">Port</string>
-    <string name="edit_discrete_volume">Discrete Volume Value</string>
+    <string name="edit_port">Port (optional)</string>
+    <string name="edit_discrete_volume">Discrete Volume Value (optional)</string>
     <string name="app_descrip">
         <![CDATA[
         Remote control app for LINN&reg; KINOS&trade;, KISTO&trade; and Klimax Kontrol&trade; system controllers.<br>

@@ -18,6 +18,7 @@ package eu.geekgasm.kintrol;
 public enum ResponseValueKey {
     VOLUME_STATUS,
     MUTE_STATUS,
+    INPUT_UNITY_GAIN,
     INPUT_PROFILE_STATUS,
     INPUT_NAME,
     SURROUND_MODE,

@@ -83,7 +83,7 @@
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <Button
-                android:id="@+id/mute_button"
+                android:id="@+id/button_mute"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -91,7 +91,7 @@
                 android:text="@string/mute" />
 
             <Button
-                android:id="@+id/discrete_volume_button"
+                android:id="@+id/button_discrete_volume"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -105,6 +105,7 @@
             android:layout_height="wrap_content">
 
             <Button
+                android:id="@+id/button_volume_dec"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="decreaseVolume"
@@ -119,6 +120,7 @@
                 android:layout_alignParentBottom="true"></FrameLayout>
 
             <Button
+                android:id="@+id/button_volume_inc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="increaseVolume"

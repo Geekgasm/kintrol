@@ -137,11 +137,12 @@ public class Kontroller {
         sendCommand(device.getCommands().get(KommandKey.checkInputProfile));
     }
 
+    public void checkUnityGain(String currentInputProfileId) {
+        sendCommand(device.getCommands().get(KommandKey.checkUnityGain), currentInputProfileId);
+    }
+
     public void checkInputName(String currentInputProfileId) {
-        String command = device.getCommands().get(KommandKey.checkInputName);
-        if (command != null) {
-            sendCommand(String.format(command, currentInputProfileId));
-        }
+        sendCommand(device.getCommands().get(KommandKey.checkInputName), currentInputProfileId);
     }
 
     public void checkSurroundMode() {
@@ -208,11 +209,13 @@ public class Kontroller {
         sendCommand(device.getCommands().get(KommandKey.nextSurroundMode));
     }
 
-    private void sendCommand(String commandString) {
+    private void sendCommand(String commandString, String... arguments) {
         if (commandString == null || commandString.trim().equals("")) {
             return;
         }
         try {
+            commandString = String.format(commandString, arguments);
+            Log.d(TAG, "Sending command: " + commandString);
             establishConnection();
             OutputStream outputStream = telnetClient.getOutputStream();
             if (outputStream == null)

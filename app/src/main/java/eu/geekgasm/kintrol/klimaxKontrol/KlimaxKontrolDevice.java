@@ -34,6 +34,7 @@ public class KlimaxKontrolDevice implements Device {
         COMMANDS.put(KommandKey.checkVolume, "VOL ?");
         COMMANDS.put(KommandKey.checkMuteStatus, "MUTE ?");
         COMMANDS.put(KommandKey.checkInputProfile, "LISTEN ?");
+        COMMANDS.put(KommandKey.checkUnityGain, "INPUT %s UGAIN ?");
         COMMANDS.put(KommandKey.checkInputName, "INPUT %s NAME ?");
         COMMANDS.put(KommandKey.checkPowerCounter, "COUNTER POWER ?");
         COMMANDS.put(KommandKey.checkSoftwareVersion, "VERSION SOFTWARE");
@@ -51,9 +52,10 @@ public class KlimaxKontrolDevice implements Device {
     }
 
     static {
-        RESPONSE_PATTERNS.put(ResponseValueKey.VOLUME_STATUS, compile("VOL ([^\\$]+)"));
+        RESPONSE_PATTERNS.put(ResponseValueKey.VOLUME_STATUS, compile("VOL (\\d+)(\\.\\d+)?"));
         RESPONSE_PATTERNS.put(ResponseValueKey.MUTE_STATUS, compile("MUTE ([^\\$]+)"));
         RESPONSE_PATTERNS.put(ResponseValueKey.INPUT_PROFILE_STATUS, compile("LISTEN (\\d+)"));
+        RESPONSE_PATTERNS.put(ResponseValueKey.INPUT_UNITY_GAIN, compile("INPUT \\d+ UGAIN ([^\\$]+)"));
         RESPONSE_PATTERNS.put(ResponseValueKey.INPUT_NAME, compile("INPUT \\d+ NAME ([^\\$]+)"));
         RESPONSE_PATTERNS.put(ResponseValueKey.POWER_COUNTER, compile("COUNTER POWER ([^\\$]+)"));
         RESPONSE_PATTERNS.put(ResponseValueKey.SOFTWARE_VERSION, compile("VERSION (SOFTWARE [^\\$]+)"));

@@ -21,10 +21,12 @@ public interface NotificationListener {
     public static final String OPERATIONAL_STATUS_TEXT = "Operational";
     public static final String NOT_CONNECTED_STATUS_TEXT = "Not Connected";
     public static final String STANDBY_STATUS_TEXT = "Standby";
+    public static final String MUTED_TEXT = "Muted";
+    public static final String UNITY_GAIN_TEXT = "Unity Gain";
 
     void handleOperationStatusUpdate(String operationState);
 
-    void handleVolumeUpdate(String volumeValue);
+    void handleVolumeUpdate(String volumeValue, boolean volumeControlEnabled);
 
     void handleSourceUpdate(String sourceName);
 

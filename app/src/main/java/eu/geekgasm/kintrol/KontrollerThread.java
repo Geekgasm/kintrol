@@ -140,6 +140,16 @@ public class KontrollerThread extends HandlerThread implements StatusChecker {
     }
 
     @Override
+    public void checkUnityGain(final String currentInputProfileId) {
+        post(new Runnable() {
+            @Override
+            public void run() {
+                kontroller.checkUnityGain(currentInputProfileId);
+            }
+        });
+    }
+
+    @Override
     public void checkInputName(final String currentInputProfileId) {
         post(new Runnable() {
             @Override

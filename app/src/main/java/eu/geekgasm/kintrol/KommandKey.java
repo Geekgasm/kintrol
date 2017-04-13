@@ -19,6 +19,7 @@ public enum KommandKey {
     checkVolume,
     checkMuteStatus,
     checkInputProfile,
+    checkUnityGain,
     checkInputName,
     checkSurroundMode,
     checkDeviceId,

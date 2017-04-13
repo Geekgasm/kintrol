@@ -55,6 +55,7 @@ public class DeviceControlActivity extends AbstractDeviceActivity implements Not
     private final DeviceInfoPersistenceHandler deviceListPersistor = new DeviceInfoPersistenceHandler(this);
     private Handler handler;
     private TextView deviceNameView;
+    private Button[] volumeButtons = {};
     private AutoSizeText volumeView;
     private AutoSizeText operationStateView;
     private AutoSizeText sourceView;
@@ -99,6 +100,12 @@ public class DeviceControlActivity extends AbstractDeviceActivity implements Not
         handler = new Handler();
 
         deviceNameView = (TextView) findViewById(R.id.device_name);
+        volumeButtons = new Button[]{
+                (Button) findViewById(R.id.button_mute),
+                (Button) findViewById(R.id.button_discrete_volume),
+                (Button) findViewById(R.id.button_volume_dec),
+                (Button) findViewById(R.id.button_volume_inc),
+        };
         volumeView = new AutoSizeText(this, R.id.volume);
         operationStateView = new AutoSizeText(this, R.id.operation_state);
         sourceView = new AutoSizeText(this, R.id.current_source);
@@ -110,7 +117,7 @@ public class DeviceControlActivity extends AbstractDeviceActivity implements Not
     @Override
     protected void onResume() {
         super.onResume();
-        Button discreteVolumeButton = (Button) findViewById(R.id.discrete_volume_button);
+        Button discreteVolumeButton = (Button) findViewById(R.id.button_discrete_volume);
         if (discreteVolumeValue >= 0) {
             discreteVolumeButton.setText(String.valueOf(discreteVolumeValue));
             discreteVolumeButton.setVisibility(View.VISIBLE);
@@ -241,11 +248,14 @@ public class DeviceControlActivity extends AbstractDeviceActivity implements Not
     }
 
     @Override
-    public void handleVolumeUpdate(final String volumeValue) {
+    public void handleVolumeUpdate(final String volumeValue, final boolean volumeControlEnabled) {
         handler.post(new Runnable() {
             @Override
             public void run() {
                 volumeView.setText(unescapeHexCharacters(volumeValue));
+                for (Button volumeButton : volumeButtons) {
+                    volumeButton.setEnabled(volumeControlEnabled);
+                }
             }
         });
     }
