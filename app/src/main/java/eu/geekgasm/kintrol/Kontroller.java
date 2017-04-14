@@ -92,7 +92,7 @@ public class Kontroller {
                 Thread notificationHandlerThread = new Thread(notificationHandler, "Device response handler thread");
                 notificationHandlerThread.start();
             } catch (IOException e) {
-                Log.e(TAG, "Unable to open telnet connection to " + deviceIp + ":" + devicePort, e);
+                Log.w(TAG, "Unable to open telnet connection to " + deviceIp + ":" + devicePort, e);
             }
         }
     }

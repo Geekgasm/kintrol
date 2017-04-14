@@ -14,6 +14,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -32,12 +33,19 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <Spinner
+            android:id="@+id/device_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dialog" />
+
         <TextView
             android:id="@+id/device_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/device_name"
+            android:visibility="invisible"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <LinearLayout
@@ -203,5 +211,6 @@
                 android:text="@string/surround_mode_next" />
         </LinearLayout>
     </LinearLayout>
+
 </LinearLayout>
 

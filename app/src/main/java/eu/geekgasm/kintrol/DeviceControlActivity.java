@@ -27,12 +27,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.SimpleAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.io.UnsupportedEncodingException;
@@ -53,6 +56,7 @@ public class DeviceControlActivity extends AbstractDeviceActivity implements Not
     public static final String EXTRA_DEVICE_TYPE = "eu.geekgasm.kintrol.DEVICE_TYPE";
     public static final String EXTRA_DEVICE_VOLUMES = "eu.geekgasm.kintrol.DEVICE_VOLUMES";
     private final DeviceInfoPersistenceHandler deviceListPersistor = new DeviceInfoPersistenceHandler(this);
+    private final List<DeviceInfo> deviceList = new ArrayList<>();
     private Handler handler;
     private TextView deviceNameView;
     private Button[] volumeButtons = {};
@@ -112,6 +116,37 @@ public class DeviceControlActivity extends AbstractDeviceActivity implements Not
         surroundModeView = new AutoSizeText(this, R.id.current_surround_mode);
         deviceNameView.setText(deviceInfo.deviceName);
         discreteVolumeValue = deviceInfo.getFirstDiscreteVolumeValue();
+
+        reloadDeviceList();
+    }
+
+    private void reloadDeviceList() {
+        new DeviceInfoPersistenceHandler(this).loadDeviceList(deviceList);
+        Spinner deviceListSpinner = (Spinner) findViewById(R.id.device_spinner);
+        List<String> list = new ArrayList<>();
+        for (DeviceInfo devInf : deviceList) {
+            list.add(devInf.deviceName);
+        }
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this,
+                R.layout.spinner_item_text, list);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        deviceListSpinner.setAdapter(dataAdapter);
+        int deviceIndex = deviceList.indexOf(deviceInfo);
+        deviceListSpinner.setSelection(deviceIndex);
+        deviceListSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                DeviceInfo selectedDevice = deviceList.get(position);
+                if (deviceInfo==null || !deviceInfo.equals(selectedDevice)) {
+                    startControlActivity(selectedDevice);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing
+            }
+        });
     }
 
     @Override
