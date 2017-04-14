@@ -1,9 +1,9 @@
 Kintrol
 =======
 
-Remote control app for [LINN&reg;](http://www.linn.co.uk/) KINOS&trade; and KISTO&trade; system controllers.
+Remote control app for [LINN&reg;](http://www.linn.co.uk/) KINOS&trade;, KISTO&trade; and Klimax Kontrol&trade; system controllers.
 
-Copyright &copy; 2015 Oliver Götz
+Copyright &copy; 2015-2017 Oliver Götz
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the [GNU General Public License version 3](http://www.gnu.org/licenses/gpl.html).
@@ -20,7 +20,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Usage
 -----
 
-On first startup the app prompts you for a name for your KINOS or KISTO device and the IP address. Your KINO/KISTO needs to be connected to your network, and a fixed IP address must be configured for it.
+On first startup the app prompts you for the settings of your KINOS, KISTO or Klimax Kontrol device:
+ - Device type: either Kinos, Kisto or Klimax Kontrol. Please select the model you want to control.
+ - Device name: pick a name for your device. Please note that this should be a unique name in case you have more than one devices.
+ - IP address: the IPV4 network address under which the device can be reached. 
+ - Port (optional): the port of the device. You can leave this empty unless you want to use a different port than the default 9004. That is the port the Kinos or Kisto device uses for network communication. But in case you are using an network-to-RS232 adapter (i.e. when using a Klimax Kontrol) the port might be different.
+ - Discrete Volume Value (optional): if you specify a numeric value, the app will show an additional button next to the mute button, which sets the volume to a fixed value. This can be useful, if you have a calibrated volume level for movies in your home theatre, but your configured initial volume setting is different. If you leave this empty, the button will not appear.
+ 
+Your KINO/KISTO/Klimax Kontrol needs to be connected to your network, and a fixed IP address must be configured for it.
 You can add additional devices in the application menu.
 
 Once you added a device you can select it from the device list in the main screen.
