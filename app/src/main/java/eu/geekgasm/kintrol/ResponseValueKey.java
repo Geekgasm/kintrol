@@ -1,6 +1,7 @@
 /*
- Kintrol: Remote control app for LINN(R) KINOS(TM) and KISTO(TM) system controllers.
- Copyright (C) 2015 Oliver Götz
+ Kintrol: Remote control app for LINN(R) KINOS(TM), KISTO(TM) and
+ Klimax Kontrol(TM) system controllers.
+ Copyright (C) 2015-2017 Oliver Götz
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License version 3.
@@ -15,16 +16,16 @@
  */
 package eu.geekgasm.kintrol;
 
-public interface KinosStatusChecker {
-    public void checkDeviceStatus(long delayMillis);
-
-    public void checkDeviceStatus();
-
-    public void checkForOperationStatus();
-
-    public void checkVolume();
-
-    public void checkInputProfile();
-
-    public void checkSurroundMode();
+public enum ResponseValueKey {
+    VOLUME_STATUS,
+    MUTE_STATUS,
+    INPUT_UNITY_GAIN,
+    INPUT_PROFILE_STATUS,
+    INPUT_NAME,
+    SURROUND_MODE,
+    DEVICE_ID,
+    POWER_COUNTER,
+    SOFTWARE_VERSION,
+    HARDWARE_VERSION,
+    STANDBY_STATUS
 }

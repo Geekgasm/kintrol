@@ -1,6 +1,7 @@
 /*
- Kintrol: Remote control app for LINN(R) KINOS(TM) and KISTO(TM) system controllers.
- Copyright (C) 2015 Oliver Götz
+ Kintrol: Remote control app for LINN(R) KINOS(TM), KISTO(TM) and
+ Klimax Kontrol(TM) system controllers.
+ Copyright (C) 2015-2017 Oliver Götz
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License version 3.
@@ -15,16 +16,18 @@
  */
 package eu.geekgasm.kintrol;
 
-public interface KinosNotificationListener {
+public interface NotificationListener {
 
     public static final String NOT_AVAILABLE = "---";
     public static final String OPERATIONAL_STATUS_TEXT = "Operational";
     public static final String NOT_CONNECTED_STATUS_TEXT = "Not Connected";
     public static final String STANDBY_STATUS_TEXT = "Standby";
+    public static final String MUTED_TEXT = "Muted";
+    public static final String UNITY_GAIN_TEXT = "Unity Gain";
 
     void handleOperationStatusUpdate(String operationState);
 
-    void handleVolumeUpdate(String volumeValue);
+    void handleVolumeUpdate(String volumeValue, boolean volumeControlEnabled);
 
     void handleSourceUpdate(String sourceName);
 
@@ -33,6 +36,8 @@ public interface KinosNotificationListener {
     void handleDeviceIdUpdate(String deviceId);
 
     void handleSoftwareVersionUpdate(String softwareVersion);
+
+    void handleHardwareVersionUpdate(String hardwareVersion);
 
     void handleSurroundModeUpdate(String currentSurroundMode);
 

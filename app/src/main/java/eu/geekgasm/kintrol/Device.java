@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+/*
  Kintrol: Remote control app for LINN(R) KINOS(TM), KISTO(TM) and
  Klimax Kontrol(TM) system controllers.
  Copyright (C) 2015-2017 Oliver Götz
@@ -13,11 +13,16 @@
 
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
--->
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/deviceRowTextView"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="10dp"
-    android:textSize="20sp"
-    android:gravity="center"></TextView>
+ */
+package eu.geekgasm.kintrol;
+
+import java.util.Map;
+import java.util.regex.Pattern;
+
+public interface Device {
+    String getDeviceName();
+    Map<KommandKey, String> getCommands();
+    Map<ResponseValueKey, Pattern> getResponsePatterns();
+    boolean hasSurround();
+    int getDeviceTypeRadioButtonId();
+}

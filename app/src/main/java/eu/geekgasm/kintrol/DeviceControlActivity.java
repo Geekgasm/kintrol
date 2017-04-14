@@ -1,6 +1,7 @@
 /*
- Kintrol: Remote control app for LINN(R) KINOS(TM) and KISTO(TM) system controllers.
- Copyright (C) 2015 Oliver Götz
+ Kintrol: Remote control app for LINN(R) KINOS(TM), KISTO(TM) and
+ Klimax Kontrol(TM) system controllers.
+ Copyright (C) 2015-2017 Oliver Götz
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License version 3.
@@ -21,7 +22,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBarActivity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,6 +32,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
@@ -42,37 +43,70 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import eu.geekgasm.kintrol.kinos.SurroundModes;
 
-public class DeviceControlActivity extends ActionBarActivity implements KinosNotificationListener {
+
+public class DeviceControlActivity extends AbstractDeviceActivity implements NotificationListener {
 
     public static final String EXTRA_IP_ADDRESS = "eu.geekgasm.kintrol.IP_ADDRESS";
+    public static final String EXTRA_PORT = "eu.geekgasm.kintrol.PORT";
     public static final String EXTRA_DEVICE_NAME = "eu.geekgasm.kintrol.DEVICE_NAME";
+    public static final String EXTRA_DEVICE_TYPE = "eu.geekgasm.kintrol.DEVICE_TYPE";
     public static final String EXTRA_DEVICE_VOLUMES = "eu.geekgasm.kintrol.DEVICE_VOLUMES";
     private final DeviceInfoPersistenceHandler deviceListPersistor = new DeviceInfoPersistenceHandler(this);
     private Handler handler;
     private TextView deviceNameView;
+    private Button[] volumeButtons = {};
     private AutoSizeText volumeView;
     private AutoSizeText operationStateView;
     private AutoSizeText sourceView;
-    private KinosKontrollerThread kontrollerThread;
+    private KontrollerThread kontrollerThread;
     private DeviceInfo deviceInfo;
     private String powerCounterValue;
     private String deviceId;
     private String softwareVersion;
+    private String hardwareVersion;
     private AutoSizeText surroundModeView;
     private int discreteVolumeValue;
+
+    private static void runJustBeforeBeingDrawn(final View view, final Runnable runnable) {
+        final ViewTreeObserver.OnPreDrawListener preDrawListener = new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                runnable.run();
+                view.getViewTreeObserver().removeOnPreDrawListener(this);
+                return true;
+            }
+        };
+        view.getViewTreeObserver().addOnPreDrawListener(preDrawListener);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_device_control);
+        /**
+         * catch unexpected error
+         */
+        Thread.setDefaultUncaughtExceptionHandler(new FatalityHander());
 
+        setContentView(R.layout.activity_device_control);
         Intent intent = getIntent();
-        deviceInfo = new DeviceInfo(intent.getStringExtra(EXTRA_IP_ADDRESS), intent.getStringExtra(EXTRA_DEVICE_NAME), intent.getStringArrayExtra(EXTRA_DEVICE_VOLUMES));
+        deviceInfo = new DeviceInfo(
+                intent.getStringExtra(EXTRA_IP_ADDRESS),
+                intent.getStringExtra(EXTRA_PORT),
+                intent.getStringExtra(EXTRA_DEVICE_TYPE),
+                intent.getStringExtra(EXTRA_DEVICE_NAME),
+                intent.getStringArrayExtra(EXTRA_DEVICE_VOLUMES));
 
         handler = new Handler();
 
         deviceNameView = (TextView) findViewById(R.id.device_name);
+        volumeButtons = new Button[]{
+                (Button) findViewById(R.id.button_mute),
+                (Button) findViewById(R.id.button_discrete_volume),
+                (Button) findViewById(R.id.button_volume_dec),
+                (Button) findViewById(R.id.button_volume_inc),
+        };
         volumeView = new AutoSizeText(this, R.id.volume);
         operationStateView = new AutoSizeText(this, R.id.operation_state);
         sourceView = new AutoSizeText(this, R.id.current_source);
@@ -84,27 +118,34 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
     @Override
     protected void onResume() {
         super.onResume();
-        Button discreteVolumeButton = (Button) findViewById(R.id.discrete_volume_button);
+        Button discreteVolumeButton = (Button) findViewById(R.id.button_discrete_volume);
         if (discreteVolumeValue >= 0) {
             discreteVolumeButton.setText(String.valueOf(discreteVolumeValue));
             discreteVolumeButton.setVisibility(View.VISIBLE);
         } else {
             discreteVolumeButton.setVisibility(View.INVISIBLE);
         }
+
+        int surroundVisibility = DeviceDirectory.getDevice(deviceInfo.deviceType).hasSurround()
+                ? View.VISIBLE
+                : View.INVISIBLE;
+        View surroundView = findViewById(R.id.surround_group);
+        surroundView.setVisibility(surroundVisibility);
+
         startKontrollerThread(deviceInfo);
     }
 
     private void setNoConnectionInfo() {
-        operationStateView.setText(KinosNotificationListener.NOT_CONNECTED_STATUS_TEXT);
-        volumeView.setText(KinosNotificationListener.NOT_AVAILABLE);
-        sourceView.setText(KinosNotificationListener.NOT_AVAILABLE);
-        surroundModeView.setText(KinosNotificationListener.NOT_AVAILABLE);
+        operationStateView.setText(NotificationListener.NOT_CONNECTED_STATUS_TEXT);
+        volumeView.setText(NotificationListener.NOT_AVAILABLE);
+        sourceView.setText(NotificationListener.NOT_AVAILABLE);
+        surroundModeView.setText(NotificationListener.NOT_AVAILABLE);
     }
 
     private void startKontrollerThread(DeviceInfo deviceInfo) {
         if (kontrollerThread != null)
             kontrollerThread.requestStop();
-        kontrollerThread = new KinosKontrollerThread(deviceInfo.ipAddress, this);
+        kontrollerThread = new KontrollerThread(deviceInfo, this);
         kontrollerThread.start();
     }
 
@@ -208,11 +249,14 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
     }
 
     @Override
-    public void handleVolumeUpdate(final String volumeValue) {
+    public void handleVolumeUpdate(final String volumeValue, final boolean volumeControlEnabled) {
         handler.post(new Runnable() {
             @Override
             public void run() {
                 volumeView.setText(unescapeHexCharacters(volumeValue));
+                for (Button volumeButton : volumeButtons) {
+                    volumeButton.setEnabled(volumeControlEnabled);
+                }
             }
         });
     }
@@ -272,14 +316,22 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         this.softwareVersion = softwareVersion;
     }
 
+    @Override
+    public void handleHardwareVersionUpdate(String hardwareVersion) {
+        this.hardwareVersion = hardwareVersion;
+    }
+
     public void openEditDeviceDialog(MenuItem item) {
-        final DeviceInfo newDevice = new DeviceInfo();
         LayoutInflater li = LayoutInflater.from(this);
         View promptsView = li.inflate(R.layout.fragment_dialog_edit_device, null);
+        final RadioGroup deviceTypeGroup = (RadioGroup) promptsView.findViewById(R.id.device_type_group);
+        deviceTypeGroup.check(deviceInfo.getDeviceTypeId());
         final EditText deviceNameText = (EditText) promptsView.findViewById(R.id.edit_device_name);
         deviceNameText.setText(deviceInfo.deviceName);
         final EditText ipAddressText = (EditText) promptsView.findViewById(R.id.edit_ip_address);
         ipAddressText.setText(deviceInfo.ipAddress);
+        final EditText portText = (EditText) promptsView.findViewById(R.id.edit_port);
+        portText.setText(deviceInfo.port);
         final EditText discreteVolumeText = (EditText) promptsView.findViewById(R.id.edit_discrete_volume);
         if (deviceInfo.discreteVolumeValues != null && deviceInfo.discreteVolumeValues.length > 0)
             discreteVolumeText.setText(deviceInfo.discreteVolumeValues[0]);
@@ -290,7 +342,12 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        final DeviceInfo newDevice = new DeviceInfo(ipAddressText.getText().toString(), deviceNameText.getText().toString(), DeviceChooserActivity.getDiscreteVolumes(discreteVolumeText));
+                        final DeviceInfo newDevice = new DeviceInfo(
+                                ipAddressText.getText().toString(),
+                                portText.getText().toString(),
+                                DeviceDirectory.getDeviceById(deviceTypeGroup.getCheckedRadioButtonId()).getDeviceName(),
+                                deviceNameText.getText().toString(),
+                                getDiscreteVolumes(discreteVolumeText));
                         deviceListPersistor.updateDevice(deviceInfo, newDevice);
                         startControlActivity(newDevice);
                         finish();
@@ -308,6 +365,8 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
     private void startControlActivity(DeviceInfo deviceInfo) {
         Intent intent = new Intent(this, DeviceControlActivity.class);
         intent.putExtra(EXTRA_IP_ADDRESS, deviceInfo.getIpAddress());
+        intent.putExtra(EXTRA_PORT, deviceInfo.getPort());
+        intent.putExtra(EXTRA_DEVICE_TYPE, deviceInfo.getDeviceType());
         intent.putExtra(EXTRA_DEVICE_NAME, deviceInfo.getDeviceName());
         intent.putExtra(EXTRA_DEVICE_VOLUMES, deviceInfo.getDiscreteVolumeValues());
         startActivity(intent);
@@ -356,8 +415,9 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         list.add(createListEntry("Device Name", deviceInfo.deviceName));
         list.add(createListEntry("IP Address", deviceInfo.ipAddress));
         list.add(createListEntry("Device ID", deviceId != null ? deviceId : "unknown"));
-        list.add(createListEntry("Total Operation Time", renderOperationTime(powerCounterValue)));
+        list.add(createListEntry("Operation Time", renderOperationTime(powerCounterValue)));
         addSoftwareVersions(list);
+        addHardwareVersions(list);
 
         return new SimpleAdapter(this, list, android.R.layout.simple_list_item_2, fromMapKey, toLayoutId);
     }
@@ -383,27 +443,17 @@ public class DeviceControlActivity extends ActionBarActivity implements KinosNot
         }
     }
 
+    private void addHardwareVersions(List<Map<String, String>> list) {
+        if (hardwareVersion != null) {
+            list.add(createListEntry("Hardware Version", hardwareVersion));
+        }
+    }
+
     private HashMap<String, String> createListEntry(String key, String value) {
         HashMap<String, String> map = new HashMap<>();
         map.put("key", key);
         map.put("value", value);
         return map;
-    }
-
-    public void showAbout(MenuItem item) {
-        AboutDialog.showAbout(this);
-    }
-
-    private static void runJustBeforeBeingDrawn(final View view, final Runnable runnable) {
-        final ViewTreeObserver.OnPreDrawListener preDrawListener = new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                runnable.run();
-                view.getViewTreeObserver().removeOnPreDrawListener(this);
-                return true;
-            }
-        };
-        view.getViewTreeObserver().addOnPreDrawListener(preDrawListener);
     }
 
 }

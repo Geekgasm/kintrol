@@ -1,6 +1,7 @@
 <!--
- Kintrol: Remote control app for LINN(R) KINOS(TM) and KISTO(TM) system controllers.
- Copyright (C) 2015 Oliver Götz
+ Kintrol: Remote control app for LINN(R) KINOS(TM), KISTO(TM) and
+ Klimax Kontrol(TM) system controllers.
+ Copyright (C) 2015-2017 Oliver Götz
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License version 3.
@@ -83,7 +84,7 @@
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <Button
-                android:id="@+id/mute_button"
+                android:id="@+id/button_mute"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -91,7 +92,7 @@
                 android:text="@string/mute" />
 
             <Button
-                android:id="@+id/discrete_volume_button"
+                android:id="@+id/button_discrete_volume"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -105,6 +106,7 @@
             android:layout_height="wrap_content">
 
             <Button
+                android:id="@+id/button_volume_dec"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="decreaseVolume"
@@ -119,6 +121,7 @@
                 android:layout_alignParentBottom="true"></FrameLayout>
 
             <Button
+                android:id="@+id/button_volume_inc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="increaseVolume"
@@ -164,9 +167,11 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/surround_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="invisible">
 
         <TextView
             android:layout_width="wrap_content"
