@@ -1,5 +1,4 @@
-Kintrol
-=======
+# Kintrol
 
 Remote control app for [LINN&reg;](http://www.linn.co.uk/) KINOS&trade;, KISTO&trade; and Klimax Kontrol&trade; system controllers.
 
@@ -16,9 +15,66 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+## Features
 
-Usage
------
+ - Support for multiple devices
+ - Configurable display name for each device
+ - Configurable IP address and port for each device
+ - Configurable discrete Volume Value (optional) for each device
+ - On/Off and display of Standby status
+ - Source selection (-/+) and source name display
+ - Volume -/+ and Mute with display of current volume setting
+ 
+### Kinos and Kisto System Controllers
+
+ - Surround Mode selection (-/+) and display of current setting
+ - Display of total operation time and software versions in the device info display
+      
+### Klimax Kontrol Pre-Amplifier
+
+ - Unity Gain detection: in case an input is configured with Unity Gain, the volume 
+   and mute control buttons are disabled. 
+ - Display of power on time, software and hardware version in the device info display
+   Downloads
+
+## Getting Started
+
+### Connecting your Linn device to the network
+
+#### Kinos and Kisto
+
+#### Klimax Kontrol
+
+### Installing the app
+
+### Starting the app for the first time
+
+When you start the app for the first time, it does not know about your Linn device.
+It will prompt you to enter the configuration for your Linn Kinos, Kisto or Klimax Kontrol:
+
+![alt text][initial_screen_new_device]
+
+Enter the required information:
+
+ - The device type: select either *Kinos*, *Kisto*, or *Klimax Kontrol*
+ - A name for the device (you can pick that freely)
+ - The IP address for your device. 
+ 
+ Optionally, you can enter:
+ 
+  - The port: this defaults to 9004 if you don't specify anything here. Leave it empty
+    for Kinos and Kisto. For Klimax Kontrol, enter the port number you configured for
+    your Network to RS232 adapter if it differs from 9004.
+  - A discrete volume value. If you specify a volume here, an additional button 
+    will appear on the device control screen, allowing you to quickly set the 
+    volume to this value.
+
+After you filled in the required values, press on the *OK* button and see the 
+entry screen with one device listed.
+
+![alt text][first_device_configured]
+
+## Using the App
 
 On first startup the app prompts you for the settings of your KINOS, KISTO or Klimax Kontrol device:
  - Device type: either Kinos, Kisto or Klimax Kontrol. Please select the model you want to control.
@@ -37,8 +93,7 @@ If your device is switched on an reachable via network the device control screen
 Opening the app menu from the device control screen allows you to edit the device settings, delete the device, and display the device information (including software version and total operation time).
 
 
-Used Libraries
---------------
+## Used Libraries
 
 The following open source libraries are included in this app:
 
@@ -51,39 +106,71 @@ All three libraries are licenses under the [Apache License 2.0](http://www.apach
 UI resources for Holo theme created with [Android Holo Colors Generator](http://android-holo-colors.com/) by [Jérôme Van Der Linden](mailto:jeromevdl@android-holo-colors.com). All generated art is licensed under a [Creative Commons Attribution 3.0 Unported License](http://creativecommons.org/licenses/by/3.0/).
 
 
-References
-----------
+## References
 
 The specifications for the control protocol for [KINOS](http://docs.linn.co.uk/wiki/images/3/3f/Kinos_RS232_Spec_v0101.pdf) and [KISTO](http://docs.linn.co.uk/wiki/images/4/4f/Kisto_rs232_commands_v106.pdf) can be found at the [LINNDOCS web site](http://docs.linn.co.uk/wiki/index.php/RS232).
 
 
-Acknowledgements
-----------------
+## Acknowledgements
 
  - App icon by Mr. Truesound
  - Many thanks to the LINN customer support
 
 
-Open Issues
------------
+## Questions and Anwsers
 
- - There is no proper release build
- - There are no tests
+**Is the app collecting any of my data?** 
+Absolutely not! The only data the app is sending out are the control codes needed to 
+talk to the Linn device, and it only uses the IP address you configure for that device.
+There is no data collected and no data sent to any outside party.
 
-Questions and Anwsers
----------------------
+**Why is the app not on the Google Play store?**
+Registering for the Google Play store as a developer comes with a fee. Since this is the only 
+app I developed so far, it didn't seem worth it for me. Maybe this will change in the future,
+but there are currently no such plans.
 
-Q: Why are there no automated tests?
-A: Shame on me! Normally, I am a big proponent of automated tests and test-driven development. However, since this was my first go at an Android app there was a lot of trial and error involved for me. Add to that a logic which relies heavily on network communication with a device for which I had to figure out some of the behaviour on the go, I saw it as too restrictive to add a test double only to find out later that the behavior of the real device is different anyhow.
+**Why are there no automated tests?**
+Shame on me! Normally, I am a big proponent of automated tests and test-driven development. 
+However, since this was my first go at an Android app there was a lot of trial and error 
+involved for me. Add to that a logic which relies heavily on network communication with a 
+device for which I had to figure out some of the behaviour on the go, I saw it as too 
+restrictive to add a test double only to find out later that the behavior of the real 
+device is different anyhow.
 
-Q: Why can I add more than one device? Who would ever need that?
-A: I do! ;-) We have two Kinos devices in the house and since I primarily wrote the app for ourselves, this is how it turned out. If I find the time and motivation I might change the UI in the future to only have the device control screen and have a selection possibility for several devices embedded there.
+**Why can I add more than one device? Who would ever need that?**
+I do! ;-) We have one Kinos and one Klimax Kontrol devices in the house and since I primarily 
+wrote the app for ourselves, this is how it turned out. If I find the time and motivation I 
+might change the UI in the future to only have the device control screen and have a selection 
+possibility for several devices embedded there.
 
-Q: Is there an iOS version?
-A: No. The reasons I opted for Android are that I am a Java developer by trade and therefore I found it more convenient to not have to learn a new language at the same time as learning the SDK and figure out the behavior of the Linn devices. Also, for Android I am not necessarily forced to go through the official release process to get the app on my device and out into the world. There are no plans currently to port this to iOS. But feel free to start such a project yourself.
+**Is there an iOS version?**
+No. The reasons I opted for Android are that I am a Java developer by trade and therefore I 
+found it more convenient to not have to learn a new language at the same time as learning the 
+SDK and figure out the behavior of the Linn devices. Also, for Android I am not necessarily 
+forced to go through the official release process to get the app on my device and out into 
+the world. There are no plans currently to port this to iOS. But feel free to start such a 
+project yourself.
 
 
-Contact Information
--------------------
+## Contact Information
 
-Please send feedback to mailto:developer@geekgasm.eu
+Please send general feedback, questions, suggestions to mailto:developer@geekgasm.eu
+
+To report bugs, please create a [new issue in the Github project](https://github.com/Geekgasm/kintrol/issues)
+
+
+[about]: docu-images/about.png
+[choose_device]: docu-images/choose_device.png
+[choose_device_menu]: docu-images/choose_device_menu.png
+[control_device_menu]: docu-images/control_device_menu.png
+[delete_device]: docu-images/delete_device.png
+[device_info]: docu-images/device_info.png
+[discrete_volume_button]: docu-images/discrete_volume_button.png
+[edit_device]: docu-images/edit_device.png
+[first_device_configured]: docu-images/first_device_configured.png "First device configured"
+[initial_screen_new_device]: docu-images/initial_screen_new_device.png "Initial screen prompting for the device configuration"
+[kinos_conrol_screen]: docu-images/kinos_conrol_screen.png
+[klimax_control_screen]: docu-images/klimax_control_screen.png
+[not_connected]: docu-images/not_connected.png
+[standby]: docu-images/standby.png
+[unity_gain]: docu-images/unity_gain.png
