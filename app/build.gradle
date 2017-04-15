@@ -8,8 +8,9 @@ android {
         applicationId "eu.geekgasm.kintrol"
         minSdkVersion 8
         targetSdkVersion 22
-        versionCode 10
+        versionCode 25
         versionName "0.25"
+        archivesBaseName = "kintrol-v$versionName"
     }
     buildTypes {
         release {
