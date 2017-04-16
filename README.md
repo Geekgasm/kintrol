@@ -105,7 +105,7 @@ work, you need a few things:
      - **Serial Port:** Baud rate: 9600, Data Size: 7 bit, Parity: even, Stop Bits: 1 bit,
        Local Port: 9004, Remote Port: 9004, Work Mode: TCP Server:
        
-       <img src="docu-images/RS232-converter-settings.png" width="500" alt="Serial Port Settings"/>
+       <img src="docu-images/RS232-converter-settings.png" width="750" alt="Serial Port Settings"/>
        RS232-converter-settings
        
 Now, the network commands sent by the app to the RS232-to-network-converter should be forwarded
