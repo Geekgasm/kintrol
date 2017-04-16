@@ -54,7 +54,7 @@ Your KINO/KISTO/Klimax Kontrol needs to be connected to your network, and a fixe
 When you start the app for the first time, it does not know about your Linn device.
 It will prompt you to enter the configuration for your Linn Kinos, Kisto or Klimax Kontrol:
 
-<img src="docu-images/initial_screen_new_device.png" height="500" alt="Initial screen prompting for the device configuration"/>
+<img src="docu-images/initial_screen_new_device.png" width="250" alt="Initial screen prompting for the device configuration"/>
 
 Enter the required information:
 
@@ -74,7 +74,7 @@ Enter the required information:
 After you filled in the required values, press on the *OK* button and see the 
 entry screen with one device listed.
 
-<img src="docu-images/first_device_configured.png" height="500" alt="First device configured"/>
+<img src="docu-images/first_device_configured.png" width="250" alt="First device configured"/>
 
 ## Using the App
 
@@ -85,14 +85,14 @@ When the app is started, it shows the *Device Chooser Screen*, whose primary
 function is to select the device you want to control. You will see the list of devices,
 which you have configured:
 
-<img src="docu-images/choose_device.png" height="500" alt="Device Chooser Screen"/>
+<img src="docu-images/choose_device.png" width="250" alt="Device Chooser Screen"/>
 
 To start controlling a device, simply tap on the device name in the list. This will 
 bring you to the *Device Control Screen* (see next section).
 
 To add more devices, open the application menu (the three small dots in the upper right corner):
 
-<img src="docu-images/choose_device_menu.png" height="500" alt="Device Chooser Application Menu"/>
+<img src="docu-images/choose_device_menu.png" width="250" alt="Device Chooser Application Menu"/>
 
 ***Add Device*** lets you add a new device to the list. The configuration menu is the same as for 
 the first device (see section *Starting the app for the first time*).
@@ -100,7 +100,7 @@ the first device (see section *Starting the app for the first time*).
 ***About Kintrol*** will open the screen with the app information (copyright notice,
 license information and links to this Github project):
  
-<img src="docu-images/about.png" height="500" alt="About Kintrol"/>
+<img src="docu-images/about.png" width="250" alt="About Kintrol"/>
 
 ### The Device Control Screen
 
@@ -109,7 +109,7 @@ control the most commonly used functions for daily operations. The available con
 depending on the device type. The picture on the left shows a normal device control screen for
 a Kino or Kisto device, the picture on the right for a Klimax Kontrol:
 
-<img src="docu-images/discrete_volume_button.png" height="500" alt="Kinos/Kisto Control Screen"/> <img src="docu-images/klimax_control_screen.png" height="500" alt="Klimax Kontrol Control Screen"/>
+<img src="docu-images/discrete_volume_button.png" width="250" alt="Kinos/Kisto Control Screen"/> <img src="docu-images/klimax_control_screen.png" width="250" alt="Klimax Kontrol Control Screen"/>
 
 The displays for standby status, volume and mute status, selected input and surround mode will 
 always show the values as received by the Linn device, so there might be a slight lag between 
@@ -151,7 +151,7 @@ The display will show one of these three values:
     on the Klimax Kontrol device. The volume control buttons are disabled in case unity gain is
     set:
 
-    <img src="docu-images/unity_gain.png" height="500" alt="Input with Unity Gain"/>
+    <img src="docu-images/unity_gain.png" width="250" alt="Input with Unity Gain"/>
 
 #### Source:
 
@@ -175,7 +175,7 @@ The display will show the name of the surround mode.
 
 #### App Menu:
 
-<img src="docu-images/control_device_menu.png" height="500" alt="Device Control Application Menu"/>
+<img src="docu-images/control_device_menu.png" width="250" alt="Device Control Application Menu"/>
 
 Opening the app menu from the device control screen allows you to access thes features:
  
@@ -185,6 +185,9 @@ Opening the app menu from the device control screen allows you to access thes fe
     Device Chooser screen.
   - *Show Device Info:* displays the device information. The exact set of information depends 
     on the device type.
+    
+    <img src="docu-images/device_info.png" width="250" alt="Device information"/>
+
   - *About Kintol:* displays the same information screen already described in the Device Chooser
     section.
 
