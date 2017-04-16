@@ -150,6 +150,7 @@ The display will show one of these three values:
     input signal is directly passed through to the outputs and the volume cannot be changed
     on the Klimax Kontrol device. The volume control buttons are disabled in case unity gain is
     set:
+
     <img src="docu-images/unity_gain.png" height="500" alt="Input with Unity Gain"/>
 
 #### Source:
