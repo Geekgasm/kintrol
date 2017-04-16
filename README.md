@@ -102,13 +102,90 @@ license information and links to this Github project):
  
 <img src="docu-images/about.png" height="500" alt="About Kintrol"/>
 
-
 ### The Device Control Screen
 
-If your device is switched on an reachable via network the device control screen allows you to switch the device on and off, change the volume, mute it, select the input profile, and select the surround mode. Also, the current setting for operation state, volume, input profile, and surround mode is displayed.
+If your device is switched on an reachable via network the device control screen allows you to
+control the most commonly used functions for daily operations. The available controls are different
+depending on the device type. The picture on the left shows a normal device control screen for
+a Kino or Kisto device, the picture on the right for a Klimax Kontrol:
 
-Opening the app menu from the device control screen allows you to edit the device settings, delete the device, and display the device information (including software version and total operation time).
+<img src="docu-images/discrete_volume_button.png" height="500" alt="Kinos/Kisto Control Screen"/> <img src="docu-images/klimax_control_screen.png" height="500" alt="Klimax Kontrol Control Screen"/>
 
+The displays for standby status, volume and mute status, selected input and surround mode will 
+always show the values as received by the Linn device, so there might be a slight lag between 
+pressing a button on the app and seeing the result displayed in the app.
+
+The controls are grouped into several sections:
+
+#### Device Status:
+
+The caption for this group is the name of your device. The ***On*** button switches the 
+device on, the ***Off*** button puts it in standby more. 
+
+The display will show one of these three values:
+
+  - *Standby* if the app is connected to the device and the device is in standby mode
+  - *Operational* if the app is connected to the device and the device is switched on
+  - *Not Connected* if the app is not connected to the device. In this case, check if the
+      device is powered on (via the main power switch on the back), and if the configured
+      IP address and port match the settings in the device.
+      
+#### Volume:
+
+The minus (*-*) and plus (*+*) buttons decrease or increase the volume level
+by one; you can also use the volume hard-buttons for this. 
+
+The *Mute* button mutes or unmutes the device. 
+
+In case you have configured a 
+discrete volume level, an additional button is shown next to the mute button showing
+the configured discrete volume button. Pressing it will set this volume directly on the 
+device.
+
+The display will show one of these three values:
+
+  - The current volume level (in case the device is not muted)
+  - *Muted* in case the device is muted
+  - *Unity Gain* (**Klimax Kontrol only!**) In case unity gain is configured for the current input. In that case, the 
+    input signal is directly passed through to the outputs and the volume cannot be changed
+    on the Klimax Kontrol device. The volume control buttons are disabled in case unity gain is
+    set:
+    <img src="docu-images/unity_gain.png" height="500" alt="Input with Unity Gain"/>
+
+#### Source:
+
+The *Src-* and *Src+* buttons let you cycle through the sources configured in
+the device. 
+
+The display will show the name you configured for the sources. 
+
+  - Please note, that for Kinos and Kisto devices, the user-defined input profiles are 
+      selected with the *Source* buttons. These input profiles need to be set up in the 
+      configuration menu of the Kinos or Kisto and can combine audio and video inputs.
+      The app does not have buttons for separately selecting audio and video inputs.
+  - For Klimax Kontrol devices, the source buttons control the audio input.
+    
+#### Surround Mode (Kinos and Kisto only!): 
+
+The minus (*-*) and plus (*+*) buttons let you cycle through the available surround modes 
+for the current input. 
+
+The display will show the name of the surround mode.
+
+#### App Menu:
+
+<img src="docu-images/control_device_menu.png" height="500" alt="Device Control Application Menu"/>
+
+Opening the app menu from the device control screen allows you to access thes features:
+ 
+  - *Edit device:* change the settings of the device. 
+  - *Delete device:* from the device list. You will be prompted if you really want to do that. 
+    It cannot be undone! After deleting the device, the app will send you back to the 
+    Device Chooser screen.
+  - *Show Device Info:* displays the device information. The exact set of information depends 
+    on the device type.
+  - *About Kintol:* displays the same information screen already described in the Device Chooser
+    section.
 
 ## Used Libraries
 
@@ -125,7 +202,10 @@ UI resources for Holo theme created with [Android Holo Colors Generator](http://
 
 ## References
 
-The specifications for the control protocol for [KINOS](http://docs.linn.co.uk/wiki/images/3/3f/Kinos_RS232_Spec_v0101.pdf) and [KISTO](http://docs.linn.co.uk/wiki/images/4/4f/Kisto_rs232_commands_v106.pdf) can be found at the [LINNDOCS web site](http://docs.linn.co.uk/wiki/index.php/RS232).
+The specifications for the control protocol for [KINOS](http://docs.linn.co.uk/wiki/images/3/3f/Kinos_RS232_Spec_v0101.pdf),
+[KISTO](http://docs.linn.co.uk/wiki/images/4/4f/Kisto_rs232_commands_v106.pdf) and 
+[Klimax Kontrol](http://docs.linn.co.uk/wiki/images/3/36/Kli_Kontrol_RS232_Commands.pdf) 
+can be found at the [LINNDOCS web site](http://docs.linn.co.uk/wiki/index.php/RS232).
 
 
 ## Acknowledgements
@@ -175,14 +255,3 @@ Please send general feedback, questions, suggestions to mailto:developer@geekgas
 
 To report bugs, please create a [new issue in the Github project](https://github.com/Geekgasm/kintrol/issues)
 
-
-[control_device_menu]: docu-images/control_device_menu.png
-[delete_device]: docu-images/delete_device.png
-[device_info]: docu-images/device_info.png
-[discrete_volume_button]: docu-images/discrete_volume_button.png
-[edit_device]: docu-images/edit_device.png
-[kinos_conrol_screen]: docu-images/kinos_conrol_screen.png
-[klimax_control_screen]: docu-images/klimax_control_screen.png
-[not_connected]: docu-images/not_connected.png
-[standby]: docu-images/standby.png
-[unity_gain]: docu-images/unity_gain.png
