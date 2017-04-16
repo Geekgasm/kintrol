@@ -41,13 +41,103 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ### Connecting your Linn device to the network
 
-Your KINO/KISTO/Klimax Kontrol needs to be connected to your network, and a fixed IP address must be configured for it.
+Your KINO/KISTO/Klimax Kontrol needs to be connected to your network, and a fixed IP address must 
+be configured for it.
+
+You need to find a free network address within your network. You should be able to do that in the
+configuration menu of your router. If possible, configure the router to not assign that network
+address randomly. Depending on the router it might allow you to assign fixed addresses to 
+specific devices, or define a range of addresses it will not assign dynamically to new devices
+using DHCP.
 
 #### Kinos and Kisto
 
+  1. **Connect the Kinos or Kisto to your network**
+  
+     Plug in the network cable to the socket marked with "Ethernet" on the back of the device.
+     
+  2. **Set the network address**
+  
+     In the setup menu of the Kinos or Kisto, set the network address to the free fixed network
+     address you selected.
+
 #### Klimax Kontrol
 
+Unlike Kinos or Kisto, the Klimax Kontrol does not come with an Ethernet socket. To make this 
+work, you need a few things:
+
+##### Prerequisites
+
+  - An **RS232-to-ethernet-converter** (we have tested it with the 
+    [USR-TCP232-302 from USR IOT](http://www.usriot.com/p/rs232-to-ethernet-converters/),
+    but I'm sure there are lots of other models out there which work just as well
+
+  - A **Software Upload Cable** or **Host to Product Cable**, as 
+    [specified by Linn](http://docs.linn.co.uk/wiki/images/1/13/RS232_Cables_v102.pdf),
+    either of these two should work.
+    
+  - A [**null modem adapter**](https://en.wikipedia.org/wiki/Null_modem).
+    If you are soldering the cable yourself and you feel up to it, you can of course try and
+    modify the cable layout to include the null modem wiring, so that you don't need an 
+    additional null modem adapter.
+
+##### Hardware Setup
+
+  1. Connect the Software Upload Cable or Host to Product Cable to **RS232 IN** socket of the 
+     Linn Klimax Kontrol
+     
+  2. Connect the null modem adapter to the 9-pin D-Sub plug of the Linn cable
+  
+  3. Connect the RS232-to-ethernet-converter to the null modem adapter
+  
+  4. Connect the RS232-to-ethernet-converter to your network
+  
+##### Software Setup
+
+  1. Install the setup software for the RS232-to-ethernet-converter on your computer
+  
+  2. Configure the RS232-to-ethernet-converter:
+  
+     - **Local IP Config:** use static IP and configure the static IP you have selected 
+       for your Linn device. Submask is usually 255.255.255.0 for private networks, and 
+       Gateway is the IP address of your network router.
+       
+     - **Serial Port:** Baud rate: 9600, Data Size: 7 bit, Parity: even, Stop Bits: 1 bit,
+       Local Port: 9004, Remote Port: 9004, Work Mode: TCP Server:
+       
+       <img src="docu-images/RS232-converter-settings.png" width="500" alt="Serial Port Settings"/>
+       RS232-converter-settings
+       
+Now, the network commands sent by the app to the RS232-to-network-converter should be forwarded
+to the RS232 port of the Klimax Kontrol device.
+
 ### Installing the app
+
+  1. **Allow Unknown Sources**
+
+     Because the Kintrol app is not available from the Google Play store, in order to install
+     it, you need to allow installation from unknown sources. To do that, go to the settings
+     menu of your android device, and in the *Security* section, tick the *Unknown Sources*
+     option.
+     
+  2. **Download the app**
+
+     In the web browser of your android device, follow the link 
+     https://github.com/Geekgasm/kintrol/releases/download/0.25/kintrol-v0.25.apk
+     to download tha latest version 0.25 of the Kintrol app.
+     
+  3. **Install the app**
+     
+     Depending on your android version, you might now be prompted to install the downloaded
+     app. If not, swipe down from the notification bar at the top of the screen. Your dowloaded
+     app should be listed. Tap on it.
+     
+     Follow the on-screen instructions to install the app.
+     
+  4. **Disallow Unknown Sources**
+  
+     For security reasons, you should revert step 1 and disallow installation from unknown sources
+     again to prevent you from accidentally install something.
 
 ### Starting the app for the first time
 
