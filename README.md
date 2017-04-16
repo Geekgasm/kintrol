@@ -41,6 +41,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ### Connecting your Linn device to the network
 
+Your KINO/KISTO/Klimax Kontrol needs to be connected to your network, and a fixed IP address must be configured for it.
+
 #### Kinos and Kisto
 
 #### Klimax Kontrol
@@ -52,7 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 When you start the app for the first time, it does not know about your Linn device.
 It will prompt you to enter the configuration for your Linn Kinos, Kisto or Klimax Kontrol:
 
-![alt text][initial_screen_new_device]
+<img src="docu-images/initial_screen_new_device.png" height="500" alt="Initial screen prompting for the device configuration"/>
 
 Enter the required information:
 
@@ -72,21 +74,36 @@ Enter the required information:
 After you filled in the required values, press on the *OK* button and see the 
 entry screen with one device listed.
 
-![alt text][first_device_configured]
+<img src="docu-images/first_device_configured.png" height="500" alt="First device configured"/>
 
 ## Using the App
 
-On first startup the app prompts you for the settings of your KINOS, KISTO or Klimax Kontrol device:
- - Device type: either Kinos, Kisto or Klimax Kontrol. Please select the model you want to control.
- - Device name: pick a name for your device. Please note that this should be a unique name in case you have more than one devices.
- - IP address: the IPV4 network address under which the device can be reached. 
- - Port (optional): the port of the device. You can leave this empty unless you want to use a different port than the default 9004. That is the port the Kinos or Kisto device uses for network communication. But in case you are using an network-to-RS232 adapter (i.e. when using a Klimax Kontrol) the port might be different.
- - Discrete Volume Value (optional): if you specify a numeric value, the app will show an additional button next to the mute button, which sets the volume to a fixed value. This can be useful, if you have a calibrated volume level for movies in your home theatre, but your configured initial volume setting is different. If you leave this empty, the button will not appear.
- 
-Your KINO/KISTO/Klimax Kontrol needs to be connected to your network, and a fixed IP address must be configured for it.
-You can add additional devices in the application menu.
+### The Device Chooser Screen
 
-Once you added a device you can select it from the device list in the main screen.
+The app allows you to configure multiple Linn devices. 
+When the app is started, it shows the *Device Chooser Screen*, whose primary 
+function is to select the device you want to control. You will see the list of devices,
+which you have configured:
+
+<img src="docu-images/choose_device.png" height="500" alt="Device Chooser Screen"/>
+
+To start controlling a device, simply tap on the device name in the list. This will 
+bring you to the *Device Control Screen* (see next section).
+
+To add more devices, open the application menu (the three small dots in the upper right corner):
+
+<img src="docu-images/choose_device_menu.png" height="500" alt="Device Chooser Application Menu"/>
+
+***Add Device*** lets you add a new device to the list. The configuration menu is the same as for 
+the first device (see section *Starting the app for the first time*).
+
+***About Kintrol*** will open the screen with the app information (copyright notice,
+license information and links to this Github project):
+ 
+<img src="docu-images/about.png" height="500" alt="About Kintrol"/>
+
+
+### The Device Control Screen
 
 If your device is switched on an reachable via network the device control screen allows you to switch the device on and off, change the volume, mute it, select the input profile, and select the surround mode. Also, the current setting for operation state, volume, input profile, and surround mode is displayed.
 
@@ -159,16 +176,11 @@ Please send general feedback, questions, suggestions to mailto:developer@geekgas
 To report bugs, please create a [new issue in the Github project](https://github.com/Geekgasm/kintrol/issues)
 
 
-[about]: docu-images/about.png
-[choose_device]: docu-images/choose_device.png
-[choose_device_menu]: docu-images/choose_device_menu.png
 [control_device_menu]: docu-images/control_device_menu.png
 [delete_device]: docu-images/delete_device.png
 [device_info]: docu-images/device_info.png
 [discrete_volume_button]: docu-images/discrete_volume_button.png
 [edit_device]: docu-images/edit_device.png
-[first_device_configured]: docu-images/first_device_configured.png "First device configured"
-[initial_screen_new_device]: docu-images/initial_screen_new_device.png "Initial screen prompting for the device configuration"
 [kinos_conrol_screen]: docu-images/kinos_conrol_screen.png
 [klimax_control_screen]: docu-images/klimax_control_screen.png
 [not_connected]: docu-images/not_connected.png
