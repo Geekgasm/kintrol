@@ -17,6 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ## Features
 
+#### All Devices:
+
  - Support for multiple devices
  - Configurable display name for each device
  - Configurable IP address and port for each device
@@ -25,12 +27,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  - Source selection (-/+) and source name display
  - Volume -/+ and Mute with display of current volume setting
  
-### Kinos and Kisto System Controllers
+#### Kinos and Kisto System Controllers
 
  - Surround Mode selection (-/+) and display of current setting
  - Display of total operation time and software versions in the device info display
       
-### Klimax Kontrol Pre-Amplifier
+#### Klimax Kontrol Pre-Amplifier
 
  - Unity Gain detection: in case an input is configured with Unity Gain, the volume 
    and mute control buttons are disabled. 
@@ -52,19 +54,17 @@ using DHCP.
 
 #### Kinos and Kisto
 
-  1. **Connect the Kinos or Kisto to your network**
-  
+  1. **Connect the Kinos or Kisto to your network.**
      Plug in the network cable to the socket marked with "Ethernet" on the back of the device.
      
-  2. **Set the network address**
-  
+  2. **Set the network address.**
      In the setup menu of the Kinos or Kisto, set the network address to the free fixed network
      address you selected.
 
 #### Klimax Kontrol
 
-Unlike Kinos or Kisto, the Klimax Kontrol does not come with an Ethernet socket. To make this 
-work, you need a few things:
+Unlike Kinos or Kisto, the Klimax Kontrol does not come with an Ethernet socket. To be able to 
+control the device with the Kintrol app, you need a few things:
 
 ##### Prerequisites
 
@@ -106,36 +106,30 @@ work, you need a few things:
        Local Port: 9004, Remote Port: 9004, Work Mode: TCP Server:
        
        <img src="docu-images/RS232-converter-settings.png" width="750" alt="Serial Port Settings"/>
-       RS232-converter-settings
        
-Now, the network commands sent by the app to the RS232-to-network-converter should be forwarded
-to the RS232 port of the Klimax Kontrol device.
+After setting this up the network communication between the app and your Klimax Kontrol
+should be forwarded by RS232-to-ethernet-converter.
 
 ### Installing the app
 
-  1. **Allow Unknown Sources**
-
+  1. **Allow Unknown Sources.**
      Because the Kintrol app is not available from the Google Play store, in order to install
      it, you need to allow installation from unknown sources. To do that, go to the settings
      menu of your android device, and in the *Security* section, tick the *Unknown Sources*
      option.
      
-  2. **Download the app**
-
+  2. **Download the app.**
      In the web browser of your android device, follow the link 
      https://github.com/Geekgasm/kintrol/releases/download/0.25/kintrol-v0.25.apk
      to download tha latest version 0.25 of the Kintrol app.
      
-  3. **Install the app**
-     
+  3. **Install the app.**
      Depending on your android version, you might now be prompted to install the downloaded
      app. If not, swipe down from the notification bar at the top of the screen. Your dowloaded
      app should be listed. Tap on it.
-     
      Follow the on-screen instructions to install the app.
      
-  4. **Disallow Unknown Sources**
-  
+  4. **Disallow Unknown Sources.**
      For security reasons, you should revert step 1 and disallow installation from unknown sources
      again to prevent you from accidentally install something.
 
@@ -178,7 +172,7 @@ which you have configured:
 <img src="docu-images/choose_device.png" width="250" alt="Device Chooser Screen"/>
 
 To start controlling a device, simply tap on the device name in the list. This will 
-bring you to the *Device Control Screen* (see next section).
+bring you to the [*Device Control Screen*](#the-device-control-screen).
 
 To add more devices, open the application menu (the three small dots in the upper right corner):
 
@@ -186,11 +180,6 @@ To add more devices, open the application menu (the three small dots in the uppe
 
 ***Add Device*** lets you add a new device to the list. The configuration menu is the same as for 
 the first device (see section *Starting the app for the first time*).
-
-***About Kintrol*** will open the screen with the app information (copyright notice,
-license information and links to this Github project):
- 
-<img src="docu-images/about.png" width="250" alt="About Kintrol"/>
 
 ### The Device Control Screen
 
@@ -278,8 +267,10 @@ Opening the app menu from the device control screen allows you to access thes fe
     
     <img src="docu-images/device_info.png" width="250" alt="Device information"/>
 
-  - *About Kintol:* displays the same information screen already described in the Device Chooser
-    section.
+  - *About Kintol:* will open the screen with the app information (copyright notice,
+    license information and links to this Github project):
+ 
+    <img src="docu-images/about.png" width="250" alt="About Kintrol"/>
 
 ## Used Libraries
 
@@ -296,11 +287,19 @@ UI resources for Holo theme created with [Android Holo Colors Generator](http://
 
 ## References
 
-The specifications for the control protocol for [KINOS](http://docs.linn.co.uk/wiki/images/3/3f/Kinos_RS232_Spec_v0101.pdf),
-[KISTO](http://docs.linn.co.uk/wiki/images/4/4f/Kisto_rs232_commands_v106.pdf) and 
-[Klimax Kontrol](http://docs.linn.co.uk/wiki/images/3/36/Kli_Kontrol_RS232_Commands.pdf) 
-can be found at the [LINNDOCS web site](http://docs.linn.co.uk/wiki/index.php/RS232).
-
+ - The [LINNDOCS web site](http://docs.linn.co.uk/wiki/index.php/RS232) provides the 
+   specifications for the control protocols for Linn devices:
+   - [KINOS](http://docs.linn.co.uk/wiki/images/3/3f/Kinos_RS232_Spec_v0101.pdf)
+   - [KISTO](http://docs.linn.co.uk/wiki/images/4/4f/Kisto_rs232_commands_v106.pdf)
+   - [Klimax Kontrol](http://docs.linn.co.uk/wiki/images/3/36/Kli_Kontrol_RS232_Commands.pdf) 
+ - The [LINN Manuals - Main Page](http://docs.linn.co.uk/wiki/index.php/Manuals_-_Main_page) 
+   provides the user manuals for Linn devices:
+   - [KINOS](http://docs.linn.co.uk/wiki/index.php/Manuals_-_Kinos)
+   - [KISTO](http://docs.linn.co.uk/wiki/index.php/Manuals_-_Kisto)
+   - [Klimax Kontrol](http://docs.linn.co.uk/wiki/index.php/Manuals_-_Klimax_Kontrol)
+ - [Software Upload/Host to Product Cable documentation](http://docs.linn.co.uk/wiki/images/1/13/RS232_Cables_v102.pdf)
+ - [Null modem adapter Wikipedia entry](https://en.wikipedia.org/wiki/Null_modem)
+ - [USR-TCP232-302 RS232-to-ethernet-converter from USR IOT](http://www.usriot.com/p/rs232-to-ethernet-converters/)
 
 ## Acknowledgements
 
