@@ -15,6 +15,17 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+## Table Of Contents
+
+1. [Features](#features)
+2. [**Getting Started**](#getting-started)
+3. [**Using the App**](#using-the-app)
+4. [Used Libraries](#used-libraries)
+5. [References](#references)
+6. [Acknowledgements](#acknowledgements)
+7. [Questions and Anwsers](#questions-and-anwsers)
+8. [Contact Information](#contact-information)
+
 ## Features
 
 #### All Devices:
