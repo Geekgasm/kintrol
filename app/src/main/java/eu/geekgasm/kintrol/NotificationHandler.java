@@ -49,7 +49,7 @@ public class NotificationHandler implements Runnable {
 
     @Override
     public void run() {
-        Log.d(TAG, "Starting NotificationHandler thread");
+        Log.i(TAG, "Starting NotificationHandler thread");
         while (!stopRequested) {
             statusChecker.checkDeviceStatus(200);
             statusChecker.checkDeviceStatus(600);
@@ -60,7 +60,7 @@ public class NotificationHandler implements Runnable {
                     updateDeviceState(deviceData);
                 }
             } catch (IOException e) {
-                Log.w(TAG, "Exception while reading socket, trying to recover:", e);
+                Log.i(TAG, "Exception while reading socket, trying to recover:", e);
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e1) {
@@ -68,7 +68,7 @@ public class NotificationHandler implements Runnable {
                 }
             }
         }
-        Log.d(TAG, "Stopping NotificationHandler thread");
+        Log.i(TAG, "Stopping NotificationHandler thread");
         telnetCommunicator = null;
         notificationListener = null;
     }

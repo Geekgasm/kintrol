@@ -158,7 +158,7 @@ public class Kontroller {
     private void sendCommand(KommandKey kommandKey, Object... arguments) {
         String commandString = device.getCommands().get(kommandKey);
         if (commandString == null || commandString.trim().equals("")) {
-            Log.d(TAG, "Command " + kommandKey + " not supported for this device, ignoring.");
+            Log.i(TAG, "Command " + kommandKey + " not supported for this device, ignoring.");
             return;
         }
         try {
@@ -166,7 +166,7 @@ public class Kontroller {
             Log.d(TAG, "Sending command: " + commandString);
             telnetCommunicator.sendLine("$" + commandString + "$");
         } catch (IOException ex) {
-            Log.e(TAG, "Error sending command '" + commandString + "'", ex);
+            Log.w(TAG, "Error sending command '" + commandString + "'", ex);
             telnetCommunicator.disconnect();
         }
     }

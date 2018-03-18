@@ -54,7 +54,7 @@ public class DeviceChooserActivity extends AbstractDeviceActivity {
         setContentView(R.layout.activity_device_choser);
         deviceListView = (ListView) findViewById(R.id.deviceListView);
         new DeviceInfoPersistenceHandler(this).loadDeviceList(deviceList);
-        Log.d(TAG, "Loaded device list: " + deviceList.toString());
+        Log.i(TAG, "Loaded device list: " + deviceList.toString());
         deviceInfoAdapter = new ArrayAdapter<DeviceInfo>(this, R.layout.devicerow, deviceList);
         deviceListView.setAdapter(deviceInfoAdapter);
         deviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

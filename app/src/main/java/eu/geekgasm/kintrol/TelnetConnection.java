@@ -46,14 +46,14 @@ public class TelnetConnection {
             try {
                 createTelnetClient();
             } catch (IOException | InvalidTelnetOptionException  e) {
-                Log.e(TAG, "Unable to open create telnet client", e);
+                Log.w(TAG, "Unable to create telnet client", e);
                 throw new RuntimeException("Unable to create telnet client", e);
             }
         }
     }
 
     private void createTelnetClient() throws IOException, InvalidTelnetOptionException {
-        Log.d(TAG, "Creating telnet client");
+        Log.i(TAG, "Creating telnet client");
         telnetClient = new TelnetClient();
 
         TerminalTypeOptionHandler ttopt = new TerminalTypeOptionHandler("VT100", false, false, true, false);
@@ -99,14 +99,14 @@ public class TelnetConnection {
             // Check by sending something
             OutputStream outputStream = telnetClient.getOutputStream();
             if (outputStream == null) {
-                Log.d(TAG, "Couldn't get output stream, no connection!");
+                Log.w(TAG, "Couldn't get output stream, no connection!");
                 connectionEstablished = false;
             } else {
                 try {
                     outputStream.write((data + "\n").getBytes("UTF-8"));
                     outputStream.flush();
                 } catch (IOException e) {
-                    Log.d(TAG, "Couldn't send command, no connection!");
+                    Log.w(TAG, "Couldn't send command, no connection!");
                     connectionEstablished = false;
                 }
             }

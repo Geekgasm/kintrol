@@ -101,7 +101,7 @@ public class TelnetCommunicator {
     }
 
     synchronized void shutdown() {
-        Log.d(TAG, "Shutting down TelnetCommunicator");
+        Log.i(TAG, "Shutting down TelnetCommunicator");
         disconnect();
     }
 }

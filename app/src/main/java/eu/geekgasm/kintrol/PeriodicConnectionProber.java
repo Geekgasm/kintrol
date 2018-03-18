@@ -31,7 +31,7 @@ public class PeriodicConnectionProber implements Runnable {
 
     @Override
     public void run() {
-        Log.d(TAG, "Starting PeriodicConnectionProber thread");
+        Log.i(TAG, "Starting PeriodicConnectionProber thread");
         try {
             while (!stopRequested) {
                 Thread.sleep(PROBE_CYCLE_IN_MILLIS);
@@ -40,7 +40,7 @@ public class PeriodicConnectionProber implements Runnable {
         } catch (InterruptedException e) {
             Log.d(TAG, "PeriodicConnectionProber thread interrupted, stopping");
         }
-        Log.d(TAG, "Stopping PeriodicConnectionProber thread");
+        Log.i(TAG, "Stopping PeriodicConnectionProber thread");
     }
 
     public synchronized boolean probeConnection() {
