@@ -1,7 +1,7 @@
 <!--
  Kintrol: Remote control app for LINN(R) KINOS(TM), KISTO(TM) and
  Klimax Kontrol(TM) system controllers.
- Copyright (C) 2015-2017 Oliver Götz
+ Copyright (C) 2015-2018 Oliver Götz
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License version 3.
@@ -49,7 +49,7 @@
         ]]></string>
     <string name="app_credits">
     <![CDATA[
-    &copy; 2015-2017 Oliver Götz<br>
+    &copy; 2015-2018 Oliver Götz<br>
     App icon designed by Mr. Truesound<p>
     This program is free software: you can redistribute it and/or modify
     it under the terms of the <a href="http://www.gnu.org/licenses/gpl.html">GNU General Public
