@@ -1,7 +1,7 @@
 /*
  Kintrol: Remote control app for LINN(R) KINOS(TM), KISTO(TM) and
  Klimax Kontrol(TM) system controllers.
- Copyright (C) 2015-2017 Oliver Götz
+ Copyright (C) 2015-2018 Oliver Götz
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License version 3.
@@ -18,96 +18,41 @@ package eu.geekgasm.kintrol;
 
 import android.util.Log;
 
-import org.apache.commons.net.telnet.EchoOptionHandler;
-import org.apache.commons.net.telnet.InvalidTelnetOptionException;
-import org.apache.commons.net.telnet.SuppressGAOptionHandler;
-import org.apache.commons.net.telnet.TelnetClient;
-import org.apache.commons.net.telnet.TerminalTypeOptionHandler;
-
 import java.io.IOException;
-import java.io.OutputStream;
 
 public class Kontroller {
     private static final String TAG = Kontroller.class.getSimpleName();
-    private static final int DEFAULT_PORT = 9004;
 
-    private String deviceIp;
-    private int devicePort;
     private NotificationListener notificationListener;
     private StatusChecker statusChecker;
     private Device device;
-    private TelnetClient telnetClient;
+    private TelnetCommunicator telnetCommunicator;
     private NotificationHandler notificationHandler;
 
-    public Kontroller(String deviceIp,
-                      String devicePortString, NotificationListener notificationListener,
-                      StatusChecker statusChecker,
-                      Device device) {
-        this.deviceIp = deviceIp;
-        this.devicePort = decodeDevicePort(devicePortString);
+    public Kontroller(DeviceInfo deviceInfo,
+                      NotificationListener notificationListener,
+                      StatusChecker statusChecker) {
         this.notificationListener = notificationListener;
         this.statusChecker = statusChecker;
-        this.device = device;
-    }
-
-    private int decodeDevicePort(String devicePortString) {
-        if (devicePortString != null) {
-            try {
-                return Integer.valueOf(devicePortString);
-            } catch (NumberFormatException ex) {
-                // Fall back to default
-            }
-        }
-        return DEFAULT_PORT;
+        this.device = DeviceDirectory.getDevice(deviceInfo.getDeviceType());
+        this.telnetCommunicator = new TelnetCommunicator(deviceInfo);
     }
 
     public void start() {
-        disconnectTelnetClient();
+        notificationListener.handleNoConnectionStatusUpdate();
         try {
-            establishConnection();
+            connectToDevice();
         } catch (Exception e) {
             Log.e(TAG, "Error starting Kontroller", e);
         }
     }
 
-    private void disconnectTelnetClient() {
-        if (telnetClient != null && telnetClient.isConnected()) {
-            try {
-                telnetClient.disconnect();
-            } catch (IOException e) {
-                Log.w(TAG, "Error disconnecting Telnet client: ", e);
-            }
+    private void connectToDevice() throws IOException {
+        if (telnetCommunicator.connect()) {
+            notificationHandler = new NotificationHandler(telnetCommunicator, notificationListener, statusChecker, device);
+            Thread notificationHandlerThread = new Thread(notificationHandler, "Device response handler thread");
+            notificationHandlerThread.start();
         }
-        notificationListener.handleNoConnectionStatusUpdate();
-    }
-
-    private void establishConnection() throws IOException, InvalidTelnetOptionException {
-        if (telnetClient == null) {
-            createTelnetClient();
-        }
-        if (!telnetClient.isConnected()) {
-            try {
-                Log.d(TAG, "Opening telnet connection to " + deviceIp + ":" + devicePort);
-                telnetClient.connect(deviceIp, devicePort);
-                notificationHandler = new NotificationHandler(telnetClient, notificationListener, statusChecker, device);
-                Thread notificationHandlerThread = new Thread(notificationHandler, "Device response handler thread");
-                notificationHandlerThread.start();
-            } catch (IOException e) {
-                Log.e(TAG, "Unable to open telnet connection to " + deviceIp + ":" + devicePort, e);
-            }
-        }
-    }
-
-    private void createTelnetClient() throws IOException, InvalidTelnetOptionException {
-        telnetClient = new TelnetClient();
-
-        TerminalTypeOptionHandler ttopt = new TerminalTypeOptionHandler("VT100", false, false, true, false);
-        EchoOptionHandler echoopt = new EchoOptionHandler(true, false, true, false);
-        SuppressGAOptionHandler gaopt = new SuppressGAOptionHandler(true, true, true, true);
-
-        telnetClient.addOptionHandler(ttopt);
-        telnetClient.addOptionHandler(echoopt);
-        telnetClient.addOptionHandler(gaopt);
     }
 
     public void checkDeviceStatus() {
@@ -123,121 +68,115 @@ public class Kontroller {
     }
 
     public void checkOperationStatus() {
-        sendCommand(device.getCommands().get(KommandKey.checkOperationStatus));
+        sendCommand(KommandKey.checkOperationStatus);
     }
 
     public void checkVolume() {
-        sendCommand(device.getCommands().get(KommandKey.checkVolume));
+        sendCommand(KommandKey.checkVolume);
     }
 
     private void checkMuteStatus() {
-        sendCommand(device.getCommands().get(KommandKey.checkMuteStatus));
+        sendCommand(KommandKey.checkMuteStatus);
     }
 
     public void checkInputProfile() {
-        sendCommand(device.getCommands().get(KommandKey.checkInputProfile));
+        sendCommand(KommandKey.checkInputProfile);
     }
 
     public void checkUnityGain(String currentInputProfileId) {
-        sendCommand(device.getCommands().get(KommandKey.checkUnityGain), currentInputProfileId);
+        sendCommand(KommandKey.checkUnityGain, currentInputProfileId);
     }
 
     public void checkInputName(String currentInputProfileId) {
-        sendCommand(device.getCommands().get(KommandKey.checkInputName), currentInputProfileId);
+        sendCommand(KommandKey.checkInputName, currentInputProfileId);
     }
 
     public void checkSurroundMode() {
-        sendCommand(device.getCommands().get(KommandKey.checkSurroundMode));
+        sendCommand(KommandKey.checkSurroundMode);
     }
 
     public void checkDeviceId() {
-        sendCommand(device.getCommands().get(KommandKey.checkDeviceId));
+        sendCommand(KommandKey.checkDeviceId);
     }
 
     public void checkPowerCounter() {
-        sendCommand(device.getCommands().get(KommandKey.checkPowerCounter));
+        sendCommand(KommandKey.checkPowerCounter);
     }
 
     public void checkSoftwareVersion() {
-        sendCommand(device.getCommands().get(KommandKey.checkSoftwareVersion));
+        sendCommand(KommandKey.checkSoftwareVersion);
     }
 
     public void checkHardwareVersion() {
-        sendCommand(device.getCommands().get(KommandKey.checkHardwareVersion));
+        sendCommand(KommandKey.checkHardwareVersion);
     }
 
     public void switchOn() {
-        sendCommand(device.getCommands().get(KommandKey.switchOn));
+        sendCommand(KommandKey.switchOn);
     }
 
     public void switchOff() {
-        sendCommand(device.getCommands().get(KommandKey.switchOff));
+        sendCommand(KommandKey.switchOff);
     }
 
     public void decreaseVolume() {
-        sendCommand(device.getCommands().get(KommandKey.decreaseVolume));
+        sendCommand(KommandKey.decreaseVolume);
     }
 
     public void increaseVolume() {
-        sendCommand(device.getCommands().get(KommandKey.increaseVolume));
+        sendCommand(KommandKey.increaseVolume);
     }
 
     public void previousInputProfile() {
-        sendCommand(device.getCommands().get(KommandKey.previousInputProfile));
+        sendCommand(KommandKey.previousInputProfile);
     }
 
     public void nextInputProfile() {
-        sendCommand(device.getCommands().get(KommandKey.nextInputProfile));
+        sendCommand(KommandKey.nextInputProfile);
     }
 
     public void toggleMute() {
-        String toggleMute = device.getCommands().get(KommandKey.toggleMute);
-        if (toggleMute == null) {
-            toggleMute = device.getCommands().get(notificationHandler.isMuted() ? KommandKey.muteOff : KommandKey.muteOn);
+        KommandKey toggleMuteKommand = KommandKey.toggleMute;
+        if (!device.getCommands().containsKey(KommandKey.toggleMute)) {
+            toggleMuteKommand = notificationHandler.isMuted() ? KommandKey.muteOff : KommandKey.muteOn;
         }
-        sendCommand(toggleMute);
+        sendCommand(toggleMuteKommand);
     }
 
     public void setVolume(int volume) {
-        sendCommand(device.getCommands().get(KommandKey.setVolume) + volume);
+        sendCommand(KommandKey.setVolume, volume);
     }
 
     public void previousSurroundMode() {
-        sendCommand(device.getCommands().get(KommandKey.previousSurroundMode));
+        sendCommand(KommandKey.previousSurroundMode);
     }
 
     public void nextSurroundMode() {
-        sendCommand(device.getCommands().get(KommandKey.nextSurroundMode));
+        sendCommand(KommandKey.nextSurroundMode);
     }
 
-    private void sendCommand(String commandString, String... arguments) {
+    private void sendCommand(KommandKey kommandKey, Object... arguments) {
+        String commandString = device.getCommands().get(kommandKey);
         if (commandString == null || commandString.trim().equals("")) {
+            Log.d(TAG, "Command " + kommandKey + " not supported for this device, ignoring.");
             return;
         }
         try {
             commandString = String.format(commandString, arguments);
             Log.d(TAG, "Sending command: " + commandString);
-            establishConnection();
-            OutputStream outputStream = telnetClient.getOutputStream();
-            if (outputStream == null)
-                throw new IOException("Could not get output stream from telnet client");
-            outputStream.write(("$" + commandString + "$\n").getBytes("UTF-8"));
-            outputStream.flush();
-        } catch (IOException | InvalidTelnetOptionException ex) {
+            telnetCommunicator.sendLine("$" + commandString + "$");
+        } catch (IOException ex) {
             Log.e(TAG, "Error sending command '" + commandString + "'", ex);
-            try {
-                telnetClient.disconnect();
-            } catch (IOException ioex) {
-                Log.w(TAG, "Error closing connection", ioex);
-            }
+            telnetCommunicator.disconnect();
         }
     }
 
     public void stop() {
-        if (notificationHandler != null)
-            notificationHandler.shutdown();
-        disconnectTelnetClient();
-        telnetClient = null;
+        if (notificationHandler != null) {
+            notificationHandler.requestStop();
+            notificationHandler = null;
+        }
+        telnetCommunicator.shutdown();
     }
 
 }

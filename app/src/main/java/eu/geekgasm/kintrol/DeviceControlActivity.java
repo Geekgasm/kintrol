@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NavUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -47,6 +48,7 @@ import eu.geekgasm.kintrol.kinos.SurroundModes;
 
 
 public class DeviceControlActivity extends AbstractDeviceActivity implements NotificationListener {
+    private static final String TAG = DeviceControlActivity.class.getSimpleName();
 
     public static final String EXTRA_IP_ADDRESS = "eu.geekgasm.kintrol.IP_ADDRESS";
     public static final String EXTRA_PORT = "eu.geekgasm.kintrol.PORT";
@@ -151,6 +153,7 @@ public class DeviceControlActivity extends AbstractDeviceActivity implements Not
 
     @Override
     protected void onPause() {
+        Log.i(TAG, "onPause: stopping KontrollerThread");
         super.onPause();
         // request the thread to stop
         kontrollerThread.requestStop();

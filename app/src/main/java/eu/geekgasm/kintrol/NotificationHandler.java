@@ -18,12 +18,8 @@ package eu.geekgasm.kintrol;
 
 import android.util.Log;
 
-import org.apache.commons.net.telnet.TelnetClient;
-
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,7 +27,7 @@ public class NotificationHandler implements Runnable {
 
     private static final String TAG = NotificationHandler.class.getSimpleName();
 
-    private TelnetClient telnetClient;
+    private TelnetCommunicator telnetCommunicator;
     private NotificationListener notificationListener;
     private StatusChecker statusChecker;
     private Device device;
@@ -39,12 +35,13 @@ public class NotificationHandler implements Runnable {
     private boolean isMuted = false;
     private boolean isOperational = false;
     private boolean isUnityGainOn = false;
+    private boolean stopRequested = false;
 
-    public NotificationHandler(TelnetClient telnetClient,
+    public NotificationHandler(TelnetCommunicator telnetClient,
                                NotificationListener notificationListener,
                                StatusChecker statusChecker,
                                Device device) {
-        this.telnetClient = telnetClient;
+        this.telnetCommunicator = telnetClient;
         this.notificationListener = notificationListener;
         this.statusChecker = statusChecker;
         this.device = device;
@@ -52,18 +49,33 @@ public class NotificationHandler implements Runnable {
 
     @Override
     public void run() {
-        InputStream instr = telnetClient.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(instr));
-        String deviceData = "";
-        statusChecker.checkDeviceStatus(200);
-        statusChecker.checkDeviceStatus(600);
-        try {
-            while ((deviceData = reader.readLine()) != null) {
-                updateDeviceState(deviceData);
+        Log.d(TAG, "Starting NotificationHandler thread");
+        while (!stopRequested) {
+            statusChecker.checkDeviceStatus(200);
+            statusChecker.checkDeviceStatus(600);
+            try {
+                BufferedReader reader = telnetCommunicator.getInputReader();
+                String deviceData = "";
+                while (!stopRequested && (deviceData = reader.readLine()) != null) {
+                    updateDeviceState(deviceData);
+                }
+            } catch (IOException e) {
+                Log.w(TAG, "Exception while reading socket, trying to recover:", e);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e1) {
+                    // continue on thread interrupt
+                }
             }
-        } catch (IOException e) {
-            Log.w(TAG, "Error in KinosNotificationHandler Thread, Exception while reading socket:", e);
         }
+        Log.d(TAG, "Stopping NotificationHandler thread");
+        telnetCommunicator = null;
+        notificationListener = null;
+    }
+
+    public synchronized void requestStop() {
+        Log.d(TAG, "Stop requested for NotificationHandler thread");
+        stopRequested = true;
     }
 
     public boolean isMuted() {
@@ -234,11 +246,6 @@ public class NotificationHandler implements Runnable {
 
     private boolean matches(Matcher matcher) {
         return matcher != null && matcher.matches();
-    }
-
-    public void shutdown() {
-        telnetClient = null;
-        notificationListener = null;
     }
 
     private boolean isOn(String status) {
