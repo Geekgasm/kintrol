@@ -39,7 +39,7 @@ public class KontrollerThread extends HandlerThread implements StatusChecker {
     protected void onLooperPrepared() {
         Log.i(TAG, "KontrollerThread starts Kontroller");
         Device device = DeviceDirectory.getDevice(deviceInfo.deviceType);
-        kontroller = new Kontroller(deviceInfo.ipAddress, deviceInfo.getPort(), notificationListener, this, device);
+        kontroller = new Kontroller(deviceInfo, notificationListener, this);
         kontroller.start();
         Log.i(TAG, "KontrollerThread entering the loop");
     }
@@ -53,6 +53,18 @@ public class KontrollerThread extends HandlerThread implements StatusChecker {
         if (kontroller != null) {
             kontroller.stop();
             kontroller = null;
+        }
+    }
+
+    public synchronized void updateDevice(final DeviceInfo deviceInfo) {
+        if (kontroller != null) {
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    Log.i(TAG, "KontrollerThread updates Kontroller with new DeviceInfo");
+                    kontroller.updateDeviceInfo(deviceInfo);
+                }
+            });
         }
     }
 
