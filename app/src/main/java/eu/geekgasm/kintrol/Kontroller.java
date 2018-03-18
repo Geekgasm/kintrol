@@ -28,6 +28,7 @@ public class Kontroller {
     private Device device;
     private TelnetCommunicator telnetCommunicator;
     private NotificationHandler notificationHandler;
+    private int reconnectDelayMillis;
 
     public Kontroller(DeviceInfo deviceInfo,
                       NotificationListener notificationListener,
@@ -36,6 +37,18 @@ public class Kontroller {
         this.statusChecker = statusChecker;
         this.device = DeviceDirectory.getDevice(deviceInfo.getDeviceType());
         this.telnetCommunicator = new TelnetCommunicator(deviceInfo);
+        this.reconnectDelayMillis = decodeReconnectDelayMillis(deviceInfo.getReconnectDelayMillis());
+    }
+
+    private int decodeReconnectDelayMillis(String reconnectDelayMillisString) {
+        if (reconnectDelayMillisString != null) {
+            try {
+                return Integer.valueOf(reconnectDelayMillisString);
+            } catch (NumberFormatException ex) {
+                // Fall back to default (0: switched off)
+            }
+        }
+        return 0;
     }
 
     public void start() {
@@ -49,7 +62,7 @@ public class Kontroller {
 
     private void connectToDevice() throws IOException {
         if (telnetCommunicator.connect()) {
-            notificationHandler = new NotificationHandler(telnetCommunicator, notificationListener, statusChecker, device);
+            notificationHandler = new NotificationHandler(telnetCommunicator, notificationListener, statusChecker, device, reconnectDelayMillis);
             Thread notificationHandlerThread = new Thread(notificationHandler, "Device response handler thread");
             notificationHandlerThread.start();
         }

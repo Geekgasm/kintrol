@@ -80,6 +80,14 @@ public class TelnetConnection {
         return connectionEstablished;
     }
 
+    public synchronized boolean probeConnection() {
+        boolean connectionEstablished = sendData("$STATUS$");
+        if (!connectionEstablished) {
+            connectionEstablished = establishConnection();
+        }
+        return connectionEstablished;
+    }
+
     public synchronized void disconnect() {
         if (telnetClient != null && telnetClient.isConnected()) {
             try {

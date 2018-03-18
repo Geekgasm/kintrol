@@ -31,6 +31,7 @@ public class TelnetCommunicator {
 
     private String deviceIp;
     private int devicePort;
+    private int probeCycleInMillis;
 
     private TelnetConnection telnetConnection;
     private PeriodicConnectionProber connectionProber;
@@ -38,6 +39,18 @@ public class TelnetCommunicator {
     public TelnetCommunicator(DeviceInfo deviceInfo) {
         this.deviceIp = deviceInfo.getIpAddress();
         this.devicePort = decodeDevicePort(deviceInfo.getPort());
+        this.probeCycleInMillis = decodeProbeCycleInMillis(deviceInfo.getProbeCycleMillis());
+    }
+
+    private int decodeProbeCycleInMillis(String probeCycleMillisString) {
+        if (probeCycleMillisString != null) {
+            try {
+                return Integer.valueOf(probeCycleMillisString);
+            } catch (NumberFormatException ex) {
+                // Fall back to default (0: switched off)
+            }
+        }
+        return 0;
     }
 
     private int decodeDevicePort(String devicePortString) {
@@ -61,24 +74,26 @@ public class TelnetCommunicator {
 
     synchronized boolean connect() throws IOException {
         ensureTelnetConnection();
-        return connectionProber.probeConnection();
+        return telnetConnection.probeConnection();
     }
 
     private void ensureTelnetConnection() throws IOException {
         if (telnetConnection == null) {
             telnetConnection = new TelnetConnection(deviceIp, devicePort);
-            createConnectionProberThread();
+            if (probeCycleInMillis > 0) {
+                createConnectionProberThread();
+            }
         }
     }
 
     private void ensureConnection() throws IOException {
-        if (!connectionProber.probeConnection()) {
+        if (!telnetConnection.probeConnection()) {
             throw new IOException("Unable to connect to " + deviceIp + ":" + devicePort);
         }
     }
 
     private void createConnectionProberThread() {
-        connectionProber = new PeriodicConnectionProber(telnetConnection, deviceIp, devicePort);
+        connectionProber = new PeriodicConnectionProber(telnetConnection, probeCycleInMillis);
         Thread connectionProberThread = new Thread(connectionProber, "Periodic connection prober thread");
         connectionProberThread.start();
     }

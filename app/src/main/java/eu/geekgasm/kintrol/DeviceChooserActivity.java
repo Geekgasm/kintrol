@@ -98,6 +98,8 @@ public class DeviceChooserActivity extends AbstractDeviceActivity {
         intent.putExtra(DeviceControlActivity.EXTRA_DEVICE_TYPE, deviceInfo.getDeviceType());
         intent.putExtra(DeviceControlActivity.EXTRA_DEVICE_NAME, deviceInfo.getDeviceName());
         intent.putExtra(DeviceControlActivity.EXTRA_DEVICE_VOLUMES, deviceInfo.getDiscreteVolumeValues());
+        intent.putExtra(DeviceControlActivity.EXTRA_PROBE_CYCLE_MILLIS, deviceInfo.getProbeCycleMillis());
+        intent.putExtra(DeviceControlActivity.EXTRA_RECONNECT_DELAY_MILLIS, deviceInfo.getReconnectDelayMillis());
         startActivity(intent);
     }
 
@@ -110,6 +112,8 @@ public class DeviceChooserActivity extends AbstractDeviceActivity {
         final EditText ipAddressText = (EditText) promptsView.findViewById(R.id.edit_ip_address);
         final EditText portText = (EditText) promptsView.findViewById(R.id.edit_port);
         final EditText discreteVolumeText = (EditText) promptsView.findViewById(R.id.edit_discrete_volume);
+        final EditText probeCycleMillisText = (EditText) promptsView.findViewById(R.id.edit_probe_cycle_millis);
+        final EditText reconnectDelayMillisText = (EditText) promptsView.findViewById(R.id.edit_reconnect_delay_millis);
         final ArrayAdapter<DeviceInfo> adapter = deviceInfoAdapter;
         AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .setView(promptsView)
@@ -123,6 +127,8 @@ public class DeviceChooserActivity extends AbstractDeviceActivity {
                                 portText.getText().toString(),
                                 DeviceDirectory.getDeviceById(deviceTypeGroup.getCheckedRadioButtonId()).getDeviceName(),
                                 deviceNameText.getText().toString(),
+                                probeCycleMillisText.getText().toString(),
+                                reconnectDelayMillisText.getText().toString(),
                                 getDiscreteVolumes(discreteVolumeText));
                         deviceList.add(newDevice);
                         deviceListPersistor.saveDeviceList(deviceList);

@@ -55,6 +55,8 @@ public class DeviceControlActivity extends AbstractDeviceActivity implements Not
     public static final String EXTRA_DEVICE_NAME = "eu.geekgasm.kintrol.DEVICE_NAME";
     public static final String EXTRA_DEVICE_TYPE = "eu.geekgasm.kintrol.DEVICE_TYPE";
     public static final String EXTRA_DEVICE_VOLUMES = "eu.geekgasm.kintrol.DEVICE_VOLUMES";
+    public static final String EXTRA_PROBE_CYCLE_MILLIS = "eu.geekgasm.kintrol.PROBE_CYCLE_MILLIS";
+    public static final String EXTRA_RECONNECT_DELAY_MILLIS = "eu.geekgasm.kintrol.RECONNECT_DELAY_MILLIS";
     private final DeviceInfoPersistenceHandler deviceListPersistor = new DeviceInfoPersistenceHandler(this);
     private Handler handler;
     private TextView deviceNameView;
@@ -98,6 +100,8 @@ public class DeviceControlActivity extends AbstractDeviceActivity implements Not
                 intent.getStringExtra(EXTRA_PORT),
                 intent.getStringExtra(EXTRA_DEVICE_TYPE),
                 intent.getStringExtra(EXTRA_DEVICE_NAME),
+                intent.getStringExtra(EXTRA_PROBE_CYCLE_MILLIS),
+                intent.getStringExtra(EXTRA_RECONNECT_DELAY_MILLIS),
                 intent.getStringArrayExtra(EXTRA_DEVICE_VOLUMES));
 
         handler = new Handler();
@@ -335,6 +339,10 @@ public class DeviceControlActivity extends AbstractDeviceActivity implements Not
         ipAddressText.setText(deviceInfo.ipAddress);
         final EditText portText = (EditText) promptsView.findViewById(R.id.edit_port);
         portText.setText(deviceInfo.port);
+        final EditText probeCycleMillisText = (EditText) promptsView.findViewById(R.id.edit_probe_cycle_millis);
+        probeCycleMillisText.setText(deviceInfo.probeCycleMillis);
+        final EditText reconnectDelayMillisText = (EditText) promptsView.findViewById(R.id.edit_reconnect_delay_millis);
+        reconnectDelayMillisText.setText(deviceInfo.reconnectDelayMillis);
         final EditText discreteVolumeText = (EditText) promptsView.findViewById(R.id.edit_discrete_volume);
         if (deviceInfo.discreteVolumeValues != null && deviceInfo.discreteVolumeValues.length > 0)
             discreteVolumeText.setText(deviceInfo.discreteVolumeValues[0]);
@@ -350,6 +358,8 @@ public class DeviceControlActivity extends AbstractDeviceActivity implements Not
                                 portText.getText().toString(),
                                 DeviceDirectory.getDeviceById(deviceTypeGroup.getCheckedRadioButtonId()).getDeviceName(),
                                 deviceNameText.getText().toString(),
+                                probeCycleMillisText.getText().toString(),
+                                reconnectDelayMillisText.getText().toString(),
                                 getDiscreteVolumes(discreteVolumeText));
                         deviceListPersistor.updateDevice(deviceInfo, newDevice);
                         startControlActivity(newDevice);
@@ -372,6 +382,8 @@ public class DeviceControlActivity extends AbstractDeviceActivity implements Not
         intent.putExtra(EXTRA_DEVICE_TYPE, deviceInfo.getDeviceType());
         intent.putExtra(EXTRA_DEVICE_NAME, deviceInfo.getDeviceName());
         intent.putExtra(EXTRA_DEVICE_VOLUMES, deviceInfo.getDiscreteVolumeValues());
+        intent.putExtra(EXTRA_PROBE_CYCLE_MILLIS, deviceInfo.getProbeCycleMillis());
+        intent.putExtra(EXTRA_RECONNECT_DELAY_MILLIS, deviceInfo.getReconnectDelayMillis());
         startActivity(intent);
     }
 

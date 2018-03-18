@@ -31,6 +31,7 @@ public class NotificationHandler implements Runnable {
     private NotificationListener notificationListener;
     private StatusChecker statusChecker;
     private Device device;
+    private final int reconnectDelayMillis;
     private String currentVolume = NotificationListener.NOT_AVAILABLE;
     private boolean isMuted = false;
     private boolean isOperational = false;
@@ -40,17 +41,19 @@ public class NotificationHandler implements Runnable {
     public NotificationHandler(TelnetCommunicator telnetClient,
                                NotificationListener notificationListener,
                                StatusChecker statusChecker,
-                               Device device) {
+                               Device device,
+                               int reconnectDelayMillis) {
         this.telnetCommunicator = telnetClient;
         this.notificationListener = notificationListener;
         this.statusChecker = statusChecker;
         this.device = device;
+        this.reconnectDelayMillis = reconnectDelayMillis;
     }
 
     @Override
     public void run() {
         Log.i(TAG, "Starting NotificationHandler thread");
-        while (!stopRequested) {
+        do {
             statusChecker.checkDeviceStatus(200);
             statusChecker.checkDeviceStatus(600);
             try {
@@ -62,12 +65,12 @@ public class NotificationHandler implements Runnable {
             } catch (IOException e) {
                 Log.i(TAG, "Exception while reading socket, trying to recover:", e);
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(reconnectDelayMillis);
                 } catch (InterruptedException e1) {
                     // continue on thread interrupt
                 }
             }
-        }
+        } while (!stopRequested && reconnectDelayMillis > 0);
         Log.i(TAG, "Stopping NotificationHandler thread");
         telnetCommunicator = null;
         notificationListener = null;

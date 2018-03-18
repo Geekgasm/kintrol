@@ -43,6 +43,8 @@
     <string name="edit_ip_address">IP address</string>
     <string name="edit_port">Port (optional)</string>
     <string name="edit_discrete_volume">Discrete Volume Value (optional)</string>
+    <string name="edit_probe_cycle_millis">Probe cycle millis (optional)</string>
+    <string name="edit_reconnect_delay_millis">Reconnect delay millis (optional)</string>
     <string name="app_descrip">
         <![CDATA[
         Remote control app for LINN&reg; KINOS&trade;, KISTO&trade; and Klimax Kontrol&trade; system controllers.<br>

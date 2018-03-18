@@ -81,5 +81,23 @@
             android:inputType="number"
             android:digits="0123456789"
             android:hint="@string/edit_discrete_volume" />
+
+        <EditText
+            android:id="@+id/edit_probe_cycle_millis"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:digits="0123456789"
+            android:hint="@string/edit_probe_cycle_millis" />
+
+        <EditText
+            android:id="@+id/edit_reconnect_delay_millis"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:digits="0123456789"
+            android:hint="@string/edit_reconnect_delay_millis" />
     </LinearLayout>
 </FrameLayout>

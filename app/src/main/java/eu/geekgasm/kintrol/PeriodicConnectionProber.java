@@ -20,13 +20,14 @@ import android.util.Log;
 
 public class PeriodicConnectionProber implements Runnable {
     private static final String TAG = PeriodicConnectionProber.class.getSimpleName();
-    private static final long PROBE_CYCLE_IN_MILLIS = 3000;
 
     private final TelnetConnection telnetConnection;
+    private final int probeCycleInMillis;
     private boolean stopRequested;
 
-    public PeriodicConnectionProber(TelnetConnection telnetConnection, String deviceIp, int devicePort) {
+    public PeriodicConnectionProber(TelnetConnection telnetConnection, int probeCycleInMillis) {
         this.telnetConnection = telnetConnection;
+        this.probeCycleInMillis = probeCycleInMillis;
     }
 
     @Override
@@ -34,21 +35,13 @@ public class PeriodicConnectionProber implements Runnable {
         Log.i(TAG, "Starting PeriodicConnectionProber thread");
         try {
             while (!stopRequested) {
-                Thread.sleep(PROBE_CYCLE_IN_MILLIS);
-                probeConnection();
+                Thread.sleep(probeCycleInMillis);
+                telnetConnection.probeConnection();
             }
         } catch (InterruptedException e) {
             Log.d(TAG, "PeriodicConnectionProber thread interrupted, stopping");
         }
         Log.i(TAG, "Stopping PeriodicConnectionProber thread");
-    }
-
-    public synchronized boolean probeConnection() {
-        boolean connectionEstablished = telnetConnection.sendData("$STATUS$");
-        if (!connectionEstablished) {
-            connectionEstablished = telnetConnection.establishConnection();
-        }
-        return connectionEstablished;
     }
 
     public synchronized void stop() {
