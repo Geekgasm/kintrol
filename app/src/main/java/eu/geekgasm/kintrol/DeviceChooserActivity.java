@@ -1,7 +1,7 @@
 /*
  Kintrol: Remote control app for LINN(R) KINOS(TM), KISTO(TM) and
  Klimax Kontrol(TM) system controllers.
- Copyright (C) 2015-2017 Oliver Götz
+ Copyright (C) 2015-2018 Oliver Götz
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License version 3.
@@ -54,7 +54,7 @@ public class DeviceChooserActivity extends AbstractDeviceActivity {
         setContentView(R.layout.activity_device_choser);
         deviceListView = (ListView) findViewById(R.id.deviceListView);
         new DeviceInfoPersistenceHandler(this).loadDeviceList(deviceList);
-        Log.d(TAG, "Loaded device list: " + deviceList.toString());
+        Log.i(TAG, "Loaded device list: " + deviceList.toString());
         deviceInfoAdapter = new ArrayAdapter<DeviceInfo>(this, R.layout.devicerow, deviceList);
         deviceListView.setAdapter(deviceInfoAdapter);
         deviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -98,6 +98,8 @@ public class DeviceChooserActivity extends AbstractDeviceActivity {
         intent.putExtra(DeviceControlActivity.EXTRA_DEVICE_TYPE, deviceInfo.getDeviceType());
         intent.putExtra(DeviceControlActivity.EXTRA_DEVICE_NAME, deviceInfo.getDeviceName());
         intent.putExtra(DeviceControlActivity.EXTRA_DEVICE_VOLUMES, deviceInfo.getDiscreteVolumeValues());
+        intent.putExtra(DeviceControlActivity.EXTRA_PROBE_CYCLE_MILLIS, deviceInfo.getProbeCycleMillis());
+        intent.putExtra(DeviceControlActivity.EXTRA_RECONNECT_DELAY_MILLIS, deviceInfo.getReconnectDelayMillis());
         startActivity(intent);
     }
 
@@ -110,6 +112,8 @@ public class DeviceChooserActivity extends AbstractDeviceActivity {
         final EditText ipAddressText = (EditText) promptsView.findViewById(R.id.edit_ip_address);
         final EditText portText = (EditText) promptsView.findViewById(R.id.edit_port);
         final EditText discreteVolumeText = (EditText) promptsView.findViewById(R.id.edit_discrete_volume);
+        final EditText probeCycleMillisText = (EditText) promptsView.findViewById(R.id.edit_probe_cycle_millis);
+        final EditText reconnectDelayMillisText = (EditText) promptsView.findViewById(R.id.edit_reconnect_delay_millis);
         final ArrayAdapter<DeviceInfo> adapter = deviceInfoAdapter;
         AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .setView(promptsView)
@@ -123,6 +127,8 @@ public class DeviceChooserActivity extends AbstractDeviceActivity {
                                 portText.getText().toString(),
                                 DeviceDirectory.getDeviceById(deviceTypeGroup.getCheckedRadioButtonId()).getDeviceName(),
                                 deviceNameText.getText().toString(),
+                                probeCycleMillisText.getText().toString(),
+                                reconnectDelayMillisText.getText().toString(),
                                 getDiscreteVolumes(discreteVolumeText));
                         deviceList.add(newDevice);
                         deviceListPersistor.saveDeviceList(deviceList);

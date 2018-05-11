@@ -1,7 +1,7 @@
 /*
  Kintrol: Remote control app for LINN(R) KINOS(TM), KISTO(TM) and
  Klimax Kontrol(TM) system controllers.
- Copyright (C) 2015-2017 Oliver Götz
+ Copyright (C) 2015-2018 Oliver Götz
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License version 3.
@@ -22,8 +22,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 public class FatalityHander implements java.lang.Thread.UncaughtExceptionHandler {
-    public static final String LOG_TAG = FatalityHander.class.getSimpleName();
-    private final String LINE_SEPARATOR = "\n";
+    public static final String TAG = FatalityHander.class.getSimpleName();
 
     @SuppressWarnings("deprecation")
     public void uncaughtException(Thread thread, Throwable exception) {
@@ -33,7 +32,7 @@ public class FatalityHander implements java.lang.Thread.UncaughtExceptionHandler
         StringBuilder errorReport = new StringBuilder();
         errorReport.append(stackTrace.toString());
 
-        Log.e(LOG_TAG, errorReport.toString());
+        Log.e(TAG, errorReport.toString());
 
         android.os.Process.killProcess(android.os.Process.myPid());
         System.exit(10);

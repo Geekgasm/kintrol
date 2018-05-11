@@ -1,7 +1,7 @@
 /*
  Kintrol: Remote control app for LINN(R) KINOS(TM), KISTO(TM) and
  Klimax Kontrol(TM) system controllers.
- Copyright (C) 2015-2017 Oliver Götz
+ Copyright (C) 2015-2018 Oliver Götz
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License version 3.
@@ -44,7 +44,7 @@ public abstract class KinosKistoDevice implements Device {
         COMMANDS.put(KommandKey.previousInputProfile, "INPUT PROFILE -");
         COMMANDS.put(KommandKey.nextInputProfile, "INPUT PROFILE +");
         COMMANDS.put(KommandKey.toggleMute, "MUTE TOGGLE");
-        COMMANDS.put(KommandKey.setVolume, "VOLUME = ");
+        COMMANDS.put(KommandKey.setVolume, "VOLUME = %d");
         COMMANDS.put(KommandKey.previousSurroundMode, "SURROUND -");
         COMMANDS.put(KommandKey.nextSurroundMode, "SURROUND +");
     }

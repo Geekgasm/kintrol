@@ -2,14 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 22
-    buildToolsVersion '25.0.0'
 
     defaultConfig {
         applicationId "eu.geekgasm.kintrol"
         minSdkVersion 8
         targetSdkVersion 22
-        versionCode 25
-        versionName "0.25"
+        versionCode 26
+        versionName "0.26"
         archivesBaseName = "kintrol-v$versionName"
     }
     buildTypes {

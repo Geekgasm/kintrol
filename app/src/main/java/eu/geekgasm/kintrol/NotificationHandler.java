@@ -1,7 +1,7 @@
 /*
  Kintrol: Remote control app for LINN(R) KINOS(TM), KISTO(TM) and
  Klimax Kontrol(TM) system controllers.
- Copyright (C) 2015-2017 Oliver Götz
+ Copyright (C) 2015-2018 Oliver Götz
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License version 3.
@@ -18,12 +18,8 @@ package eu.geekgasm.kintrol;
 
 import android.util.Log;
 
-import org.apache.commons.net.telnet.TelnetClient;
-
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,39 +27,58 @@ public class NotificationHandler implements Runnable {
 
     private static final String TAG = NotificationHandler.class.getSimpleName();
 
-    private TelnetClient telnetClient;
+    private TelnetCommunicator telnetCommunicator;
     private NotificationListener notificationListener;
     private StatusChecker statusChecker;
     private Device device;
+    private final int reconnectDelayMillis;
     private String currentVolume = NotificationListener.NOT_AVAILABLE;
     private boolean isMuted = false;
     private boolean isOperational = false;
     private boolean isUnityGainOn = false;
+    private boolean stopRequested = false;
 
-    public NotificationHandler(TelnetClient telnetClient,
+    public NotificationHandler(TelnetCommunicator telnetClient,
                                NotificationListener notificationListener,
                                StatusChecker statusChecker,
-                               Device device) {
-        this.telnetClient = telnetClient;
+                               Device device,
+                               int reconnectDelayMillis) {
+        this.telnetCommunicator = telnetClient;
         this.notificationListener = notificationListener;
         this.statusChecker = statusChecker;
         this.device = device;
+        this.reconnectDelayMillis = reconnectDelayMillis;
     }
 
     @Override
     public void run() {
-        InputStream instr = telnetClient.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(instr));
-        String deviceData = "";
-        statusChecker.checkDeviceStatus(200);
-        statusChecker.checkDeviceStatus(600);
-        try {
-            while ((deviceData = reader.readLine()) != null) {
-                updateDeviceState(deviceData);
+        Log.i(TAG, "Starting NotificationHandler thread");
+        do {
+            statusChecker.checkDeviceStatus(200);
+            statusChecker.checkDeviceStatus(600);
+            try {
+                BufferedReader reader = telnetCommunicator.getInputReader();
+                String deviceData = "";
+                while (!stopRequested && (deviceData = reader.readLine()) != null) {
+                    updateDeviceState(deviceData);
+                }
+            } catch (IOException e) {
+                Log.i(TAG, "Exception while reading socket, trying to recover:", e);
+                try {
+                    Thread.sleep(reconnectDelayMillis);
+                } catch (InterruptedException e1) {
+                    // continue on thread interrupt
+                }
             }
-        } catch (IOException e) {
-            Log.w(TAG, "Error in KinosNotificationHandler Thread, Exception while reading socket:", e);
-        }
+        } while (!stopRequested && reconnectDelayMillis > 0);
+        Log.i(TAG, "Stopping NotificationHandler thread");
+        telnetCommunicator = null;
+        notificationListener = null;
+    }
+
+    public synchronized void requestStop() {
+        Log.d(TAG, "Stop requested for NotificationHandler thread");
+        stopRequested = true;
     }
 
     public boolean isMuted() {
@@ -234,11 +249,6 @@ public class NotificationHandler implements Runnable {
 
     private boolean matches(Matcher matcher) {
         return matcher != null && matcher.matches();
-    }
-
-    public void shutdown() {
-        telnetClient = null;
-        notificationListener = null;
     }
 
     private boolean isOn(String status) {

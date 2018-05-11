@@ -1,7 +1,7 @@
 <!--
  Kintrol: Remote control app for LINN(R) KINOS(TM), KISTO(TM) and
  Klimax Kontrol(TM) system controllers.
- Copyright (C) 2015-2017 Oliver Götz
+ Copyright (C) 2015-2018 Oliver Götz
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License version 3.
@@ -81,5 +81,23 @@
             android:inputType="number"
             android:digits="0123456789"
             android:hint="@string/edit_discrete_volume" />
+
+        <EditText
+            android:id="@+id/edit_probe_cycle_millis"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:digits="0123456789"
+            android:hint="@string/edit_probe_cycle_millis" />
+
+        <EditText
+            android:id="@+id/edit_reconnect_delay_millis"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:digits="0123456789"
+            android:hint="@string/edit_reconnect_delay_millis" />
     </LinearLayout>
 </FrameLayout>
