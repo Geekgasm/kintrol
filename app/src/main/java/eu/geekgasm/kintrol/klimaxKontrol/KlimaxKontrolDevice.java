@@ -49,7 +49,7 @@ public class KlimaxKontrolDevice implements Device {
         COMMANDS.put(KommandKey.nextInputProfile, "LISTEN +");
         COMMANDS.put(KommandKey.muteOn, "MUTE Y");
         COMMANDS.put(KommandKey.muteOff, "MUTE N");
-        COMMANDS.put(KommandKey.setVolume, "VOL = ");
+        COMMANDS.put(KommandKey.setVolume, "VOL = %d");
     }
 
     static {
