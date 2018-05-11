@@ -203,8 +203,7 @@ public class Kontroller {
     }
 
     public void previousSurroundMode() {
-        KommandKey commandKey = KommandKey.previousSurroundMode;
-        sendCommand(commandKey);
+        sendCommand(KommandKey.previousSurroundMode);
     }
 
     public void nextSurroundMode() {
