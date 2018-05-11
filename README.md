@@ -2,7 +2,7 @@
 
 Remote control app for [LINN&reg;](http://www.linn.co.uk/) KINOS&trade;, KISTO&trade; and Klimax Kontrol&trade; system controllers.
 
-Copyright &copy; 2015-2017 Oliver Götz
+Copyright &copy; 2015-2018 Oliver Götz
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the [GNU General Public License version 3](http://www.gnu.org/licenses/gpl.html).
