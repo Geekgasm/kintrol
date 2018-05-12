@@ -8,7 +8,7 @@ android {
         minSdkVersion 8
         targetSdkVersion 22
         versionCode 26
-        versionName '0.26dev'
+        versionName '0.26'
         archivesBaseName = "kintrol-v$versionName"
     }
     buildTypes {
