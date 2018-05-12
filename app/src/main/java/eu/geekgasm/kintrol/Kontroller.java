@@ -36,6 +36,7 @@ public class Kontroller {
     private NotificationListener notificationListener;
     private StatusChecker statusChecker;
     private Device device;
+    private DeviceStatus deviceStatus = new DeviceStatus();
     private TelnetClient telnetClient;
     private NotificationHandler notificationHandler;
 
@@ -48,6 +49,7 @@ public class Kontroller {
         this.notificationListener = notificationListener;
         this.statusChecker = statusChecker;
         this.device = device;
+        this.deviceStatus = deviceStatus;
     }
 
     private int decodeDevicePort(String devicePortString) {
@@ -89,7 +91,7 @@ public class Kontroller {
             try {
                 Log.d(TAG, "Opening telnet connection to " + deviceIp + ":" + devicePort);
                 telnetClient.connect(deviceIp, devicePort);
-                notificationHandler = new NotificationHandler(telnetClient, notificationListener, statusChecker, device);
+                notificationHandler = new NotificationHandler(telnetClient, notificationListener, statusChecker, device, deviceStatus);
                 Thread notificationHandlerThread = new Thread(notificationHandler, "Device response handler thread");
                 notificationHandlerThread.start();
             } catch (IOException e) {
@@ -193,7 +195,7 @@ public class Kontroller {
     public void toggleMute() {
         KommandKey toggleMuteKommand = KommandKey.toggleMute;
         if (!device.getCommands().containsKey(KommandKey.toggleMute)) {
-            toggleMuteKommand = notificationHandler.isMuted() ? KommandKey.muteOff : KommandKey.muteOn;
+            toggleMuteKommand = deviceStatus.isMuted() ? KommandKey.muteOff : KommandKey.muteOn;
         }
         sendCommand(toggleMuteKommand);
     }
