@@ -44,7 +44,7 @@ public abstract class KinosKistoDevice implements Device {
         COMMANDS.put(KommandKey.previousInputProfile, "INPUT PROFILE -");
         COMMANDS.put(KommandKey.nextInputProfile, "INPUT PROFILE +");
         COMMANDS.put(KommandKey.toggleMute, "MUTE TOGGLE");
-        COMMANDS.put(KommandKey.setVolume, "VOLUME = ");
+        COMMANDS.put(KommandKey.setVolume, "VOLUME = %d");
         COMMANDS.put(KommandKey.previousSurroundMode, "SURROUND -");
         COMMANDS.put(KommandKey.nextSurroundMode, "SURROUND +");
     }

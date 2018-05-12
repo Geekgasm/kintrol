@@ -36,6 +36,7 @@ public class Kontroller {
     private NotificationListener notificationListener;
     private StatusChecker statusChecker;
     private Device device;
+    private DeviceStatus deviceStatus = new DeviceStatus();
     private TelnetClient telnetClient;
     private NotificationHandler notificationHandler;
 
@@ -48,6 +49,7 @@ public class Kontroller {
         this.notificationListener = notificationListener;
         this.statusChecker = statusChecker;
         this.device = device;
+        this.deviceStatus = deviceStatus;
     }
 
     private int decodeDevicePort(String devicePortString) {
@@ -89,7 +91,7 @@ public class Kontroller {
             try {
                 Log.d(TAG, "Opening telnet connection to " + deviceIp + ":" + devicePort);
                 telnetClient.connect(deviceIp, devicePort);
-                notificationHandler = new NotificationHandler(telnetClient, notificationListener, statusChecker, device);
+                notificationHandler = new NotificationHandler(telnetClient, notificationListener, statusChecker, device, deviceStatus);
                 Thread notificationHandlerThread = new Thread(notificationHandler, "Device response handler thread");
                 notificationHandlerThread.start();
             } catch (IOException e) {
@@ -123,94 +125,95 @@ public class Kontroller {
     }
 
     public void checkOperationStatus() {
-        sendCommand(device.getCommands().get(KommandKey.checkOperationStatus));
+        sendCommand(KommandKey.checkOperationStatus);
     }
 
     public void checkVolume() {
-        sendCommand(device.getCommands().get(KommandKey.checkVolume));
+        sendCommand(KommandKey.checkVolume);
     }
 
     private void checkMuteStatus() {
-        sendCommand(device.getCommands().get(KommandKey.checkMuteStatus));
+        sendCommand(KommandKey.checkMuteStatus);
     }
 
     public void checkInputProfile() {
-        sendCommand(device.getCommands().get(KommandKey.checkInputProfile));
+        sendCommand(KommandKey.checkInputProfile);
     }
 
     public void checkUnityGain(String currentInputProfileId) {
-        sendCommand(device.getCommands().get(KommandKey.checkUnityGain), currentInputProfileId);
+        sendCommand(KommandKey.checkUnityGain, currentInputProfileId);
     }
 
     public void checkInputName(String currentInputProfileId) {
-        sendCommand(device.getCommands().get(KommandKey.checkInputName), currentInputProfileId);
+        sendCommand(KommandKey.checkInputName, currentInputProfileId);
     }
 
     public void checkSurroundMode() {
-        sendCommand(device.getCommands().get(KommandKey.checkSurroundMode));
+        sendCommand(KommandKey.checkSurroundMode);
     }
 
     public void checkDeviceId() {
-        sendCommand(device.getCommands().get(KommandKey.checkDeviceId));
+        sendCommand(KommandKey.checkDeviceId);
     }
 
     public void checkPowerCounter() {
-        sendCommand(device.getCommands().get(KommandKey.checkPowerCounter));
+        sendCommand(KommandKey.checkPowerCounter);
     }
 
     public void checkSoftwareVersion() {
-        sendCommand(device.getCommands().get(KommandKey.checkSoftwareVersion));
+        sendCommand(KommandKey.checkSoftwareVersion);
     }
 
     public void checkHardwareVersion() {
-        sendCommand(device.getCommands().get(KommandKey.checkHardwareVersion));
+        sendCommand(KommandKey.checkHardwareVersion);
     }
 
     public void switchOn() {
-        sendCommand(device.getCommands().get(KommandKey.switchOn));
+        sendCommand(KommandKey.switchOn);
     }
 
     public void switchOff() {
-        sendCommand(device.getCommands().get(KommandKey.switchOff));
+        sendCommand(KommandKey.switchOff);
     }
 
     public void decreaseVolume() {
-        sendCommand(device.getCommands().get(KommandKey.decreaseVolume));
+        sendCommand(KommandKey.decreaseVolume);
     }
 
     public void increaseVolume() {
-        sendCommand(device.getCommands().get(KommandKey.increaseVolume));
+        sendCommand(KommandKey.increaseVolume);
     }
 
     public void previousInputProfile() {
-        sendCommand(device.getCommands().get(KommandKey.previousInputProfile));
+        sendCommand(KommandKey.previousInputProfile);
     }
 
     public void nextInputProfile() {
-        sendCommand(device.getCommands().get(KommandKey.nextInputProfile));
+        sendCommand(KommandKey.nextInputProfile);
     }
 
     public void toggleMute() {
-        String toggleMute = device.getCommands().get(KommandKey.toggleMute);
-        if (toggleMute == null) {
-            toggleMute = device.getCommands().get(notificationHandler.isMuted() ? KommandKey.muteOff : KommandKey.muteOn);
+        KommandKey toggleMuteKommand = KommandKey.toggleMute;
+        if (!device.getCommands().containsKey(KommandKey.toggleMute)) {
+            toggleMuteKommand = deviceStatus.isMuted() ? KommandKey.muteOff : KommandKey.muteOn;
         }
-        sendCommand(toggleMute);
+        sendCommand(toggleMuteKommand);
     }
 
     public void setVolume(int volume) {
-        sendCommand(device.getCommands().get(KommandKey.setVolume) + volume);
+        sendCommand(KommandKey.setVolume, volume);
     }
 
     public void previousSurroundMode() {
-        sendCommand(device.getCommands().get(KommandKey.previousSurroundMode));
+        sendCommand(KommandKey.previousSurroundMode);
     }
 
     public void nextSurroundMode() {
-        sendCommand(device.getCommands().get(KommandKey.nextSurroundMode));
+        sendCommand(KommandKey.nextSurroundMode);
     }
 
-    private void sendCommand(String commandString, String... arguments) {
+    private void sendCommand(KommandKey kommandKey, Object... arguments) {
+        String commandString = device.getCommands().get(kommandKey);
         if (commandString == null || commandString.trim().equals("")) {
             return;
         }

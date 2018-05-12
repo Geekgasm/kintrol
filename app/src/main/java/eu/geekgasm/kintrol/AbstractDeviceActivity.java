@@ -16,13 +16,11 @@
  */
 package eu.geekgasm.kintrol;
 
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 
-public abstract class AbstractDeviceActivity extends ActionBarActivity {
+public abstract class AbstractDeviceActivity extends AppCompatActivity {
     public void showAbout(MenuItem item) {
         AboutDialog.showAbout(this);
     }
