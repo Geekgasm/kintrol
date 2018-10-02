@@ -17,8 +17,14 @@
 package eu.geekgasm.kintrol;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NavUtils;
@@ -48,6 +54,12 @@ import eu.geekgasm.kintrol.kinos.SurroundModes;
 
 public class DeviceControlActivity extends AbstractDeviceActivity implements NotificationListener {
 
+    private enum WifiState {
+        UNKNOWN,
+        CONNECTED,
+        NOT_CONNECTED
+    }
+
     public static final String EXTRA_IP_ADDRESS = "eu.geekgasm.kintrol.IP_ADDRESS";
     public static final String EXTRA_PORT = "eu.geekgasm.kintrol.PORT";
     public static final String EXTRA_DEVICE_NAME = "eu.geekgasm.kintrol.DEVICE_NAME";
@@ -68,6 +80,7 @@ public class DeviceControlActivity extends AbstractDeviceActivity implements Not
     private String hardwareVersion;
     private AutoSizeText surroundModeView;
     private int discreteVolumeValue;
+    private WifiState lastWifiState = WifiState.UNKNOWN;
 
     private static void runJustBeforeBeingDrawn(final View view, final Runnable runnable) {
         final ViewTreeObserver.OnPreDrawListener preDrawListener = new ViewTreeObserver.OnPreDrawListener() {
@@ -113,6 +126,7 @@ public class DeviceControlActivity extends AbstractDeviceActivity implements Not
         surroundModeView = new AutoSizeText(this, R.id.current_surround_mode);
         deviceNameView.setText(deviceInfo.deviceName);
         discreteVolumeValue = deviceInfo.getFirstDiscreteVolumeValue();
+        registerReceiver(new WifiStateChangeBroadcastReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
     @Override
@@ -132,11 +146,30 @@ public class DeviceControlActivity extends AbstractDeviceActivity implements Not
         View surroundView = findViewById(R.id.surround_group);
         surroundView.setVisibility(surroundVisibility);
 
-        startKontrollerThread(deviceInfo);
+        if (getWifiState() == WifiState.CONNECTED) {
+            startKontrollerThread(deviceInfo);
+        } else {
+            handleNoConnectionStatusUpdate();
+        }
+    }
+
+    private WifiState getWifiState() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+        if (activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting() &&
+                activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
+            lastWifiState = WifiState.CONNECTED;
+        } else {
+            lastWifiState = WifiState.NOT_CONNECTED;
+        }
+        return lastWifiState;
     }
 
     private void setNoConnectionInfo() {
-        operationStateView.setText(NotificationListener.NOT_CONNECTED_STATUS_TEXT);
+        operationStateView.setText(lastWifiState == WifiState.NOT_CONNECTED ?
+                NotificationListener.NO_WIFI_STATUS_TEXT :
+                NotificationListener.NOT_CONNECTED_STATUS_TEXT);
         volumeView.setText(NotificationListener.NOT_AVAILABLE);
         sourceView.setText(NotificationListener.NOT_AVAILABLE);
         surroundModeView.setText(NotificationListener.NOT_AVAILABLE);
@@ -360,6 +393,28 @@ public class DeviceControlActivity extends AbstractDeviceActivity implements Not
                     }
                 }).create();
         alertDialog.show();
+    }
+
+    class WifiStateChangeBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            WifiManager wifiManager = (WifiManager) context
+                    .getSystemService(Context.WIFI_SERVICE);
+
+            NetworkInfo networkInfo = intent
+                    .getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+
+            boolean wifiConnected = networkInfo != null &&
+                    networkInfo.getType() == ConnectivityManager.TYPE_WIFI &&
+                    networkInfo.getState() == NetworkInfo.State.CONNECTED;
+
+            if ((lastWifiState == WifiState.NOT_CONNECTED && wifiConnected) ||
+                    (lastWifiState == WifiState.CONNECTED && !wifiConnected)) {
+                // Wifi state changed. Restart acitvity
+                startControlActivity(deviceInfo);
+            }
+        }
     }
 
     private void startControlActivity(DeviceInfo deviceInfo) {

@@ -20,6 +20,7 @@ public interface NotificationListener {
 
     public static final String NOT_AVAILABLE = "---";
     public static final String OPERATIONAL_STATUS_TEXT = "Operational";
+    public static final String NO_WIFI_STATUS_TEXT = "No WIFI";
     public static final String NOT_CONNECTED_STATUS_TEXT = "Not Connected";
     public static final String STANDBY_STATUS_TEXT = "Standby";
     public static final String MUTED_TEXT = "Muted";
