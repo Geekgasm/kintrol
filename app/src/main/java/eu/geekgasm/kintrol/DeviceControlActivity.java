@@ -54,6 +54,12 @@ import eu.geekgasm.kintrol.kinos.SurroundModes;
 
 public class DeviceControlActivity extends AbstractDeviceActivity implements NotificationListener {
 
+    private enum WifiState {
+        UNKNOWN,
+        CONNECTED,
+        NOT_CONNECTED
+    }
+
     public static final String EXTRA_IP_ADDRESS = "eu.geekgasm.kintrol.IP_ADDRESS";
     public static final String EXTRA_PORT = "eu.geekgasm.kintrol.PORT";
     public static final String EXTRA_DEVICE_NAME = "eu.geekgasm.kintrol.DEVICE_NAME";
@@ -74,7 +80,7 @@ public class DeviceControlActivity extends AbstractDeviceActivity implements Not
     private String hardwareVersion;
     private AutoSizeText surroundModeView;
     private int discreteVolumeValue;
-    private boolean hasWifiConnection;
+    private WifiState lastWifiState = WifiState.UNKNOWN;
 
     private static void runJustBeforeBeingDrawn(final View view, final Runnable runnable) {
         final ViewTreeObserver.OnPreDrawListener preDrawListener = new ViewTreeObserver.OnPreDrawListener() {
@@ -140,24 +146,30 @@ public class DeviceControlActivity extends AbstractDeviceActivity implements Not
         View surroundView = findViewById(R.id.surround_group);
         surroundView.setVisibility(surroundVisibility);
 
-        if (isWifiConnected()) {
+        if (getWifiState() == WifiState.CONNECTED) {
             startKontrollerThread(deviceInfo);
         } else {
             handleNoConnectionStatusUpdate();
         }
     }
 
-    private boolean isWifiConnected() {
+    private WifiState getWifiState() {
         ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
-        hasWifiConnection = activeNetwork != null &&
+        if (activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting() &&
-                activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
-        return hasWifiConnection;
+                activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
+            lastWifiState = WifiState.CONNECTED;
+        } else {
+            lastWifiState = WifiState.NOT_CONNECTED;
+        }
+        return lastWifiState;
     }
 
     private void setNoConnectionInfo() {
-        operationStateView.setText(isWifiConnected() ? NotificationListener.NOT_CONNECTED_STATUS_TEXT : NotificationListener.NO_WIFI_STATUS_TEXT);
+        operationStateView.setText(lastWifiState == WifiState.NOT_CONNECTED ?
+                NotificationListener.NO_WIFI_STATUS_TEXT :
+                NotificationListener.NOT_CONNECTED_STATUS_TEXT);
         volumeView.setText(NotificationListener.NOT_AVAILABLE);
         sourceView.setText(NotificationListener.NOT_AVAILABLE);
         surroundModeView.setText(NotificationListener.NOT_AVAILABLE);
@@ -397,9 +409,9 @@ public class DeviceControlActivity extends AbstractDeviceActivity implements Not
                     networkInfo.getType() == ConnectivityManager.TYPE_WIFI &&
                     networkInfo.getState() == NetworkInfo.State.CONNECTED;
 
-            if ((!hasWifiConnection && wifiConnected) || (hasWifiConnection && !wifiConnected)) {
+            if ((lastWifiState == WifiState.NOT_CONNECTED && wifiConnected) ||
+                    (lastWifiState == WifiState.CONNECTED && !wifiConnected)) {
                 // Wifi state changed. Restart acitvity
-                hasWifiConnection = wifiConnected;
                 startControlActivity(deviceInfo);
             }
         }
